@@ -221,16 +221,7 @@ export function startLanguageServer(connection: Connection): void {
   connection.onDocumentRangeFormatting((params): TextEdit[] => {
     const document = documents.get(params.textDocument.uri);
     if (document === undefined) return [];
-    const startLine = params.range.start.line;
-    const endLine =
-      params.range.end.character === 0 ? params.range.end.line : params.range.end.line + 1;
-    const start = document.offsetAt({ character: 0, line: startLine });
-    const end = document.offsetAt({ character: 0, line: endLine });
-    const original = document.getText().slice(start, end);
-    const formatted = formatCaddyfile(original);
-    return original === formatted
-      ? []
-      : [{ newText: formatted, range: toRange(document, { end, start }) }];
+    return rangeDocumentFormat(document, params.range);
   });
 
   connection.onDefinition((params): Location | undefined => {
@@ -474,6 +465,26 @@ function fullDocumentFormat(document: TextDocument): TextEdit[] {
   return original === formatted
     ? []
     : [{ newText: formatted, range: toRange(document, { end: original.length, start: 0 }) }];
+}
+
+function rangeDocumentFormat(document: TextDocument, requested: Range): TextEdit[] {
+  const source = document.getText();
+  const formatted = formatCaddyfile(source);
+  if (source === formatted) return [];
+  const sourceLines = source.split("\n");
+  const formattedLines = formatted.split("\n");
+  if (sourceLines.length !== formattedLines.length) return [];
+  const startLine = requested.start.line;
+  const endLine = requested.end.character === 0 ? requested.end.line : requested.end.line + 1;
+  const start = document.offsetAt({ character: 0, line: startLine });
+  const end = document.offsetAt({ character: 0, line: endLine });
+  const original = source.slice(start, end);
+  const replacement =
+    formattedLines.slice(startLine, endLine).join("\n") +
+    (end > start && source.slice(start, end).endsWith("\n") ? "\n" : "");
+  return original === replacement
+    ? []
+    : [{ newText: replacement, range: toRange(document, { end, start }) }];
 }
 
 function toRange(document: TextDocument, span: TextSpan): Range {

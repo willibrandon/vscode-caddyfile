@@ -5,6 +5,6 @@
     "tsBuildInfoFile": "../../node_modules/.cache/vscode-client-desktop.tsbuildinfo",
     "types": ["node", "vscode"]
   },
-  "include": ["src/desktop.ts"],
+  "include": ["src/caddy-output.ts", "src/caddy-runner.ts", "src/desktop.ts"],
   "references": [{ "path": "." }]
 }

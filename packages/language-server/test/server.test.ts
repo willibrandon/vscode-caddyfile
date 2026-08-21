@@ -39,6 +39,7 @@ const source = `{
 	respond "api"
 }
 example.com {
+	# Serve assets locally.
 	@assets path /assets/*
 	basicauth {
 		user hash
@@ -50,6 +51,9 @@ example.com {
 	import common
 	invoke api
 	custom_handler
+	respond <<BODY
+hello from heredoc
+BODY
 }
 `;
 
@@ -213,6 +217,16 @@ describe("language server JSON-RPC contract", () => {
     });
     expect(formatting).toEqual([]);
 
+    const rangeFormatting = await request<TextEdit[]>(client, "textDocument/rangeFormatting", {
+      options: { insertSpaces: true, tabSize: 2 },
+      range: {
+        end: { character: 0, line: 17 },
+        start: { character: 0, line: 15 },
+      },
+      textDocument: { uri },
+    });
+    expect(rangeFormatting).toEqual([]);
+
     const unformatted = source.replace("\treverse_proxy", "  reverse_proxy");
     await change(client, unformatted, 2);
     const edits = await request<TextEdit[]>(client, "textDocument/formatting", {
@@ -252,6 +266,93 @@ describe("language server JSON-RPC contract", () => {
       },
     });
     expect((await next).map(({ code }) => code)).not.toContain("unknown-directive");
+
+    const malformedDiagnostics = nextDiagnostics(client);
+    await change(client, "example.com{\n\trespond ok\n", 2);
+    const malformed = await malformedDiagnostics;
+    const braceProblem = malformed.find(({ code }) => code === "missing-space-before-brace");
+    expect(braceProblem).toBeDefined();
+    const braceActions = await request<CodeAction[]>(client, "textDocument/codeAction", {
+      context: { diagnostics: braceProblem === undefined ? [] : [braceProblem] },
+      range: braceProblem?.range,
+      textDocument: { uri },
+    });
+    expect(braceActions).toMatchObject([
+      {
+        edit: {
+          changes: {
+            [uri]: [{ newText: " " }],
+          },
+        },
+        title: "Insert space before brace",
+      },
+    ]);
+  });
+
+  it("returns neutral results for unopened documents and invalid renames", async () => {
+    const missing = { textDocument: { uri: "file:///workspace/missing.Caddyfile" } };
+    expect(
+      await request(client, "textDocument/completion", {
+        ...missing,
+        position: { character: 0, line: 0 },
+      }),
+    ).toEqual([]);
+    expect(
+      await request(client, "textDocument/hover", {
+        ...missing,
+        position: { character: 0, line: 0 },
+      }),
+    ).toBeNull();
+    expect(
+      await request(client, "textDocument/signatureHelp", {
+        ...missing,
+        position: { character: 0, line: 0 },
+      }),
+    ).toBeNull();
+    expect(
+      await request(client, "textDocument/formatting", {
+        ...missing,
+        options: { insertSpaces: true, tabSize: 2 },
+      }),
+    ).toEqual([]);
+    expect(
+      await request(client, "textDocument/rangeFormatting", {
+        ...missing,
+        options: { insertSpaces: true, tabSize: 2 },
+        range: {
+          end: { character: 0, line: 1 },
+          start: { character: 0, line: 0 },
+        },
+      }),
+    ).toEqual([]);
+    expect(
+      await request(client, "textDocument/definition", {
+        ...missing,
+        position: { character: 0, line: 0 },
+      }),
+    ).toBeNull();
+    expect(
+      await request(client, "textDocument/references", {
+        ...missing,
+        context: { includeDeclaration: true },
+        position: { character: 0, line: 0 },
+      }),
+    ).toEqual([]);
+    expect(await request(client, "textDocument/documentSymbol", missing)).toEqual([]);
+    expect(await request(client, "textDocument/foldingRange", missing)).toEqual([]);
+    expect(await request(client, "textDocument/documentLink", missing)).toEqual([]);
+    expect(await request(client, "textDocument/semanticTokens/full", missing)).toMatchObject({
+      data: [],
+    });
+
+    await open(client, source);
+    expect(
+      await request(client, "textDocument/rename", {
+        newName: "invalid name",
+        position: positionOf(source, "invoke api", 8),
+        textDocument: { uri },
+      }),
+    ).toBeNull();
   });
 });
 

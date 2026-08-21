@@ -18,6 +18,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(output, client);
   await client.start();
   registerCommonCommands(context, client, output);
+  const unavailable = async (): Promise<void> => {
+    await vscode.window.showInformationMessage(
+      "Installed Caddy commands are unavailable in a browser extension host; built-in language features remain active.",
+    );
+  };
+  context.subscriptions.push(
+    vscode.commands.registerCommand("caddyfile.checkWithCaddy", unavailable),
+    vscode.commands.registerCommand("caddyfile.showAdaptedJson", unavailable),
+    vscode.commands.registerCommand("caddyfile.showCaddyInformation", unavailable),
+  );
   output.info("Caddyfile language server started in a Web Worker.");
 }
 
