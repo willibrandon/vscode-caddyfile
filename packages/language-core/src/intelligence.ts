@@ -72,11 +72,14 @@ export function semanticSpans(document: ParsedDocument): readonly SemanticSpan[]
     } else if (/^-?\d+(?:\.\d+)?(?:ns|us|µs|ms|s|m|h|d)?$/u.test(token.value)) {
       spans.push({ span: token.span, type: "number" });
     }
-    for (const match of token.raw.matchAll(
-      /\{\$[A-Za-z_][A-Za-z0-9_]*(?::[^}]*)?\}|\{[A-Za-z0-9_.-]+\}/gu,
-    )) {
-      const start = token.span.start + match.index;
-      spans.push({ span: { start, end: start + match[0].length }, type: "variable" });
+    for (const placeholder of placeholderSpans(token.raw)) {
+      spans.push({
+        span: {
+          start: token.span.start + placeholder.start,
+          end: token.span.start + placeholder.end,
+        },
+        type: "variable",
+      });
     }
   }
   for (const statement of document.statements) {
@@ -98,6 +101,49 @@ export function semanticSpans(document: ParsedDocument): readonly SemanticSpan[]
     }
   }
   return spans;
+}
+
+function placeholderSpans(value: string): readonly TextSpan[] {
+  const spans: TextSpan[] = [];
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] !== "{") continue;
+    const start = index;
+    index += 1;
+    if (value[index] === "$") {
+      index += 1;
+      if (!isEnvironmentNameStart(value[index])) continue;
+      while (isEnvironmentNamePart(value[index])) index += 1;
+      if (value[index] === ":") {
+        while (index < value.length && value[index] !== "}") index += 1;
+      }
+    } else {
+      const nameStart = index;
+      while (isPlaceholderNamePart(value[index])) index += 1;
+      if (index === nameStart) continue;
+    }
+    if (value[index] === "}") spans.push({ start, end: index + 1 });
+  }
+  return spans;
+}
+
+function isEnvironmentNameStart(value: string | undefined): boolean {
+  return value !== undefined && ((value >= "A" && value <= "Z") || value === "_");
+}
+
+function isEnvironmentNamePart(value: string | undefined): boolean {
+  return isEnvironmentNameStart(value) || (value !== undefined && value >= "0" && value <= "9");
+}
+
+function isPlaceholderNamePart(value: string | undefined): boolean {
+  return (
+    value !== undefined &&
+    ((value >= "A" && value <= "Z") ||
+      (value >= "a" && value <= "z") ||
+      (value >= "0" && value <= "9") ||
+      value === "_" ||
+      value === "." ||
+      value === "-")
+  );
 }
 
 export function languageCoverage(): Readonly<Record<string, number>> {

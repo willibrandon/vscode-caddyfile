@@ -89,6 +89,14 @@ describe("language intelligence", () => {
     expect(types).toEqual(expect.arrayContaining(["comment", "variable", "number", "keyword"]));
   });
 
+  it("scans adversarial environment placeholders in linear time", () => {
+    const repeated = "{$A:".repeat(100_000);
+    const started = performance.now();
+    const spans = semanticSpans(parseCaddyfile(`:80 {\nrespond ${repeated}\n}\n`));
+    expect(spans.filter(({ type }) => type === "variable")).toEqual([]);
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
   it("covers the complete standard top-level registry", () => {
     expect(languageCoverage()).toEqual({
       directives: 43,
