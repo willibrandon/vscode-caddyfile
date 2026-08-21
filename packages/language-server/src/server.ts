@@ -2,7 +2,6 @@ import {
   CADDY_LANGUAGE_DATA_VERSION,
   analyzeCaddyfile,
   completionsAt,
-  definitionAt,
   formatCaddyfile,
   hoverAt,
   languageItemFor,
@@ -56,6 +55,13 @@ import type {
 } from "vscode-languageserver";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { URI, Utils } from "vscode-uri";
+import {
+  WorkspaceIndex,
+  definitionAtWorkspace,
+  importTargets,
+  occurrencesAtWorkspace,
+  workspaceImportDiagnostics,
+} from "./workspace-index.js";
 
 const languageIds = new Set(["caddyfile", "caddyfile-test"]);
 const tokenTypes = ["keyword", "string", "number", "comment", "variable", "property"] as const;
@@ -73,9 +79,11 @@ const defaultSettings: ServerSettings = {
 
 export function startLanguageServer(connection: Connection): void {
   const documents = new TextDocuments(TextDocument);
+  const workspaceIndex = new WorkspaceIndex();
   const settingsCache = new Map<string, Promise<ServerSettings>>();
   let fallbackSettings = defaultSettings;
   let supportsConfiguration = false;
+  let workspaceRoots: readonly string[] = [];
 
   const parsed = (document: TextDocument): ParsedDocument | undefined =>
     languageIds.has(document.languageId) ? parseCaddyfile(document.getText()) : undefined;
@@ -98,10 +106,21 @@ export function startLanguageServer(connection: Connection): void {
     const diagnostics =
       tree === undefined || !settings.validation.enable
         ? []
-        : analyzeCaddyfile(tree, {
-            maxProblems: settings.validation.maxProblems,
-            unknownItems: settings.diagnostics.unknownItems,
-          }).map((item) => toDiagnostic(document, item));
+        : [
+            ...analyzeCaddyfile(tree, {
+              maxProblems: settings.validation.maxProblems,
+              unknownItems: settings.diagnostics.unknownItems,
+            }),
+            ...(workspaceIndex.ready
+              ? workspaceImportDiagnostics(
+                  document.uri,
+                  workspaceIndex.merged(documents.all()),
+                  workspaceRoots,
+                )
+              : []),
+          ]
+            .slice(0, settings.validation.maxProblems)
+            .map((item) => toDiagnostic(document, item));
     void connection.sendDiagnostics({
       diagnostics,
       uri: document.uri,
@@ -150,6 +169,17 @@ export function startLanguageServer(connection: Connection): void {
       const eventSettings: unknown = event.settings;
       fallbackSettings = normalizeSettings(object(eventSettings)?.["caddyfile"] ?? eventSettings);
     }
+    for (const document of documents.all()) void publish(document);
+  });
+
+  connection.onNotification("caddyfile/workspaceFiles", (payload: unknown): void => {
+    const value = object(payload);
+    const files = value?.["files"];
+    const roots = value?.["roots"];
+    workspaceRoots = Array.isArray(roots)
+      ? roots.filter((root): root is string => typeof root === "string").slice(0, 100)
+      : [];
+    workspaceIndex.replace(Array.isArray(files) ? files : []);
     for (const document of documents.all()) void publish(document);
   });
 
@@ -226,23 +256,30 @@ export function startLanguageServer(connection: Connection): void {
 
   connection.onDefinition((params): Location | undefined => {
     const document = documents.get(params.textDocument.uri);
-    const tree = document === undefined ? undefined : parsed(document);
-    if (document === undefined || tree === undefined) return undefined;
-    const definition = definitionAt(tree, document.offsetAt(params.position));
+    if (document === undefined || parsed(document) === undefined) return undefined;
+    const definition = definitionAtWorkspace(
+      document.uri,
+      document.offsetAt(params.position),
+      workspaceIndex.merged(documents.all()),
+    );
     return definition === undefined
       ? undefined
-      : { range: toRange(document, definition.span), uri: document.uri };
+      : {
+          range: toRange(definition.document, definition.span),
+          uri: definition.document.uri,
+        };
   });
 
   connection.onReferences((params): Location[] => {
     const document = documents.get(params.textDocument.uri);
-    const tree = document === undefined ? undefined : parsed(document);
-    if (document === undefined || tree === undefined) return [];
+    if (document === undefined || parsed(document) === undefined) return [];
     const offset = document.offsetAt(params.position);
-    const definition = tree.definitions.find(({ span }) => spanContains(span, offset));
-    return referencesAt(tree, offset)
-      .filter((span) => params.context.includeDeclaration || span !== definition?.span)
-      .map((span) => ({ range: toRange(document, span), uri: document.uri }));
+    return occurrencesAtWorkspace(document.uri, offset, workspaceIndex.merged(documents.all()))
+      .filter(({ definition }) => params.context.includeDeclaration || !definition)
+      .map((occurrence) => ({
+        range: toRange(occurrence.document, occurrence.span),
+        uri: occurrence.document.uri,
+      }));
   });
 
   connection.onDocumentHighlight((params): DocumentHighlight[] => {
@@ -261,26 +298,43 @@ export function startLanguageServer(connection: Connection): void {
 
   connection.onPrepareRename((params): Range | undefined => {
     const document = documents.get(params.textDocument.uri);
-    const tree = document === undefined ? undefined : parsed(document);
-    if (document === undefined || tree === undefined) return undefined;
-    const span = renameSpansAt(tree, document.offsetAt(params.position))[0];
-    return span === undefined ? undefined : toRange(document, span);
+    if (document === undefined || parsed(document) === undefined) return undefined;
+    const offset = document.offsetAt(params.position);
+    const occurrence = occurrencesAtWorkspace(
+      document.uri,
+      offset,
+      workspaceIndex.merged(documents.all()),
+    ).find(
+      ({ document: candidate, span }) =>
+        candidate.uri === document.uri && spanContains(span, offset),
+    );
+    return occurrence === undefined ? undefined : toRange(document, occurrence.span);
   });
 
   connection.onRenameRequest((params): WorkspaceEdit | undefined => {
     if (!/^[A-Za-z0-9_.-]+$/u.test(params.newName)) return undefined;
     const document = documents.get(params.textDocument.uri);
-    const tree = document === undefined ? undefined : parsed(document);
-    if (document === undefined || tree === undefined) return undefined;
-    const spans = renameSpansAt(tree, document.offsetAt(params.position));
-    if (spans.length === 0) return undefined;
+    if (document === undefined || parsed(document) === undefined) return undefined;
+    const occurrences = occurrencesAtWorkspace(
+      document.uri,
+      document.offsetAt(params.position),
+      workspaceIndex.merged(documents.all()),
+    );
+    if (occurrences.length === 0) return undefined;
+    const changes: Record<string, TextEdit[]> = {};
+    for (const occurrence of occurrences) {
+      const edits = changes[occurrence.document.uri] ?? [];
+      edits.push({
+        newText: renamedText(
+          occurrence.document.getText(toRange(occurrence.document, occurrence.span)),
+          params.newName,
+        ),
+        range: toRange(occurrence.document, occurrence.span),
+      });
+      changes[occurrence.document.uri] = edits;
+    }
     return {
-      changes: {
-        [document.uri]: spans.map((span): TextEdit => ({
-          newText: renamedText(document.getText().slice(span.start, span.end), params.newName),
-          range: toRange(document, span),
-        })),
-      },
+      changes,
     };
   });
 
@@ -290,12 +344,11 @@ export function startLanguageServer(connection: Connection): void {
     return document === undefined || tree === undefined ? [] : documentSymbols(document, tree);
   });
 
-  connection.onWorkspaceSymbol((): SymbolInformation[] => {
+  connection.onWorkspaceSymbol(({ query }): SymbolInformation[] => {
     const result: SymbolInformation[] = [];
-    for (const document of documents.all()) {
-      const tree = parsed(document);
-      if (tree === undefined) continue;
+    for (const { document, tree } of workspaceIndex.merged(documents.all()).values()) {
       for (const definition of tree.definitions) {
+        if (!definition.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())) continue;
         result.push({
           kind: symbolKindForDefinition(definition),
           location: { range: toRange(document, definition.span), uri: document.uri },
@@ -336,8 +389,18 @@ export function startLanguageServer(connection: Connection): void {
     const document = documents.get(params.textDocument.uri);
     const tree = document === undefined ? undefined : parsed(document);
     if (document === undefined || tree === undefined) return [];
+    const indexed = workspaceIndex.merged(documents.all());
     return tree.references.flatMap((reference) => {
-      if (reference.kind !== "import" || /[*?{}$]/u.test(reference.name)) return [];
+      if (reference.kind !== "import") return [];
+      const targets = importTargets(document.uri, reference, indexed);
+      if (targets.length > 0) {
+        return targets.map(({ document: target }) => ({
+          range: toRange(document, reference.span),
+          target: target.uri,
+          tooltip: "Open imported Caddyfile",
+        }));
+      }
+      if (/[*?{}$]/u.test(reference.name)) return [];
       try {
         return [
           {
@@ -495,21 +558,6 @@ function deepestStatementAt(tree: ParsedDocument, offset: number): Statement | u
   return tree.statements
     .filter(({ span }) => spanContains(span, offset))
     .sort((left, right) => right.depth - left.depth)[0];
-}
-
-function renameSpansAt(tree: ParsedDocument, offset: number): readonly TextSpan[] {
-  const definition = tree.definitions.find(({ span }) => spanContains(span, offset));
-  const reference = tree.references.find(({ span }) => spanContains(span, offset));
-  const symbol = definition ?? reference;
-  if (symbol === undefined || symbol.kind === "import") return [];
-  return [
-    ...tree.definitions
-      .filter(({ kind, name }) => kind === symbol.kind && name === symbol.name)
-      .map(({ span }) => span),
-    ...tree.references
-      .filter(({ kind, name }) => kind === symbol.kind && name === symbol.name)
-      .map(({ span }) => span),
-  ];
 }
 
 function renamedText(original: string, name: string): string {

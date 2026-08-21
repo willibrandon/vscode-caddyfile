@@ -145,9 +145,7 @@ describe("language server JSON-RPC contract", () => {
     const workspaceSymbols = await request<SymbolInformation[]>(client, "workspace/symbol", {
       query: "api",
     });
-    expect(workspaceSymbols.map(({ name }) => name)).toEqual(
-      expect.arrayContaining(["common", "api", "assets"]),
-    );
+    expect(workspaceSymbols.map(({ name }) => name)).toEqual(["api"]);
 
     const folds = await request<FoldingRange[]>(client, "textDocument/foldingRange", {
       textDocument: { uri },
@@ -353,6 +351,75 @@ describe("language server JSON-RPC contract", () => {
         textDocument: { uri },
       }),
     ).toBeNull();
+  });
+
+  it("indexes imports and navigates across closed workspace files", async () => {
+    const workspaceSource = `import ./parts.caddy
+import shared
+:80 {
+	invoke backend
+}
+`;
+    const partsUri = "file:///workspace/parts.caddy";
+    const partsSource = `(shared) {
+	encode gzip
+}
+&(backend) {
+	respond ok
+}
+`;
+    await open(client, workspaceSource);
+    await client.sendNotification("caddyfile/workspaceFiles", {
+      files: [
+        { text: workspaceSource, uri },
+        { text: partsSource, uri: partsUri },
+      ],
+    });
+
+    const importedFile = await request<Location | null>(client, "textDocument/definition", {
+      textDocument: { uri },
+      position: positionOf(workspaceSource, "./parts.caddy", 3),
+    });
+    expect(importedFile).toMatchObject({
+      range: { end: { character: 0, line: 0 }, start: { character: 0, line: 0 } },
+      uri: partsUri,
+    });
+
+    const snippet = await request<Location | null>(client, "textDocument/definition", {
+      textDocument: { uri },
+      position: positionOf(workspaceSource, "shared", 2),
+    });
+    expect(snippet).toMatchObject({ uri: partsUri });
+    expect(snippet?.range.start).toEqual(positionOf(partsSource, "(shared)", 0));
+
+    const routePosition = positionOf(workspaceSource, "backend", 2);
+    const routeReferences = await request<Location[]>(client, "textDocument/references", {
+      context: { includeDeclaration: true },
+      textDocument: { uri },
+      position: routePosition,
+    });
+    expect(routeReferences.map(({ uri: locationUri }) => locationUri)).toHaveLength(2);
+    expect(routeReferences.map(({ uri: locationUri }) => locationUri)).toEqual(
+      expect.arrayContaining([partsUri, uri]),
+    );
+
+    const rename = await request<WorkspaceEdit>(client, "textDocument/rename", {
+      newName: "origin",
+      textDocument: { uri },
+      position: routePosition,
+    });
+    expect(rename.changes?.[partsUri]?.map(({ newText }) => newText)).toEqual(["&(origin)"]);
+    expect(rename.changes?.[uri]?.map(({ newText }) => newText)).toEqual(["origin"]);
+
+    const workspaceSymbols = await request<SymbolInformation[]>(client, "workspace/symbol", {
+      query: "back",
+    });
+    expect(workspaceSymbols.map(({ name }) => name)).toEqual(["backend"]);
+
+    const links = await request<DocumentLink[]>(client, "textDocument/documentLink", {
+      textDocument: { uri },
+    });
+    expect(links[0]?.target).toBe(partsUri);
   });
 });
 

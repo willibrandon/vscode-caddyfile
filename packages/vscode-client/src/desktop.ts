@@ -4,7 +4,11 @@ import type { ServerOptions } from "vscode-languageclient/node";
 import { caddyResultSummary, parseCaddyOutput } from "./caddy-output.js";
 import { runCaddy } from "./caddy-runner.js";
 import type { CaddyRunResult } from "./caddy-runner.js";
-import { clientOptions, registerCommonCommands } from "./common.js";
+import {
+  clientOptions,
+  registerCommonCommands,
+  registerWorkspaceSynchronization,
+} from "./common.js";
 
 const adaptArguments = ["adapt", "--config", "-", "--adapter", "caddyfile"] as const;
 let client: LanguageClient | undefined;
@@ -22,7 +26,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const languageClient = client;
   context.subscriptions.push(output, languageClient);
   await languageClient.start();
-  registerCommonCommands(context, languageClient, output);
+  const refreshWorkspace = registerWorkspaceSynchronization(context, languageClient, output);
+  registerCommonCommands(context, languageClient, output, refreshWorkspace);
 
   const diagnostics = vscode.languages.createDiagnosticCollection("caddy-installed");
   const active = new Map<string, AbortController>();

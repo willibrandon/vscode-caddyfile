@@ -12,7 +12,7 @@ const config: ViteUserConfig = defineConfig({
       provider: "v8",
       include: [
         "packages/language-core/src/**/*.ts",
-        "packages/language-server/src/server.ts",
+        "packages/language-server/src/{server,workspace-index}.ts",
         "packages/vscode-client/src/caddy-output.ts",
         "packages/vscode-client/src/caddy-runner.ts",
       ],
