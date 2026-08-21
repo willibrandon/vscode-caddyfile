@@ -1,0 +1,133 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Caddyfile",
+  "scopeName": "source.caddyfile",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#heredoc" },
+    { "include": "#doubleQuoted" },
+    { "include": "#backtickQuoted" },
+    { "include": "#environment" },
+    { "include": "#placeholder" },
+    { "include": "#namedMatcher" },
+    { "include": "#snippet" },
+    { "include": "#headerOperator" },
+    { "include": "#braces" },
+    { "include": "#numbers" },
+    { "include": "#keywords" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.caddyfile",
+          "match": "(^|(?<=\\s))#.*$"
+        }
+      ]
+    },
+    "heredoc": {
+      "patterns": [
+        {
+          "name": "string.unquoted.heredoc.caddyfile",
+          "begin": "(?x)(?<=^|\\s)<<<([A-Za-z0-9_-]+)\\s*$",
+          "beginCaptures": { "1": { "name": "entity.name.tag.heredoc.caddyfile" } },
+          "end": "^\\s*\\1\\s*$",
+          "endCaptures": { "0": { "name": "entity.name.tag.heredoc.caddyfile" } }
+        }
+      ]
+    },
+    "doubleQuoted": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.caddyfile",
+          "begin": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.caddyfile" } },
+          "end": "\"",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.caddyfile" } },
+          "patterns": [
+            { "name": "constant.character.escape.caddyfile", "match": "\\\\." },
+            { "include": "#environment" },
+            { "include": "#placeholder" }
+          ]
+        }
+      ]
+    },
+    "backtickQuoted": {
+      "patterns": [
+        {
+          "name": "string.quoted.other.backtick.caddyfile",
+          "begin": "`",
+          "end": "`"
+        }
+      ]
+    },
+    "environment": {
+      "patterns": [
+        {
+          "name": "variable.other.environment.caddyfile",
+          "match": "\\{\\$[A-Za-z_][A-Za-z0-9_]*(?::[^}]*)?\\}"
+        }
+      ]
+    },
+    "placeholder": {
+      "patterns": [
+        {
+          "name": "variable.other.placeholder.caddyfile",
+          "match": "\\{(?:[A-Za-z0-9_.-]+|args(?:\\[[^]\\r\\n]+\\])?|block(?:\\[[^]\\r\\n]+\\])?)\\}"
+        }
+      ]
+    },
+    "namedMatcher": {
+      "patterns": [
+        {
+          "name": "entity.name.tag.matcher.caddyfile",
+          "match": "(?<!\\S)@[A-Za-z0-9_-]+"
+        }
+      ]
+    },
+    "snippet": {
+      "patterns": [
+        {
+          "name": "entity.name.function.snippet.caddyfile",
+          "match": "(?<!\\S)[(&][A-Za-z0-9_.-]+\\)?"
+        }
+      ]
+    },
+    "headerOperator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.header.caddyfile",
+          "match": "(?<!\\S)[+?->][A-Za-z0-9-]+"
+        }
+      ]
+    },
+    "braces": {
+      "patterns": [
+        {
+          "name": "punctuation.section.block.caddyfile",
+          "match": "[{}]"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.caddyfile",
+          "match": "(?<![A-Za-z0-9_.-])(?:\\d+(?:\\.\\d+)?(?:ns|us|µs|ms|s|m|h|d)?|:\\d+)(?![A-Za-z0-9_.-])"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.directive.caddyfile",
+          "match": "(?x)(?<!\\S)(?:abort|acme_server|basic_auth|bind|copy_response|copy_response_headers|encode|error|file_server|forward_auth|fs|handle|handle_errors|handle_path|header|import|intercept|invoke|log|log_append|log_name|log_skip|map|method|metrics|php_fastcgi|push|redir|request_body|request_header|respond|reverse_proxy|rewrite|root|route|templates|tls|tracing|try_files|uri|vars)(?!\\S)"
+        },
+        {
+          "name": "constant.language.boolean.caddyfile",
+          "match": "(?<!\\S)(?:true|false|on|off)(?!\\S)"
+        }
+      ]
+    }
+  }
+}

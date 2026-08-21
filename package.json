@@ -1,0 +1,279 @@
+{
+  "name": "caddyfile",
+  "displayName": "Caddyfile",
+  "description": "Complete Caddyfile language support for Visual Studio Code",
+  "version": "0.1.0",
+  "license": "MIT",
+  "publisher": "willibrandon",
+  "author": {
+    "name": "Brandon Williams"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willibrandon/vscode-caddyfile.git"
+  },
+  "bugs": {
+    "url": "https://github.com/willibrandon/vscode-caddyfile/issues"
+  },
+  "homepage": "https://willibrandon.github.io/vscode-caddyfile/",
+  "icon": "media/icon.png",
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters"
+  ],
+  "keywords": [
+    "caddy",
+    "caddyfile",
+    "web server",
+    "reverse proxy",
+    "configuration"
+  ],
+  "packageManager": "npm@12.0.2",
+  "workspaces": [
+    "packages/*"
+  ],
+  "files": [
+    "dist/browser.js",
+    "dist/browserServer.js",
+    "dist/extension.cjs",
+    "dist/nodeServer.cjs",
+    "language-configuration.json",
+    "media/icon.png",
+    "snippets/*.json",
+    "syntaxes/*.json",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=24 <25",
+    "vscode": "^1.102.0"
+  },
+  "main": "./dist/extension.cjs",
+  "browser": "./dist/browser.js",
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": {
+      "supported": true,
+      "description": "Language features are available; installed Caddy commands are disabled."
+    },
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Internal language features remain available; installed Caddy commands are disabled.",
+      "restrictedConfigurations": [
+        "caddyfile.caddy.command",
+        "caddyfile.caddy.checkOnSave"
+      ]
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "caddyfile",
+        "aliases": [
+          "Caddyfile",
+          "caddyfile"
+        ],
+        "extensions": [
+          ".caddyfile",
+          ".Caddyfile"
+        ],
+        "filenames": [
+          "Caddyfile"
+        ],
+        "filenamePatterns": [
+          "Caddyfile.*",
+          "Caddyfile-*"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "caddyfile-test",
+        "aliases": [
+          "Caddyfile Test",
+          "caddyfile-test"
+        ],
+        "extensions": [
+          ".caddyfiletest"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "caddyfile",
+        "scopeName": "source.caddyfile",
+        "path": "./syntaxes/caddyfile.tmLanguage.json"
+      },
+      {
+        "language": "caddyfile-test",
+        "scopeName": "source.caddyfile.test",
+        "path": "./syntaxes/caddyfile-test.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.caddyfile.markdown",
+        "path": "./syntaxes/caddyfile-markdown.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
+        ]
+      }
+    ],
+    "snippets": [
+      {
+        "language": "caddyfile",
+        "path": "./snippets/caddyfile.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "caddyfile.checkWithCaddy",
+        "title": "Check with Caddy",
+        "category": "Caddyfile"
+      },
+      {
+        "command": "caddyfile.showAdaptedJson",
+        "title": "Show Adapted JSON",
+        "category": "Caddyfile"
+      },
+      {
+        "command": "caddyfile.showCaddyInformation",
+        "title": "Show Caddy Information",
+        "category": "Caddyfile"
+      },
+      {
+        "command": "caddyfile.restartLanguageServer",
+        "title": "Restart Language Server",
+        "category": "Caddyfile"
+      },
+      {
+        "command": "caddyfile.openDocumentation",
+        "title": "Open Documentation",
+        "category": "Caddyfile"
+      },
+      {
+        "command": "caddyfile.showOutput",
+        "title": "Show Output",
+        "category": "Caddyfile"
+      }
+    ],
+    "configuration": {
+      "title": "Caddyfile",
+      "properties": {
+        "caddyfile.validation.enable": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "Enable built-in Caddyfile diagnostics."
+        },
+        "caddyfile.validation.maxProblems": {
+          "type": "integer",
+          "default": 200,
+          "minimum": 1,
+          "maximum": 2000,
+          "scope": "resource",
+          "description": "Maximum diagnostics per document."
+        },
+        "caddyfile.diagnostics.unknownItems": {
+          "type": "string",
+          "default": "hint",
+          "enum": [
+            "off",
+            "hint",
+            "warning"
+          ],
+          "scope": "resource",
+          "description": "Severity for directives and options not included with standard Caddy."
+        },
+        "caddyfile.caddy.command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "default": [
+            "caddy"
+          ],
+          "scope": "machine-overridable",
+          "description": "Caddy executable and wrapper arguments. Each argument is a separate array item."
+        },
+        "caddyfile.caddy.checkOnSave": {
+          "type": "boolean",
+          "default": false,
+          "scope": "resource",
+          "description": "Run caddy adapt after saving a trusted local Caddyfile."
+        },
+        "caddyfile.trace.server": {
+          "type": "string",
+          "default": "off",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "scope": "window",
+          "description": "Language server protocol tracing."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "node ./esbuild.mjs",
+    "vscode:prepublish": "npm run build",
+    "package": "npm run build && vsce package --no-dependencies --out dist/caddyfile.vsix",
+    "package:list": "vsce ls --no-dependencies",
+    "audit": "npm audit --audit-level=moderate",
+    "audit:signatures": "npm audit signatures",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run audit && npm run audit:signatures"
+  },
+  "dependencies": {
+    "vscode-languageclient": "10.1.0",
+    "vscode-languageserver": "10.1.0",
+    "vscode-languageserver-textdocument": "1.0.12"
+  },
+  "overrides": {
+    "cheerio": "1.0.0-rc.12",
+    "diff": "8.0.3",
+    "glob": "13.0.6",
+    "keytar": "npm:@github/keytar@7.10.6",
+    "serialize-javascript": "7.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.13.3",
+    "@types/vscode": "1.102.0",
+    "@vitest/coverage-v8": "4.1.10",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/test-web": "0.0.81",
+    "@vscode/vsce": "3.9.2",
+    "esbuild": "0.28.2",
+    "eslint": "10.8.1",
+    "fast-check": "4.9.0",
+    "glob": "13.0.6",
+    "ovsx": "1.1.1",
+    "playwright": "1.62.1",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.10",
+    "vscode-jsonrpc": "9.0.1",
+    "vscode-oniguruma": "2.0.1",
+    "vscode-textmate": "9.3.2",
+    "yauzl": "3.4.0"
+  }
+}

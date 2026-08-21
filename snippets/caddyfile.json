@@ -1,0 +1,21 @@
+{
+  "Site block": {
+    "prefix": "site",
+    "body": [
+      "${1:example.com} {",
+      "\t${2:respond \"Hello, world!\"}",
+      "}"
+    ],
+    "description": "Create a Caddy site block"
+  },
+  "Reverse proxy": {
+    "prefix": "reverse_proxy",
+    "body": ["reverse_proxy ${1:localhost:3000}"],
+    "description": "Proxy requests to an upstream"
+  },
+  "Static files": {
+    "prefix": "file_server",
+    "body": ["root * ${1:/srv}", "file_server"],
+    "description": "Serve static files"
+  }
+}

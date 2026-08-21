@@ -1,0 +1,12 @@
+{
+  "name": "@caddyfile/language-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/server.ts"
+  },
+  "dependencies": {
+    "@caddyfile/language-core": "0.1.0"
+  }
+}

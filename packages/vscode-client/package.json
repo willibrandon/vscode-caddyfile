@@ -1,0 +1,13 @@
+{
+  "name": "@caddyfile/vscode-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/common.ts"
+  },
+  "dependencies": {
+    "@caddyfile/language-core": "0.1.0",
+    "@caddyfile/language-server": "0.1.0"
+  }
+}

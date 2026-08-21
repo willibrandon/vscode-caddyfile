@@ -1,0 +1,1 @@
+export const CADDY_LANGUAGE_DATA_VERSION = "2.11.4";

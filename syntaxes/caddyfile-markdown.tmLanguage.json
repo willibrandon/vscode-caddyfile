@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Caddyfile Markdown Injection",
+  "scopeName": "source.caddyfile.markdown",
+  "injectionSelector": "L:text.html.markdown",
+  "patterns": [
+    {
+      "begin": "(^|\\G)(\\s*)(`{3,}|~{3,})\\s*(?i:caddyfile|caddy)\\s*$",
+      "beginCaptures": {
+        "3": { "name": "punctuation.definition.markdown" }
+      },
+      "end": "(^|\\G)(\\s*)(\\3)\\s*$",
+      "endCaptures": {
+        "3": { "name": "punctuation.definition.markdown" }
+      },
+      "contentName": "meta.embedded.block.caddyfile",
+      "patterns": [{ "include": "source.caddyfile" }]
+    }
+  ]
+}

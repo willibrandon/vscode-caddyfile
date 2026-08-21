@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Caddyfile Test",
+  "scopeName": "source.caddyfile.test",
+  "patterns": [
+    {
+      "begin": "\\A",
+      "end": "^(?=----------\\s*$)",
+      "patterns": [{ "include": "source.caddyfile" }]
+    },
+    {
+      "name": "comment.line.separator.caddyfile-test",
+      "match": "^----------\\s*$"
+    },
+    {
+      "begin": "(?<=^----------$)\\n",
+      "end": "\\z",
+      "patterns": [{ "include": "source.json" }]
+    }
+  ]
+}
