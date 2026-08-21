@@ -11,6 +11,7 @@
     "packages/*/test/**/*.ts",
     "packages/vscode-client/src/caddy-output.ts",
     "packages/vscode-client/src/caddy-runner.ts",
+    "scripts/test/**/*.ts",
     "test/**/*.ts",
     "vitest.config.mts"
   ],

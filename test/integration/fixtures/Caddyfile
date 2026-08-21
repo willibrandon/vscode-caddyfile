@@ -1,0 +1,12 @@
+{
+	debug
+}
+
+example.com {
+	@api path /api/*
+	reverse_proxy @api localhost:3000
+	import ./parts.caddy
+	import shared
+	invoke backend
+	unknown_handler
+}

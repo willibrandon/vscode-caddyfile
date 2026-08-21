@@ -1,0 +1,10 @@
+{
+  "name": "caddyfile-package-smoke-host",
+  "displayName": "Caddyfile Package Smoke Host",
+  "version": "0.0.0",
+  "private": true,
+  "publisher": "vscode-caddyfile-tests",
+  "engines": {
+    "vscode": "^1.102.0"
+  }
+}
