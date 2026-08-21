@@ -114,6 +114,17 @@ example.com {
     ]);
   });
 
+  it("suggests only a unique close standard spelling", () => {
+    const misspelled = analyzeCaddyfile(
+      parseCaddyfile(":80 {\n reverze_proxy localhost:3000\n}\n"),
+    );
+    expect(misspelled).toMatchObject([{ code: "unknown-directive", replacement: "reverse_proxy" }]);
+    expect(misspelled[0]?.message).toContain("Did you mean 'reverse_proxy'?");
+    expect(analyzeCaddyfile(parseCaddyfile(":80 {\n custom_handler\n}\n"))[0]).not.toHaveProperty(
+      "replacement",
+    );
+  });
+
   it("marks known deprecated directives", () => {
     const diagnostics = analyzeCaddyfile(
       parseCaddyfile(":80 {\n basicauth {\n user hash\n }\n}\n"),

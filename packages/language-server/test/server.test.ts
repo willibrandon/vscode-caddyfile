@@ -254,6 +254,24 @@ describe("language server JSON-RPC contract", () => {
       ]),
     );
 
+    const spellingDiagnostics = nextDiagnostics(client);
+    await change(client, ":80 {\n\treverze_proxy localhost:3000\n}\n", 2);
+    const spelling = await spellingDiagnostics;
+    const misspelling = spelling.find(({ code }) => code === "unknown-directive");
+    expect(misspelling?.data).toEqual({ replacement: "reverse_proxy" });
+    const spellingActions = await request<CodeAction[]>(client, "textDocument/codeAction", {
+      context: { diagnostics: misspelling === undefined ? [] : [misspelling] },
+      range: misspelling?.range,
+      textDocument: { uri },
+    });
+    expect(spellingActions).toMatchObject([
+      {
+        edit: { changes: { [uri]: [{ newText: "reverse_proxy" }] } },
+        isPreferred: true,
+        title: "Use reverse_proxy",
+      },
+    ]);
+
     const next = nextDiagnostics(client);
     await client.sendNotification("workspace/didChangeConfiguration", {
       settings: {

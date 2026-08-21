@@ -26,6 +26,7 @@ export type CoreDiagnosticSeverity = "error" | "warning" | "hint";
 export interface CoreDiagnostic {
   readonly code: string;
   readonly message: string;
+  readonly replacement?: string;
   readonly severity: CoreDiagnosticSeverity;
   readonly span: TextSpan;
 }

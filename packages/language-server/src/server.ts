@@ -455,6 +455,14 @@ export function startLanguageServer(connection: Connection): void {
           quickFixAt(document, diagnostic, "Insert space before brace", { end: start, start }, " "),
         ];
       }
+      if (code === "unknown-directive" || code === "unknown-global-option") {
+        const replacement = object(diagnostic.data)?.["replacement"];
+        const kind = code === "unknown-directive" ? "directive" : "global-option";
+        if (typeof replacement !== "string" || languageItemFor(replacement, [kind]) === undefined) {
+          return [];
+        }
+        return [quickFix(document.uri, diagnostic, `Use ${replacement}`, replacement)];
+      }
       return [];
     });
   });
@@ -509,6 +517,7 @@ function boundedInteger(
 function toDiagnostic(document: TextDocument, item: CoreDiagnostic): Diagnostic {
   return {
     code: item.code,
+    ...(item.replacement === undefined ? {} : { data: { replacement: item.replacement } }),
     message: item.message,
     range: toRange(document, item.span),
     severity:
