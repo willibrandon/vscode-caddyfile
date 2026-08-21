@@ -6,15 +6,16 @@
     {
       "begin": "\\A",
       "end": "^(?=----------\\s*$)",
+      "contentName": "meta.embedded.caddyfile.caddyfile-test",
       "patterns": [{ "include": "source.caddyfile" }]
     },
     {
-      "name": "comment.line.separator.caddyfile-test",
-      "match": "^----------\\s*$"
-    },
-    {
-      "begin": "(?<=^----------$)\\n",
+      "begin": "^----------\\s*$",
+      "beginCaptures": {
+        "0": { "name": "comment.line.separator.caddyfile-test" }
+      },
       "end": "\\z",
+      "contentName": "meta.embedded.json.caddyfile-test",
       "patterns": [{ "include": "source.json" }]
     }
   ]

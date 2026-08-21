@@ -36,6 +36,17 @@ describe("Caddyfile lexer", () => {
     expect(result.tokens[1]?.raw).toBe("<<BODY\nhello {world}\nBODY");
   });
 
+  it("leaves closing-line arguments available and strips marker indentation", () => {
+    const result = tokenize("respond <<BODY\n  hello\n  BODY 200\n");
+    expect(result.diagnostics).toEqual([]);
+    expect(result.tokens[1]).toMatchObject({
+      kind: "heredoc",
+      raw: "<<BODY\n  hello\n  BODY",
+      value: "hello",
+    });
+    expect(result.tokens.map(({ value }) => value)).toContain("200");
+  });
+
   it("reports a missing heredoc closing marker", () => {
     const result = tokenize("respond <<BODY\nhello\n");
     expect(result.diagnostics).toMatchObject([{ code: "unterminated-heredoc" }]);

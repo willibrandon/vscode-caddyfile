@@ -3,20 +3,73 @@
   "name": "Caddyfile",
   "scopeName": "source.caddyfile",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#heredoc" },
-    { "include": "#doubleQuoted" },
-    { "include": "#backtickQuoted" },
-    { "include": "#environment" },
-    { "include": "#placeholder" },
-    { "include": "#namedMatcher" },
-    { "include": "#snippet" },
-    { "include": "#headerOperator" },
-    { "include": "#braces" },
-    { "include": "#numbers" },
-    { "include": "#keywords" }
+    { "include": "#globalOptionsBlock" },
+    { "include": "#common" }
   ],
   "repository": {
+    "common": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#heredoc" },
+        { "include": "#doubleQuoted" },
+        { "include": "#backtickQuoted" },
+        { "include": "#environment" },
+        { "include": "#placeholder" },
+        { "include": "#namedRoute" },
+        { "include": "#snippet" },
+        { "include": "#matcherDefinition" },
+        { "include": "#namedMatcher" },
+        { "include": "#directives" },
+        { "include": "#siteAddress" },
+        { "include": "#headerOperator" },
+        { "include": "#braces" },
+        { "include": "#numbers" },
+        { "include": "#constants" }
+      ]
+    },
+    "globalOptionsBlock": {
+      "begin": "^\\s*(\\{)(?:\\s*(#.*))?$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.section.block.begin.caddyfile" },
+        "2": { "name": "comment.line.number-sign.caddyfile" }
+      },
+      "end": "^\\s*(\\})(?:\\s*(#.*))?$",
+      "endCaptures": {
+        "1": { "name": "punctuation.section.block.end.caddyfile" },
+        "2": { "name": "comment.line.number-sign.caddyfile" }
+      },
+      "name": "meta.block.global-options.caddyfile",
+      "patterns": [
+        { "include": "#globalOptionLine" },
+        { "include": "#nestedGlobalBlock" },
+        { "include": "#common" }
+      ]
+    },
+    "nestedGlobalBlock": {
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.block.begin.caddyfile" }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.block.end.caddyfile" }
+      },
+      "patterns": [
+        { "include": "#globalOptionLine" },
+        { "include": "#nestedGlobalBlock" },
+        { "include": "#common" }
+      ]
+    },
+    "globalOptionLine": {
+      "patterns": [
+        {
+          "match": "^\\s*(acme_ca|acme_ca_root|acme_dns|acme_eab|admin|auto_https|cert_issuer|cert_lifetime|debug|default_bind|default_sni|dns|ech|email|events|fallback_sni|filesystem|grace_period|http_port|https_port|key_type|local_certs|log|metrics|ocsp_interval|ocsp_stapling|on_demand_tls|order|persist_config|pki|preferred_chains|renew_interval|renewal_window_ratio|servers|shutdown_delay|skip_install_trust|storage|storage_check|storage_clean_interval|tls_resolvers)(?=\\s|$)",
+          "captures": {
+            "1": { "name": "support.type.property-name.global-option.caddyfile" }
+          }
+        }
+      ]
+    },
     "comments": {
       "patterns": [
         {
@@ -29,10 +82,19 @@
       "patterns": [
         {
           "name": "string.unquoted.heredoc.caddyfile",
-          "begin": "(?x)(?<=^|\\s)<<<([A-Za-z0-9_-]+)\\s*$",
-          "beginCaptures": { "1": { "name": "entity.name.tag.heredoc.caddyfile" } },
-          "end": "^\\s*\\1\\s*$",
-          "endCaptures": { "0": { "name": "entity.name.tag.heredoc.caddyfile" } }
+          "begin": "(?:^|(?<=\\s))(<<)([A-Za-z0-9_-]+)[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.string.begin.caddyfile" },
+            "2": { "name": "entity.name.tag.heredoc.caddyfile" }
+          },
+          "end": "^\\s*\\2\\s*$",
+          "endCaptures": {
+            "0": { "name": "entity.name.tag.heredoc.caddyfile" }
+          },
+          "patterns": [
+            { "include": "#environment" },
+            { "include": "#placeholder" }
+          ]
         }
       ]
     },
@@ -41,9 +103,13 @@
         {
           "name": "string.quoted.double.caddyfile",
           "begin": "\"",
-          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.caddyfile" } },
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.caddyfile" }
+          },
           "end": "\"",
-          "endCaptures": { "0": { "name": "punctuation.definition.string.end.caddyfile" } },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.caddyfile" }
+          },
           "patterns": [
             { "name": "constant.character.escape.caddyfile", "match": "\\\\." },
             { "include": "#environment" },
@@ -57,7 +123,17 @@
         {
           "name": "string.quoted.other.backtick.caddyfile",
           "begin": "`",
-          "end": "`"
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.caddyfile" }
+          },
+          "end": "`",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.caddyfile" }
+          },
+          "patterns": [
+            { "include": "#environment" },
+            { "include": "#placeholder" }
+          ]
         }
       ]
     },
@@ -77,11 +153,11 @@
         }
       ]
     },
-    "namedMatcher": {
+    "namedRoute": {
       "patterns": [
         {
-          "name": "entity.name.tag.matcher.caddyfile",
-          "match": "(?<!\\S)@[A-Za-z0-9_-]+"
+          "name": "entity.name.function.route.caddyfile",
+          "match": "^\\s*(&\\([A-Za-z0-9_.-]+\\))(?=\\s*\\{)"
         }
       ]
     },
@@ -89,7 +165,50 @@
       "patterns": [
         {
           "name": "entity.name.function.snippet.caddyfile",
-          "match": "(?<!\\S)[(&][A-Za-z0-9_.-]+\\)?"
+          "match": "^\\s*(\\([A-Za-z0-9_.-]+\\))(?=\\s*\\{)"
+        }
+      ]
+    },
+    "matcherDefinition": {
+      "patterns": [
+        {
+          "match": "^\\s*(@[A-Za-z0-9_-]+)\\s+([A-Za-z_][A-Za-z0-9_-]*)",
+          "captures": {
+            "1": { "name": "entity.name.tag.matcher.caddyfile" },
+            "2": { "name": "keyword.control.matcher.caddyfile" }
+          }
+        }
+      ]
+    },
+    "namedMatcher": {
+      "patterns": [
+        {
+          "name": "variable.other.matcher.caddyfile",
+          "match": "(?<!\\S)@[A-Za-z0-9_-]+"
+        }
+      ]
+    },
+    "directives": {
+      "patterns": [
+        {
+          "match": "^\\s*(abort|acme_server|basic_auth|basicauth|bind|copy_response|copy_response_headers|encode|error|file_server|forward_auth|fs|handle|handle_errors|handle_path|header|import|intercept|invoke|log|log_append|log_name|log_skip|map|method|metrics|php_fastcgi|push|redir|request_body|request_header|respond|reverse_proxy|rewrite|root|route|skip_log|templates|tls|tracing|try_files|uri|vars)(?=\\s|$)",
+          "captures": {
+            "1": { "name": "keyword.control.directive.caddyfile" }
+          }
+        }
+      ]
+    },
+    "siteAddress": {
+      "patterns": [
+        {
+          "begin": "^\\s*(?=[^#{}]+\\s*\\{)",
+          "end": "(?=\\s*\\{)",
+          "contentName": "entity.name.namespace.site-address.caddyfile",
+          "patterns": [
+            { "include": "#environment" },
+            { "include": "#placeholder" },
+            { "include": "#numbers" }
+          ]
         }
       ]
     },
@@ -97,7 +216,7 @@
       "patterns": [
         {
           "name": "keyword.operator.header.caddyfile",
-          "match": "(?<!\\S)[+?->][A-Za-z0-9-]+"
+          "match": "(?<!\\S)[+?\\->][A-Za-z0-9-]+"
         }
       ]
     },
@@ -113,19 +232,15 @@
       "patterns": [
         {
           "name": "constant.numeric.caddyfile",
-          "match": "(?<![A-Za-z0-9_.-])(?:\\d+(?:\\.\\d+)?(?:ns|us|µs|ms|s|m|h|d)?|:\\d+)(?![A-Za-z0-9_.-])"
+          "match": "(?<![A-Za-z0-9_.-])-?\\d+(?:\\.\\d+)?(?:ns|us|µs|ms|s|m|h|d)?(?![A-Za-z0-9_.-])"
         }
       ]
     },
-    "keywords": {
+    "constants": {
       "patterns": [
         {
-          "name": "keyword.control.directive.caddyfile",
-          "match": "(?x)(?<!\\S)(?:abort|acme_server|basic_auth|bind|copy_response|copy_response_headers|encode|error|file_server|forward_auth|fs|handle|handle_errors|handle_path|header|import|intercept|invoke|log|log_append|log_name|log_skip|map|method|metrics|php_fastcgi|push|redir|request_body|request_header|respond|reverse_proxy|rewrite|root|route|templates|tls|tracing|try_files|uri|vars)(?!\\S)"
-        },
-        {
           "name": "constant.language.boolean.caddyfile",
-          "match": "(?<!\\S)(?:true|false|on|off)(?!\\S)"
+          "match": "(?<!\\S)(?:true|false|on|off|null)(?!\\S)"
         }
       ]
     }

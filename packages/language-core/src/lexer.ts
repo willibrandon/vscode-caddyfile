@@ -170,19 +170,23 @@ function readHeredoc(
   }
   const contentStart = cursor.offset;
   let contentEnd = text.length;
+  let indentation = "";
   let found = false;
   while (cursor.offset < text.length) {
     const markerLineStart = cursor.offset;
     const markerLineEnd = lineEnd(text, markerLineStart);
     const line = text.slice(markerLineStart, markerLineEnd).replace(/\r$/u, "");
-    if (line.trimStart() === opening && line.trimEnd().endsWith(opening)) {
-      const padding = line.slice(0, line.length - line.trimStart().length);
-      if (`${padding}${opening}` === line) {
-        contentEnd = markerLineStart;
-        consumeUntil(text, cursor, markerLineEnd);
-        found = true;
-        break;
-      }
+    const trimmed = line.trimStart();
+    if (
+      trimmed === opening ||
+      trimmed.startsWith(opening + " ") ||
+      trimmed.startsWith(opening + "\t")
+    ) {
+      indentation = line.slice(0, line.length - trimmed.length);
+      contentEnd = markerLineStart;
+      consumeUntil(text, cursor, markerLineStart + indentation.length + opening.length);
+      found = true;
+      break;
     }
     consumeUntil(text, cursor, markerLineEnd);
     if (cursor.offset < text.length) {
@@ -199,8 +203,19 @@ function readHeredoc(
       span: { start: start.offset, end: end.offset },
     });
   }
-  const content = text.slice(contentStart, contentEnd).replace(/(?:\r?\n)$/u, "");
+  const content = dedentHeredoc(
+    text.slice(contentStart, contentEnd).replace(/(?:\r?\n)$/u, ""),
+    indentation,
+  );
   return token("heredoc", content, text.slice(start.offset, end.offset), start, end);
+}
+
+function dedentHeredoc(content: string, indentation: string): string {
+  if (indentation === "") return content;
+  return content
+    .split("\n")
+    .map((line) => (line.startsWith(indentation) ? line.slice(indentation.length) : line))
+    .join("\n");
 }
 
 function readWord(text: string, cursor: Cursor, start: SourcePosition): Token {

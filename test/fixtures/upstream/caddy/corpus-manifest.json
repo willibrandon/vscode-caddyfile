@@ -1,0 +1,1426 @@
+{
+  "schema": 1,
+  "upstream": {
+    "commit": "45ba3278b5822f6fa6107a44ca41669b6e722482",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/caddyserver/caddy.git"
+  },
+  "files": [
+    {
+      "path": "adapter/acme_dns_configured.caddyfiletest",
+      "sha256": "85df5eefe386b09b52dea970392e24e3b372530da5f084587b2196e2154a533f",
+      "size": 935,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_dns_configured.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_dns_naked_use_dns_defaults.caddyfiletest",
+      "sha256": "9e2da9f5e74afa99bdc33d6fa3699de2d207b64ec3765da859726e2887a9898b",
+      "size": 570,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_dns_naked_use_dns_defaults.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_dns_naked_without_dns.caddyfiletest",
+      "sha256": "dc2b2a939cbb9a38184f53d721a14e92de632daf7c4075b89bcb0151b4486ade",
+      "size": 163,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_dns_naked_without_dns.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_custom_challenges.caddyfiletest",
+      "sha256": "011757103e420db94242efe15ac036262c914f4f65ad966bdca07bd24ab280c2",
+      "size": 867,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_custom_challenges.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_default_challenges.caddyfiletest",
+      "sha256": "18fabb9da36a61da1b753538c4d830806988675a7020f74a0d7de7fae46ec4e7",
+      "size": 792,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_default_challenges.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_lifetime.caddyfiletest",
+      "sha256": "2e5e745837c07a2fbbd4f6ed73630260f77c2c519d48e737f0000c1bc648d9b5",
+      "size": 1865,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_lifetime.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_multi_custom_challenges.caddyfiletest",
+      "sha256": "1c59c19374f634b131fa0e8d70f2b0f368d70e68b010588e93bbd75837f26e38",
+      "size": 900,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_multi_custom_challenges.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_policy-allow.caddyfiletest",
+      "sha256": "620d789ebaac94cd76a5ed66fe05f23df60dee90316ced30539069e7bf7c9fbd",
+      "size": 1080,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_policy-allow.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_policy-both.caddyfiletest",
+      "sha256": "ff381c21547c3b8d67bf5707e5d3c273780d1e7f53b16b2cbdbad6dce9432f05",
+      "size": 1256,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_policy-both.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_policy-deny.caddyfiletest",
+      "sha256": "4261f49eee22034ac883d4f276cb2d4e2c865972d83bdeba56764d12d0982a22",
+      "size": 995,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_policy-deny.caddyfiletest"
+    },
+    {
+      "path": "adapter/acme_server_sign_with_root.caddyfiletest",
+      "sha256": "c3a2bee75e87de092ac38c4c9f21e17191463993c8aef65a5b80ff9f7b7cb7c8",
+      "size": 1017,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/acme_server_sign_with_root.caddyfiletest"
+    },
+    {
+      "path": "adapter/ambiguous_site_definition.caddyfiletest",
+      "sha256": "0a943eb8b96fe0f85e28a27a2db25b15716a99ce24ee9f5e64b843230a5a722f",
+      "size": 258,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/ambiguous_site_definition.caddyfiletest"
+    },
+    {
+      "path": "adapter/ambiguous_site_definition_duplicate_key.caddyfiletest",
+      "sha256": "262653947be26fb1a71f13c2aad6c3d8f88336749d6ffb228862a661fea335d0",
+      "size": 94,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/ambiguous_site_definition_duplicate_key.caddyfiletest"
+    },
+    {
+      "path": "adapter/auto_https_disable_redirects.caddyfiletest",
+      "sha256": "6d5b0429a302a3fef256290a5c2bb0973967b6c109a9e941c8d74cc9b57f484c",
+      "size": 398,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/auto_https_disable_redirects.caddyfiletest"
+    },
+    {
+      "path": "adapter/auto_https_ignore_loaded_certs.caddyfiletest",
+      "sha256": "e5b07d0f9c482bf0310c92ff6e396da12e4ee1cddc95732ac90a5f05692193d2",
+      "size": 409,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/auto_https_ignore_loaded_certs.caddyfiletest"
+    },
+    {
+      "path": "adapter/auto_https_off.caddyfiletest",
+      "sha256": "ad3f6c5c40af86437842664c0508d11cbd43c11d675a4817de4227ec02200dd5",
+      "size": 425,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/auto_https_off.caddyfiletest"
+    },
+    {
+      "path": "adapter/bind_fd_fdgram_h123.caddyfiletest",
+      "sha256": "3103655bcdb1680f1c438629478ea40fb4b83cfa692257d9b27648e9f4339783",
+      "size": 2110,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/bind_fd_fdgram_h123.caddyfiletest"
+    },
+    {
+      "path": "adapter/bind_ipv6.caddyfiletest",
+      "sha256": "aac8ede87ebf59b9c7f8fc7eb177e3163d05f106711d99029b0510159a356ade",
+      "size": 330,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/bind_ipv6.caddyfiletest"
+    },
+    {
+      "path": "adapter/directive_as_site_address.caddyfiletest",
+      "sha256": "b376cfa7db2f942ccec9c9ff8a7efbbeb81f5b49f47e54997c9751a38ad7dd2a",
+      "size": 160,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/directive_as_site_address.caddyfiletest"
+    },
+    {
+      "path": "adapter/duplicate_listener_address_global.caddyfiletest",
+      "sha256": "4c25be9b5d5c75aa14354178bf1a84c8ee653f39ff05c54dff24f4add0debcb2",
+      "size": 177,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/duplicate_listener_address_global.caddyfiletest"
+    },
+    {
+      "path": "adapter/duplicate_named_route_challenge.caddyfiletest",
+      "sha256": "da487b51afa81812310f787e457ae3525f8874545711a3081277daecd5d460a9",
+      "size": 180,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/duplicate_named_route_challenge.caddyfiletest"
+    },
+    {
+      "path": "adapter/enable_tls_for_catch_all_site.caddyfiletest",
+      "sha256": "9df65cb217da026446ecb347238e00b7ad67ececef46f867be0d45e1ce5b236f",
+      "size": 394,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/enable_tls_for_catch_all_site.caddyfiletest"
+    },
+    {
+      "path": "adapter/encode_options.caddyfiletest",
+      "sha256": "f4c2f46c14458da327e05a0ad2e3bba1178a47e0f976b89813e6ac5d43c0a328",
+      "size": 1866,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/encode_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_example.caddyfiletest",
+      "sha256": "aa9c664030bbe87f28f4bec8431fa3571c8a42593081c1b03249eb19313eab1e",
+      "size": 2642,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_example.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_multi_site_blocks.caddyfiletest",
+      "sha256": "c008fd37c212d05856e39bdd677dff3fe4dd3c10b743c39d96d810a7f118ed5c",
+      "size": 5596,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_multi_site_blocks.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_range_codes.caddyfiletest",
+      "sha256": "0fab3b7962201e099010574a554782e97ec65ec4ef902223d2f0d25cb60b0132",
+      "size": 2302,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_range_codes.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_range_simple_codes.caddyfiletest",
+      "sha256": "f8573931b1a0065bd53b5a0e31db89c3c528a5e788b910f2f0583881c661cb9f",
+      "size": 3450,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_range_simple_codes.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_simple_codes.caddyfiletest",
+      "sha256": "756f2bc67b83cde49ae0aa9c833a1a142770e56f74233f0b001100dae803f5af",
+      "size": 2228,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_simple_codes.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_sort.caddyfiletest",
+      "sha256": "e93753e4cf402a1a48602ae8b0e2018cd9eb13c8cb3a5f54c0b3db3e2ba9d93d",
+      "size": 3184,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_sort.caddyfiletest"
+    },
+    {
+      "path": "adapter/error_subhandlers.caddyfiletest",
+      "sha256": "f3c3895791d19c7ec0a8324abab246e97ea22847eccb5b4484987cb547580ee2",
+      "size": 5493,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/error_subhandlers.caddyfiletest"
+    },
+    {
+      "path": "adapter/expression_quotes.caddyfiletest",
+      "sha256": "15e6550cc8053aad3b218b43b443f49545b378d329f55fe6288274949ba21078",
+      "size": 3084,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/expression_quotes.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_disable_canonical_uris.caddyfiletest",
+      "sha256": "c0a7f9fb7e56fc51a778d176047659631b554c4f20f7380247f4583a2a4e547c",
+      "size": 379,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_disable_canonical_uris.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_etag_file_extensions.caddyfiletest",
+      "sha256": "65c76cd2340cab2535c77c54ba329734f3c1ac3efd2d87cf1adc94181d3aabc9",
+      "size": 536,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_etag_file_extensions.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_file_limit.caddyfiletest",
+      "sha256": "5c4c8cf27d99bb7d910a90c00076e7c9259c605aa31292f83f13ff9f36a77267",
+      "size": 413,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_file_limit.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_hide_repeated.caddyfiletest",
+      "sha256": "7e0d9b85bd62bc4625ab1a8d2f2c89e446e3cd44ed3bcac779b035ca7f2df463",
+      "size": 434,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_hide_repeated.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_pass_thru.caddyfiletest",
+      "sha256": "da36a3d92ab28ad69e05d3b8f0811394cd6605e97fcec0988aff08b83c7449d2",
+      "size": 360,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_pass_thru.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_precompressed.caddyfiletest",
+      "sha256": "6becf268da928981b8e085062dacccf4c0c8f3ed1bf0f4bd3d113a9babd1a78b",
+      "size": 891,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_precompressed.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_sort.caddyfiletest",
+      "sha256": "55493ad63e26249dd5033d35f60a172140b6c538df81a8ef0ef4f41339cab871",
+      "size": 452,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_sort.caddyfiletest"
+    },
+    {
+      "path": "adapter/file_server_status.caddyfiletest",
+      "sha256": "d57a48576f5ea0b9ef58117c6ca528dcd738a41740b01f84801d59544f7755d0",
+      "size": 1903,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/file_server_status.caddyfiletest"
+    },
+    {
+      "path": "adapter/forward_auth_authelia.caddyfiletest",
+      "sha256": "a5d15e0b9b70fd50692a748ddff83b27078b7e1251251cff775c93a4527ff358",
+      "size": 6083,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/forward_auth_authelia.caddyfiletest"
+    },
+    {
+      "path": "adapter/forward_auth_copy_headers_strip.caddyfiletest",
+      "sha256": "a1df3a6292cc9798f64bb54c56842fd812a708174db1d36f9a344a61ec4418ea",
+      "size": 2898,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/forward_auth_copy_headers_strip.caddyfiletest"
+    },
+    {
+      "path": "adapter/forward_auth_duplicate_uri.caddyfiletest",
+      "sha256": "66a9493cbba4005fe9e5b435dfb7cd1c73603455a282def60435518bdcf1c4f0",
+      "size": 205,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/forward_auth_duplicate_uri.caddyfiletest"
+    },
+    {
+      "path": "adapter/forward_auth_rename_headers.caddyfiletest",
+      "sha256": "a1ed89e91426a4dd811b61f8ce35d454bae67e0750c0c52cdd5a156974074a7c",
+      "size": 5415,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/forward_auth_rename_headers.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options.caddyfiletest",
+      "sha256": "e2b8af51c879d24495c257c39545e4973115e640399eea9ab4d0305233ad2eda",
+      "size": 1248,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_acme.caddyfiletest",
+      "sha256": "75b61eaef639115308149e1e83ea1737abf890fb5e3c6a8eeff3ce8e8e5c238b",
+      "size": 1765,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_acme.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_admin.caddyfiletest",
+      "sha256": "390d2a479e1b553d2e95ec03fd9684053374f83b7032dec8eec61b8ee86fabca",
+      "size": 1117,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_admin.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_admin_with_persist_config_off.caddyfiletest",
+      "sha256": "9454c2fa11ae55c6adfc2d796250f8ac62bb43659e12f035320caf60981d625d",
+      "size": 450,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_admin_with_persist_config_off.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_debug_with_access_log.caddyfiletest",
+      "sha256": "9c211a527b701a95ee8b21858618e0dc62aac70ba1a1a1ada4a1e7ddbfcefaf3",
+      "size": 500,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_debug_with_access_log.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_default_bind.caddyfiletest",
+      "sha256": "7c16beb319129ac076595ad36dc854511c23d0bb05c4274df1c3c9be95303744",
+      "size": 669,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_default_bind.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_log_and_site.caddyfiletest",
+      "sha256": "a12199de648622b7386a47ba7cf8da188490820d4139fb5b61642175d4167d75",
+      "size": 1082,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_log_and_site.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_log_basic.caddyfiletest",
+      "sha256": "f5c868abd51d56f24870ea99a5e93272096b22391144c950d30d68dfce61ab9f",
+      "size": 177,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_log_basic.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_log_custom.caddyfiletest",
+      "sha256": "152a4a11deba976bda38b7deed94c1dd26f40c43301549c1824e90db3db097e6",
+      "size": 460,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_log_custom.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_log_multi.caddyfiletest",
+      "sha256": "d4c7f6bfe70580ef023400ac733dea221773462cacb8908b377ddf7f4b7aeac5",
+      "size": 278,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_log_multi.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_log_sampling.caddyfiletest",
+      "sha256": "fae62d5b6017549d79c763548790719ed5c60f281cf04a807f2f1a49cbe77081",
+      "size": 238,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_log_sampling.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_persist_config.caddyfiletest",
+      "sha256": "296bf7f5c76154217fa28133b0366b6a78002950c0ba23a26f1ee1dae9b90a18",
+      "size": 213,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_persist_config.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_preferred_chains.caddyfiletest",
+      "sha256": "0a125419824430f5bc5ff2c4c19750c47e86706b9a4104d674bb3d790a4a66fe",
+      "size": 549,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_preferred_chains.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_resolvers.caddyfiletest",
+      "sha256": "b387590b0849dcbf4002bc68ba9e54d569cfb2d59b76a3005ae895107746bb4f",
+      "size": 1080,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_resolvers.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_resolvers_http_challenge.caddyfiletest",
+      "sha256": "65b17cfbec89064caa9a18721f136e3e1ff4da48ec4c2446359865a2281a75a0",
+      "size": 410,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_resolvers_http_challenge.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_resolvers_local_dns_inherit.caddyfiletest",
+      "sha256": "28220eabdc89ac6f456d32caf9c8a128e8b6643460adb68fbb870ccd2b1cf1e5",
+      "size": 929,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_resolvers_local_dns_inherit.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_resolvers_local_override.caddyfiletest",
+      "sha256": "0b07d9591449e15d41336c7a2caa403c806ad303895838c831ed223c43bff389",
+      "size": 1404,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_resolvers_local_override.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_resolvers_mixed.caddyfiletest",
+      "sha256": "42b2bfdf7ca8e26d0f3a57550f12898b8b7f5dcf2e5ad18eea2906925bdb68f6",
+      "size": 1624,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_resolvers_mixed.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_options_skip_install_trust.caddyfiletest",
+      "sha256": "f1d1689e6dd1079c21d9302fb61f2533428b94f850fdf91d05aad024b4ecc3aa",
+      "size": 2751,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_options_skip_install_trust.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_server_options_multi.caddyfiletest",
+      "sha256": "0194565c89433a557d290d15eb0826d5ee079b24008fec33c8d836cf5442baf8",
+      "size": 964,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_server_options_multi.caddyfiletest"
+    },
+    {
+      "path": "adapter/global_server_options_single.caddyfiletest",
+      "sha256": "ad355fba054dcc380eb8bd29b312079593545ec0eefbcf6ef993dbd8fdc1c206",
+      "size": 1718,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/global_server_options_single.caddyfiletest"
+    },
+    {
+      "path": "adapter/handle_nested_in_route.caddyfiletest",
+      "sha256": "c8ea550a692fe1920ceb572d3cf4dedb6817fb34bddb62e1156dcc1567e6de6b",
+      "size": 1263,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/handle_nested_in_route.caddyfiletest"
+    },
+    {
+      "path": "adapter/handle_path.caddyfiletest",
+      "sha256": "23a68d7dc235f265d3464c62186aa515234d06d21bf0841910479618dce24ee8",
+      "size": 751,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/handle_path.caddyfiletest"
+    },
+    {
+      "path": "adapter/handle_path_sorting.caddyfiletest",
+      "sha256": "c76db7b594d45fb09affff62be70f4f590864c92f8b74268c00873651246611b",
+      "size": 1580,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/handle_path_sorting.caddyfiletest"
+    },
+    {
+      "path": "adapter/header.caddyfiletest",
+      "sha256": "147ae087f2fef6c4ea59bbdf95f4744eee7466d2055dade2996f213a1365d469",
+      "size": 3282,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/header.caddyfiletest"
+    },
+    {
+      "path": "adapter/header_placeholder_search.caddyfiletest",
+      "sha256": "27c673fc045780abc012b07447683801e23b7f00e9d5040c08215677a6dde0e7",
+      "size": 1268,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/header_placeholder_search.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc.caddyfiletest",
+      "sha256": "9e0c15f9d2d91de8d886c3f53229e3711806b2c90c0d8c0e8c02b654e3e84874",
+      "size": 844,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_extra_indentation.caddyfiletest",
+      "sha256": "771b071e42e948c4469ab7c49afb9dd6ffcfdb165e47d58ff451661003a3ebe5",
+      "size": 519,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_extra_indentation.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_incomplete.caddyfiletest",
+      "sha256": "5def871b0c4d9ea481d93423b7dab3114b9ccde7833ac08ce979c399ec6af5dc",
+      "size": 207,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_incomplete.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_invalid_marker.caddyfiletest",
+      "sha256": "8ad35bbed7710bf930e3254c84042701cc50d756d7f098147e7a97558926e312",
+      "size": 169,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_invalid_marker.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_mismatched_whitespace.caddyfiletest",
+      "sha256": "d367c383e5b0276104709e2b38ba9e619ebf5798622ea50f9f053f2f39652c74",
+      "size": 182,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_mismatched_whitespace.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_missing_marker.caddyfiletest",
+      "sha256": "136a7a031ed108948f4aa5d8447ffce3680e14e29790b930283ef5d0185bc72b",
+      "size": 218,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_missing_marker.caddyfiletest"
+    },
+    {
+      "path": "adapter/heredoc_too_many_angle_brackets.caddyfiletest",
+      "sha256": "11e47aeb4625f9190a2a70b026add64d2f41403413b72234ed9c5f3dad429679",
+      "size": 132,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/heredoc_too_many_angle_brackets.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_hostnames.caddyfiletest",
+      "sha256": "57fef368f13df937311cff048f01f4ce64fcd1c470a81994076d65e579e184b9",
+      "size": 648,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_hostnames.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_on_any_address.caddyfiletest",
+      "sha256": "121fcb3e847ca94359f33f8a865b7d59d858ada8cfd92fc436e29f270f0683eb",
+      "size": 482,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_on_any_address.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_on_domain.caddyfiletest",
+      "sha256": "25bb6cb99bd9621719007746505b532ad75a66b909ba7c6084596a54d07bacf7",
+      "size": 828,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_on_domain.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_on_hostless_block.caddyfiletest",
+      "sha256": "011ff9e5d5ca7410f953f50ce27a1cf16d173260ccc04b38faf15f1346617d60",
+      "size": 329,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_on_hostless_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_on_localhost.caddyfiletest",
+      "sha256": "c60678f6e969a5327785fa216e3c9f6d98389d64438f82b2b9c4ebbf660af20c",
+      "size": 808,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_on_localhost.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_only_on_non_standard_port.caddyfiletest",
+      "sha256": "3e3935f38221a689b75d4ff127ac61c2c8d6531f0c138eac2c760bf9ad9dd3a2",
+      "size": 916,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_only_on_non_standard_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/http_valid_directive_like_site_address.caddyfiletest",
+      "sha256": "01b9ac8573bd67949a3e8b01175732c3c2b16c812890d79c74439853eb1572d2",
+      "size": 620,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/http_valid_directive_like_site_address.caddyfiletest"
+    },
+    {
+      "path": "adapter/https_on_domain.caddyfiletest",
+      "sha256": "be776f5066b5bd07b1150a0c222f14235987ed540232a19dbd330c2c4063601e",
+      "size": 822,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/https_on_domain.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_args_file.caddyfiletest",
+      "sha256": "7a3cb4cd021e56283758d9d877c2df51a5b6fe2af9762cc37831dd0962dfeaa7",
+      "size": 832,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_args_file.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_args_snippet.caddyfiletest",
+      "sha256": "bee66bfdc8389dee25233b19c20036d351ff629d66b1c6b468b0cbf9c1290231",
+      "size": 1249,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_args_snippet.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_args_snippet_env_placeholder.caddyfiletest",
+      "sha256": "b492e1b4537c14ac4bdd8093085ccabaa14d4c648c44069278854f98faa58c42",
+      "size": 328,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_args_snippet_env_placeholder.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_anonymous.caddyfiletest",
+      "sha256": "a1b0b78bc2318d64294f7131dfebf92966011d39109cf8c3839400760c39acb0",
+      "size": 232,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_anonymous.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet.caddyfiletest",
+      "sha256": "1c75ab631b5b175b52c2d1bfe7f966fd31024bff505bc0386f2259d9a4d5c62f",
+      "size": 755,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet_args.caddyfiletest",
+      "sha256": "85f9f5e167735dbaa1b5f4434fa706d6feabeeba47e79c5b86d24c9163da52bf",
+      "size": 748,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet_args.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet_invalid_subdirective.caddyfiletest",
+      "sha256": "d55edcc545d9bd1665e4287efd65eba47406c56c9376a2eb6675bf805be909bb",
+      "size": 246,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet_invalid_subdirective.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet_non_replaced_block.caddyfiletest",
+      "sha256": "d71be238758b8e972efafce31c8dbe528e31c4274841a16fcfd8e1c22204e0cd",
+      "size": 792,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet_non_replaced_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet_non_replaced_block_from_separate_file.caddyfiletest",
+      "sha256": "bb608e6a9b66433d964f8b434d422a4d73bb817376bdb747489f65ae38675b33",
+      "size": 783,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet_non_replaced_block_from_separate_file.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_snippet_non_replaced_key_block.caddyfiletest",
+      "sha256": "41bce38346f9a9189147aa9cc159c48c6dc266be26c0a8a35b396d1d39995345",
+      "size": 806,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_snippet_non_replaced_key_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_block_with_site_block.caddyfiletest",
+      "sha256": "4330262ab2040de3acd77eb64d8e3833bbc3ecb6e9393e7a6adc098124024a0d",
+      "size": 1000,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_block_with_site_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_blocks_snippet.caddyfiletest",
+      "sha256": "a04fe6e3801d9c5560772e3bc788fd4700287f780b7db2eb9370e58bce9cfde9",
+      "size": 1024,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_blocks_snippet.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_blocks_snippet_nested.caddyfiletest",
+      "sha256": "f7e543f9acb9ed5f6f12aec507e8e9538ec447709a81f5c8432d070d1f337bd6",
+      "size": 1094,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_blocks_snippet_nested.caddyfiletest"
+    },
+    {
+      "path": "adapter/import_cycle.caddyfiletest",
+      "sha256": "05fd6549d03a2910ba74db03935fd9cc6fe8e2f86b502b489276c889adbe5d4d",
+      "size": 162,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/import_cycle.caddyfiletest"
+    },
+    {
+      "path": "adapter/intercept_handle_response_too_many_args.caddyfiletest",
+      "sha256": "11cfc5d107ac87735b0b3ffff51fdc53ac83cef6d78d275ef27479552cfd6073",
+      "size": 274,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/intercept_handle_response_too_many_args.caddyfiletest"
+    },
+    {
+      "path": "adapter/intercept_response.caddyfiletest",
+      "sha256": "7196c7c9583ee635d24ed05f0ce58654ffad62fc8d01f8b38121e26c38a62187",
+      "size": 4745,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/intercept_response.caddyfiletest"
+    },
+    {
+      "path": "adapter/invoke_named_routes.caddyfiletest",
+      "sha256": "e9ee50cf57a14d6b49872093232f3267b38188df7e4eb8a11676ea925cf50779",
+      "size": 2221,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/invoke_named_routes.caddyfiletest"
+    },
+    {
+      "path": "adapter/invoke_nested_named_routes.caddyfiletest",
+      "sha256": "906797a959db24d3553998f7238948c2593bb15ecf3f661d868360ee4b05e499",
+      "size": 1381,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/invoke_nested_named_routes.caddyfiletest"
+    },
+    {
+      "path": "adapter/invoke_nested_undefined_named_route.caddyfiletest",
+      "sha256": "d911ebc3c22c321724797b012bc031fde3758fec2204414c4131c02aa711fef6",
+      "size": 147,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/invoke_nested_undefined_named_route.caddyfiletest"
+    },
+    {
+      "path": "adapter/invoke_undefined_named_route.caddyfiletest",
+      "sha256": "c315483a39fb698bba64d2129508471195d63f1f652b62015460a993c04a2b8d",
+      "size": 93,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/invoke_undefined_named_route.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_add.caddyfiletest",
+      "sha256": "c962cc97ae5e7f2aa4f13d153b58b60ed17ee0b9993d0fabc75be06700090974",
+      "size": 1069,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_add.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_append_encoder.caddyfiletest",
+      "sha256": "bb01517f5845c117e124cd6bbe7010b7f8d272283453599534e616100262b23e",
+      "size": 777,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_append_encoder.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_except_catchall_blocks.caddyfiletest",
+      "sha256": "63394e0c62dad8814fb6ac382da3ddafe167b223f6fa4c1c52a1722a47a6519a",
+      "size": 1778,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_except_catchall_blocks.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_filter_no_wrap.caddyfiletest",
+      "sha256": "cc5a0681a06560002c31086f704d3037f8146d8fd2941e65f84f5b20d81e5c14",
+      "size": 651,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_filter_no_wrap.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_filters.caddyfiletest",
+      "sha256": "07609efa0f6166dd0ac22850f87ec7300290a8ec9f8c0bbd1faf60cb36e2017e",
+      "size": 2408,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_filters.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_journald_encoder.caddyfiletest",
+      "sha256": "5de8d8626a0c1fef9f3abf8e1047e73757b6b669d25fc1decdf1564e2b54b181",
+      "size": 524,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_journald_encoder.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_multi_logger_name.caddyfiletest",
+      "sha256": "2daa4515626f177db8475d0e07b6bb6135ad160e455aa14a8b875598803449e6",
+      "size": 2196,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_multi_logger_name.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_multiple_regexp_filters.caddyfiletest",
+      "sha256": "402c3fbb6bbcbfb912609fa3b5b94d2055922539229ddf42a0d746e5c10a46c9",
+      "size": 1997,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_multiple_regexp_filters.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_override_hostname.caddyfiletest",
+      "sha256": "937075aa2bb5dda8847624f09e4dfa6792942a1dacebe9764e3362e530e213b7",
+      "size": 1650,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_override_hostname.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_override_name_multiaccess.caddyfiletest",
+      "sha256": "6a083f8f2375f0c93983d9b19d88d9d86b0b5e57e8e4e598b1f9eb4fa1fa2d70",
+      "size": 1243,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_override_name_multiaccess.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_override_name_multiaccess_debug.caddyfiletest",
+      "sha256": "735a37d1db9288eaf643d7ff2802cc2c36b68c2abafcf02931e6b98c2b313391",
+      "size": 1317,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_override_name_multiaccess_debug.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_roll_days.caddyfiletest",
+      "sha256": "dc4f85daf8c01f4f12af6231a65b37e19777c0a18748d84119646b20bfdb721f",
+      "size": 1618,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_roll_days.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_sampling.caddyfiletest",
+      "sha256": "2eadfa6235b613981ac4c74ffa2ebac79d59864182e842505032621fdf7b657d",
+      "size": 531,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_sampling.caddyfiletest"
+    },
+    {
+      "path": "adapter/log_skip_hosts.caddyfiletest",
+      "sha256": "c7ffaa5e18f21d6b3617dd70ffb6e6188cd2a3b687e962ba1a8f9d4d9c5d2a6a",
+      "size": 1028,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/log_skip_hosts.caddyfiletest"
+    },
+    {
+      "path": "adapter/map_and_vars_with_raw_types.caddyfiletest",
+      "sha256": "37a8671d891ea19a9b13b6c769b7702181ff8853d2000e4279038c194f4ea59f",
+      "size": 2480,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/map_and_vars_with_raw_types.caddyfiletest"
+    },
+    {
+      "path": "adapter/matcher_outside_site_block.caddyfiletest",
+      "sha256": "336b1aa612474c36e22a230403b7d16921ca6b0966f0b9e6d340068a35e8ac03",
+      "size": 172,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/matcher_outside_site_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/matcher_syntax.caddyfiletest",
+      "sha256": "2c87785159dfedee63bccaf9828dcad5604bf2a85b468212db5a7d0844152e40",
+      "size": 6170,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/matcher_syntax.caddyfiletest"
+    },
+    {
+      "path": "adapter/matcher_url_pattern.caddyfiletest",
+      "sha256": "084e438ed729ca96ea9d7b361e4d6270dc77aa08c74686d3d795eaae762a3b12",
+      "size": 1377,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/matcher_url_pattern.caddyfiletest"
+    },
+    {
+      "path": "adapter/matchers_in_route.caddyfiletest",
+      "sha256": "5847fc99488488734d0037fcc8e16f9b5ca3375ab00f851e77619776494112e4",
+      "size": 403,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/matchers_in_route.caddyfiletest"
+    },
+    {
+      "path": "adapter/method_directive.caddyfiletest",
+      "sha256": "1875a60356075cdfaa93fc7219696f854746f18dd258313c0b1e9ec3257ef592",
+      "size": 290,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/method_directive.caddyfiletest"
+    },
+    {
+      "path": "adapter/metrics_disable_om.caddyfiletest",
+      "sha256": "a7a4914fefad7168139e645c7f7bc85fcbd610b3166930c73ce19271f5bd8c8b",
+      "size": 431,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/metrics_disable_om.caddyfiletest"
+    },
+    {
+      "path": "adapter/metrics_merge_options.caddyfiletest",
+      "sha256": "eb9a9177655199f88b4daf9aaec815d17f8fb11fe47c86aad8b49e29b46ba731",
+      "size": 402,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/metrics_merge_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/metrics_otlp.caddyfiletest",
+      "sha256": "4c5ec0435d3b6677004078d8d71d1b78b613f9b9676cd29088206ac114e87b39",
+      "size": 364,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/metrics_otlp.caddyfiletest"
+    },
+    {
+      "path": "adapter/metrics_perhost.caddyfiletest",
+      "sha256": "7882471cfb484eeb56bd2095700427906b4b76d58427ec46f384d00763bb1294",
+      "size": 393,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/metrics_perhost.caddyfiletest"
+    },
+    {
+      "path": "adapter/metrics_syntax.caddyfiletest",
+      "sha256": "3d6e03fcb413e4dca5c06c01f8b22086c23ae66742172cacf6b5f116ee75cc1c",
+      "size": 366,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/metrics_syntax.caddyfiletest"
+    },
+    {
+      "path": "adapter/not_block_merging.caddyfiletest",
+      "sha256": "0da5acaf88806586837dfe8dbee20d8af21a61a609de649087ebae108d14d66f",
+      "size": 604,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/not_block_merging.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_expanded_form.caddyfiletest",
+      "sha256": "8a778297783dd4ccc9a31e691a23840b075443a35de4a9bd7ba954934bd8b1e7",
+      "size": 2552,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_expanded_form.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_handle_response.caddyfiletest",
+      "sha256": "9d5ad1df3206ecc862ed857bb4ff160d25510dc69e61e6ae6f2972120da16fd1",
+      "size": 2636,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_handle_response.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_index_off.caddyfiletest",
+      "sha256": "52e0db1cab41d2ab4ee7a6675aaddbf5779eb2530502cdb2d56cf099d8d2bc6d",
+      "size": 1258,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_index_off.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_matcher.caddyfiletest",
+      "sha256": "b00be24ed3fab3b7381909c960604d57926cada432794e9ec7e74454379aff2a",
+      "size": 2975,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_matcher.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_subdirectives.caddyfiletest",
+      "sha256": "2ef9e1f0c8986770f00b8ec8f4b139361268b584f85c231e902bcf42d74f31fa",
+      "size": 2139,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_subdirectives.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_try_files_override.caddyfiletest",
+      "sha256": "72c961d4fff7bb0d777101b4bb660d08c4f0bd7829a9ae5921da8ae58b12b825",
+      "size": 2277,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_try_files_override.caddyfiletest"
+    },
+    {
+      "path": "adapter/php_fastcgi_try_files_override_no_dir_index.caddyfiletest",
+      "sha256": "6ac8d63517a864554cd34338381191498ab7db90eea64ca86ac42e4375e1d93f",
+      "size": 1720,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/php_fastcgi_try_files_override_no_dir_index.caddyfiletest"
+    },
+    {
+      "path": "adapter/portless_upstream.caddyfiletest",
+      "sha256": "9292c9a68d44a7e1bf160efce052131802513ee2cb0ee0c804c599aba54556f3",
+      "size": 1801,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/portless_upstream.caddyfiletest"
+    },
+    {
+      "path": "adapter/push.caddyfiletest",
+      "sha256": "cb0e2f5805d1b42156fa0189e4662bbb978e059dbe2b3eb6e58d9559e4e4ac55",
+      "size": 1033,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/push.caddyfiletest"
+    },
+    {
+      "path": "adapter/quoted_brace_args.caddyfiletest",
+      "sha256": "f3628760f77a28b531368e826b50d2b620dc0f5705e0e7d3b529e6a714ae7359",
+      "size": 698,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/quoted_brace_args.caddyfiletest"
+    },
+    {
+      "path": "adapter/renewal_window_ratio_global.caddyfiletest",
+      "sha256": "9fa9daafaa500d1f3e2f00a4884dd5bf294c2347151468031c385ac448f41fb5",
+      "size": 455,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/renewal_window_ratio_global.caddyfiletest"
+    },
+    {
+      "path": "adapter/renewal_window_ratio_tls_directive.caddyfiletest",
+      "sha256": "e6313f7b4313dde5d0616a00a49e2c0d172606f45c250e0b3c0e569adf1da97c",
+      "size": 763,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/renewal_window_ratio_tls_directive.caddyfiletest"
+    },
+    {
+      "path": "adapter/replaceable_upstream.caddyfiletest",
+      "sha256": "7dfcca6e78665e1d87e17c97d7f5b1f19f4132b9066425b23113117c9c404565",
+      "size": 1925,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/replaceable_upstream.caddyfiletest"
+    },
+    {
+      "path": "adapter/replaceable_upstream_partial_port.caddyfiletest",
+      "sha256": "03549052a79e697e4951ed9437b9d0175c13317b228014c9797933fedaba417a",
+      "size": 1907,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/replaceable_upstream_partial_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/replaceable_upstream_port.caddyfiletest",
+      "sha256": "c485e19f97f9f6beac292d247563dc728bd0a2e59296049597efffc95c935836",
+      "size": 1905,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/replaceable_upstream_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/request_body.caddyfiletest",
+      "sha256": "df85ffb7374f45f600e2a80a1978807a4e40aa562ca54ea60cfb097d013d261c",
+      "size": 603,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/request_body.caddyfiletest"
+    },
+    {
+      "path": "adapter/request_header.caddyfiletest",
+      "sha256": "64ba84baf22c94a9bc59ea563ae29411230b13c56b044250b86a39a389598dfd",
+      "size": 1436,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/request_header.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_buffers.caddyfiletest",
+      "sha256": "13e5b1115df52a47b287816944088a71f6fda323865dc6282a74b9abf0adbfaf",
+      "size": 949,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_buffers.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_dynamic_upstreams.caddyfiletest",
+      "sha256": "26cbebd5d37a293bd37fafc61798e825c6f6e55676dd1790e710d9eea88cc31d",
+      "size": 2063,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_dynamic_upstreams.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_dynamic_upstreams_grace_period.caddyfiletest",
+      "sha256": "b89c1d0d2f8a612fa28eeb7d0621865f9bd3129190276264dafb83dc406f73d7",
+      "size": 511,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_dynamic_upstreams_grace_period.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_empty_non_http_transport.caddyfiletest",
+      "sha256": "e03d4e19f108fe803944f2a08b282d2f77d19709ccc7ea8f7d636a56eecf709f",
+      "size": 474,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_empty_non_http_transport.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_h2c_shorthand.caddyfiletest",
+      "sha256": "28520ff6bfc9bbad34b846190542bff38af1089eb671600ebfa6d3422476967f",
+      "size": 851,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_h2c_shorthand.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_handle_response.caddyfiletest",
+      "sha256": "16953563e63927d05205e1419c313a0a79c77d51279f703687d331a526bd2383",
+      "size": 5263,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_handle_response.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_handle_response_too_many_args.caddyfiletest",
+      "sha256": "bf319780ce88803cd823e0122712dcae6f48f10ec4d23c5e3bc168f19efe4cf1",
+      "size": 280,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_handle_response_too_many_args.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_health_headers.caddyfiletest",
+      "sha256": "eeca529b98b56a278ed36c3300e81072955a1c5cc3beac0842350217a91eee80",
+      "size": 1207,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_health_headers.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_health_method.caddyfiletest",
+      "sha256": "e5946de7debcaa593abb72cee0a14fbb96f3523f58e10b1aa5f3ba7177b10d0a",
+      "size": 558,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_health_method.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_health_path_query.caddyfiletest",
+      "sha256": "be3432a35838d63ceee214f25fbdf81aa395b5fb24021a7b7fceff280371cab3",
+      "size": 1152,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_health_path_query.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_health_reqbody.caddyfiletest",
+      "sha256": "98b047c8075aeec40d1c6d7719853481b76fd600ecf7bb55be52f72064741c4b",
+      "size": 574,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_health_reqbody.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_load_balance.caddyfiletest",
+      "sha256": "4c630ccaf6261f5e0af71fd0a13485cee3369e3a0aced941820ea8b04c8c6c37",
+      "size": 1017,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_load_balance.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_load_balance_wrr.caddyfiletest",
+      "sha256": "821d2fec0215aabda9ea35de60ee2d995af4b3e24189bf8a99ad3c28449b720d",
+      "size": 1198,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_load_balance_wrr.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_localaddr.caddyfiletest",
+      "sha256": "f740245ed146cec15c98d7e11938e0c9772fdad8b33ac0ea0626263db24bf78b",
+      "size": 891,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_localaddr.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_options.caddyfiletest",
+      "sha256": "28eb7f395ba45a8093d09aaafe140e9016485e5dd94ce930f313c88997146293",
+      "size": 2880,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_port_range.caddyfiletest",
+      "sha256": "51448a60764754954c7671c1a81aaa2eb28dace1562eaabf0ae19bdc675ecaad",
+      "size": 1132,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_port_range.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_retry_match_oneline.caddyfiletest",
+      "sha256": "da523283b2b1ed7f05fcfcec139cde67c9ef644cbadb8542d3e3a590d6fbcae6",
+      "size": 1396,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_retry_match_oneline.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_retry_match_response.caddyfiletest",
+      "sha256": "789ce183baba6246bf0c78d08490bf1cdaf89fd811360fac3fd8fdf10b3da061",
+      "size": 3806,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_retry_match_response.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_stream_buffer_size.caddyfiletest",
+      "sha256": "0b6e30cadacc6f4c8ed885387ee585ea0600da996cf52225a85bd2539c1f6b35",
+      "size": 885,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_stream_buffer_size.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_trusted_proxies.caddyfiletest",
+      "sha256": "a90d0ff15155c8bd47a11eab34bfbd7b1ad9bf8ce7f62cfa3806019565731dd7",
+      "size": 883,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_trusted_proxies.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_trusted_proxies_unix.caddyfiletest",
+      "sha256": "83964e37149787f4b09afc0fe3191197aed9cd86161ac002c163e579857e115c",
+      "size": 872,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_trusted_proxies_unix.caddyfiletest"
+    },
+    {
+      "path": "adapter/reverse_proxy_upstream_placeholder.caddyfiletest",
+      "sha256": "35bf92bb016760c631793e51ee55a4998ef866a92fe18b2291cbb5f1dd6c00bb",
+      "size": 1714,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/reverse_proxy_upstream_placeholder.caddyfiletest"
+    },
+    {
+      "path": "adapter/rewrite_directive_permutations.caddyfiletest",
+      "sha256": "a258744965a99202e00b49d9d15831763c97dd976f5102becb6597a17c369e4f",
+      "size": 1739,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/rewrite_directive_permutations.caddyfiletest"
+    },
+    {
+      "path": "adapter/root_directive_permutations.caddyfiletest",
+      "sha256": "be5fd41362712d2d78e6a05e1a8e64724e38a4d7e093d86cca51cdfa69bba818",
+      "size": 1599,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/root_directive_permutations.caddyfiletest"
+    },
+    {
+      "path": "adapter/server_names.caddyfiletest",
+      "sha256": "286413d56d1371ebd2f66294f3771182e90700f2516e6164e2e222e0bbecfe92",
+      "size": 830,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/server_names.caddyfiletest"
+    },
+    {
+      "path": "adapter/shorthand_parameterized_placeholders.caddyfiletest",
+      "sha256": "970e1dca22df312206454d92405900c29582a62c1cae10d02c03a386faf75cda",
+      "size": 1185,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/shorthand_parameterized_placeholders.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_address_invalid_port.caddyfiletest",
+      "sha256": "179f5fa3a560ef3c84744873f423490e229bad2f12d7dc6cf86b25ecbb2996b5",
+      "size": 83,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_address_invalid_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_address_negative_port.caddyfiletest",
+      "sha256": "83322f9ce685b0818a99eec0e0f856f4276c5517b4ce328f4f5d7915f290f82c",
+      "size": 77,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_address_negative_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_address_unsupported_scheme.caddyfiletest",
+      "sha256": "6192c1fa3ed258a0d951a7232d0cb2eabc4124f06dc78e69d81b8066868e399e",
+      "size": 87,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_address_unsupported_scheme.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_address_wss_invalid_port.caddyfiletest",
+      "sha256": "341cd0dc336b68e0d60700930f53e10120d8d64d46abfa53d33abcf55de199e2",
+      "size": 100,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_address_wss_invalid_port.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_address_wss_scheme.caddyfiletest",
+      "sha256": "451f7a41d5bb56deff4a719bfff14526067e1fb3e57825194f958ab1d8c98998",
+      "size": 127,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_address_wss_scheme.caddyfiletest"
+    },
+    {
+      "path": "adapter/site_block_sorting.caddyfiletest",
+      "sha256": "4ed31a2d0a45bf305c85f439827565fcfa19a13de69b0737efcec8bea6bdbdde",
+      "size": 2925,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/site_block_sorting.caddyfiletest"
+    },
+    {
+      "path": "adapter/sort_directives_with_any_matcher_first.caddyfiletest",
+      "sha256": "2502ae0085412be4056f72874798ad36e8202303d2509e1ce66af86215656333",
+      "size": 692,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/sort_directives_with_any_matcher_first.caddyfiletest"
+    },
+    {
+      "path": "adapter/sort_directives_within_handle.caddyfiletest",
+      "sha256": "8f23af69d532b57b816ed574ce9672b9fece1c7e7b6e57694e01765c6d395b14",
+      "size": 3603,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/sort_directives_within_handle.caddyfiletest"
+    },
+    {
+      "path": "adapter/sort_vars_in_reverse.caddyfiletest",
+      "sha256": "3e32de92eb3b31635b25671d8c94f8073264772dd6eb64a06349ffd3d109c4bc",
+      "size": 1012,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/sort_vars_in_reverse.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_acme_dns_override_global_dns.caddyfiletest",
+      "sha256": "fbb94e59ad9c3561b7b1661022b898eb55bdbf1e1ae420d3d35649c8a53d89d2",
+      "size": 1112,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_acme_dns_override_global_dns.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_acme_preferred_chains.caddyfiletest",
+      "sha256": "af44c487835c64e9fb0354da5789ecbc4fb1dbfad72f79fd91f1aedea4fdc5b9",
+      "size": 728,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_acme_preferred_chains.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_1.caddyfiletest",
+      "sha256": "338e3b941207419602dba9a0275697029209d1f5e3e7747cca58745a36d67073",
+      "size": 1038,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_1.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_10.caddyfiletest",
+      "sha256": "fa351555d2540e6fdf0d674d7c17f120ec92ea0048b606371175a008af19d439",
+      "size": 785,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_10.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_11.caddyfiletest",
+      "sha256": "663eec440509f5c0b74fd67d42146366bf6f8c75a0e3963af85249136136486d",
+      "size": 774,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_11.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_12.caddyfiletest",
+      "sha256": "cbcde0e56bd5b600623a580cd87c1ae3ecce4cc7a798e668778c3885e6741435",
+      "size": 1521,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_12.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_2.caddyfiletest",
+      "sha256": "192f6ce96fadbe29a53c83a47c88326fb1ed0d348867f53386213b02249c2c8f",
+      "size": 1115,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_2.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_3.caddyfiletest",
+      "sha256": "ab3d44bea2a2a6b2205a79156d075dba1d753ef24b1c7b62c4c563ad2fe9c5f1",
+      "size": 1240,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_3.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_4.caddyfiletest",
+      "sha256": "6dbf824ee8b9dec7ca177cc4f702745d5d32efe07c2ee214ce28ce9b8bee27f4",
+      "size": 2226,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_4.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_5.caddyfiletest",
+      "sha256": "7b24e4eb2a80fe8f99a3ffdc02df63fd6d5a4c0ea74a709ecaa798ab013274a3",
+      "size": 697,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_5.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_6.caddyfiletest",
+      "sha256": "8198655dd25205e32fe547b3d36fc6c74261bc6dd48e2e497c8f6f797ac14477",
+      "size": 1459,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_6.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_7.caddyfiletest",
+      "sha256": "590f6e278755c3774b3bad06c884b45aeb3ece91c241d1781a210ef2594ac4ce",
+      "size": 848,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_7.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_8.caddyfiletest",
+      "sha256": "2b00ab60bc8391029cbf0d7cb0f1b21c121aca5447907b4acf07fa455044831a",
+      "size": 1345,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_8.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_9.caddyfiletest",
+      "sha256": "6ec17c712d79e59d1a50c38e4bb0adc20991a2a8ec047d4245a9572e0660d445",
+      "size": 853,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_9.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_policies_global_email_localhost.caddyfiletest",
+      "sha256": "c41b4d9802c867585b5a1c31d3267b8ca0943aa93982504957d7b0589f1259e1",
+      "size": 829,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_policies_global_email_localhost.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_wildcard_force_automate.caddyfiletest",
+      "sha256": "8bcfb2d54bef2da77135621d83620886f3743e11716ac40a7eb32c7ff187945a",
+      "size": 2752,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_wildcard_force_automate.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_automation_wildcard_shadowing.caddyfiletest",
+      "sha256": "e4ecf9232151c0bbcdaa12d11d0359fefb6e1d23c427ca285a666d6887a34401",
+      "size": 1526,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_automation_wildcard_shadowing.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_cert_file-legacy-with-verifier.caddyfiletest",
+      "sha256": "f76e3ace99c0521f1fc550dd36cb06d516282ebba55d9ab64b496a6ff5b73b95",
+      "size": 2258,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_cert_file-legacy-with-verifier.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_cert_file-legacy.caddyfiletest",
+      "sha256": "6999a4e4dd62ba77b6ed656cb9069bd816e865be89fa781db3f98958db7a5161",
+      "size": 2155,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_cert_file-legacy.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_cert_file.caddyfiletest",
+      "sha256": "886aa6c50f67fbe14637df6ca82b4671ef7783c4a96fc8e29707db5b43bf9d11",
+      "size": 1042,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_cert_file.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_combined_trust_pool.caddyfiletest",
+      "sha256": "73bf28186d2753c4145ce429cc798929ebc1036843b9cba6616e6015d182cf0b",
+      "size": 3590,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_combined_trust_pool.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_combined_trust_pool_pki.caddyfiletest",
+      "sha256": "74c47dc70e74864f59e905d0b9a96e5fea9cb3cf7bd2043b1fa5c9cb17a6b9f7",
+      "size": 3601,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_combined_trust_pool_pki.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_inline_cert-legacy.caddyfiletest",
+      "sha256": "c10a8c80236dd816de47959d3db99a9c2c810c73611352646388eecb9f95f198",
+      "size": 3267,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_inline_cert-legacy.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_inline_cert.caddyfiletest",
+      "sha256": "3dffbafac4397e1445a80b5fe4250d8aceba7e2ac80bae0c37d30c417646a0bf",
+      "size": 3288,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_inline_cert.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_inline_cert_with_leaf_trust.caddyfiletest",
+      "sha256": "ea240cdd9bd54e0416299acc764443db5ec627567bfe0bc52010b6cccc0a77aa",
+      "size": 4516,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_inline_cert_with_leaf_trust.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_file_loader_block.caddyfiletest",
+      "sha256": "9a3fcd35b914d885adc774194859d59c50133968da14b85f689ca58f306dbede",
+      "size": 3590,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_file_loader_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_file_loader_inline.caddyfiletest",
+      "sha256": "030af3bb362ddebb0e99b251dc82ce5866a4567f4516aa85a925b29576f61dc7",
+      "size": 3581,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_file_loader_inline.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_file_loader_multi-in-block.caddyfiletest",
+      "sha256": "08915d3c8275b5559eb7794079ae2628ed42186338a3d59efc62e48bda0b6632",
+      "size": 3739,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_file_loader_multi-in-block.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_folder_loader_block.caddyfiletest",
+      "sha256": "a64e07612b369a5daf5edabcd3acaa5d89c5d3db78a8029fef5d5e38d8c7e2fb",
+      "size": 3572,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_folder_loader_block.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_folder_loader_inline.caddyfiletest",
+      "sha256": "56838c45f7472973bd263ab72a61311ade7880c0ee70be361e948da98deb2f2f",
+      "size": 3563,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_folder_loader_inline.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_leaf_verifier_folder_loader_multi-in-block.caddyfiletest",
+      "sha256": "200ac66816e91ca7110a9e4189d2e919c6d3a30b24a3190aa6b0b22d43ddf83e",
+      "size": 3703,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_leaf_verifier_folder_loader_multi-in-block.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_system_trust_pool.caddyfiletest",
+      "sha256": "ab550e7973e75a9e340ea4aea7cf36590325553868a35c42e213c01ebb72cbeb",
+      "size": 949,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_system_trust_pool.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_wildcard_not_inherited_by_specific_host.caddyfiletest",
+      "sha256": "4be3770faf0997d5e866d608e35caf1e8f87e069e1b4d806a4558c9a0c7b55e9",
+      "size": 1632,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_wildcard_not_inherited_by_specific_host.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_wildcard_shield_preserves_other_settings.caddyfiletest",
+      "sha256": "f359a454ea4e375ec403b8657e252f843e72b952e7b9af2fdc603f6e787d6ff9",
+      "size": 1929,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_wildcard_shield_preserves_other_settings.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_client_auth_wildcards_shield_each_covering_policy.caddyfiletest",
+      "sha256": "21a83bd76ef8acf03c55d8f393e4eeb5d1df200248086438c921e3b760da5b06",
+      "size": 2647,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_client_auth_wildcards_shield_each_covering_policy.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_conn_policy_consolidate.caddyfiletest",
+      "sha256": "df046ddb354e20a4a84eeb35cfacf1de044714507990f5a86e70a25a151edf3d",
+      "size": 1897,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_conn_policy_consolidate.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_multiple_options_without_provider.caddyfiletest",
+      "sha256": "b648886f51db6e53aa18d19f53b1a842f75a58c2f3446be38631dcaa35842eae",
+      "size": 262,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_multiple_options_without_provider.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_override_acme_dns.caddyfiletest",
+      "sha256": "9e17f6d7506e06ece4890bbb4421e8c2893692d19797f7d7aa5541d58e6b2703",
+      "size": 1053,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_override_acme_dns.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_override_global_dns.caddyfiletest",
+      "sha256": "6dad2beb8c5270fadd579f8b676d6ef07da64493854c8a24c939817c743c3bb6",
+      "size": 867,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_override_global_dns.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_propagation_timeout_without_provider.caddyfiletest",
+      "sha256": "3d4eb02004fa3c37397c9bde6a1115963777380552bdfe9e88f90132ae1f7e94",
+      "size": 245,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_propagation_timeout_without_provider.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_propagation_without_provider.caddyfiletest",
+      "sha256": "75c3b0990bb766206a0ba4138378b47d2596cfbe9dc9039fbf96029ce79a6780",
+      "size": 241,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_propagation_without_provider.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_resolvers_with_global_provider.caddyfiletest",
+      "sha256": "6d0580d365a3d16a616af09f25fda2074d18a9eefd4f31e8e2a7ce9d47a217d3",
+      "size": 974,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_resolvers_with_global_provider.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_dns_ttl.caddyfiletest",
+      "sha256": "9fd1ecd24baa2323a99bc0bdb3bd26c0fb6c91d9777a32d9d5a5bdeef53fb3bc",
+      "size": 1003,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_dns_ttl.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_explicit_issuer_dns_ttl.caddyfiletest",
+      "sha256": "0c7c795ce742ecff642998459339e8cb6057a2f8f58d0ce403d5480b449af6f8",
+      "size": 1142,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_explicit_issuer_dns_ttl.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_explicit_issuer_propagation_options.caddyfiletest",
+      "sha256": "43ae8a09b5442614a2ad37028b0f9f4e92699c4deaeab512184890744400a0eb",
+      "size": 1326,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_explicit_issuer_propagation_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_internal_options.caddyfiletest",
+      "sha256": "ba7c13588b65566991dbc992b2fd34ec22a0d2ab40ec09cb635ead5dc4415444",
+      "size": 680,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_internal_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/tls_propagation_options.caddyfiletest",
+      "sha256": "f8b047ca1f5b2ff9930f6dac70def7fd1a02dc8d686b5343b2485a4e1e08b3df",
+      "size": 1102,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tls_propagation_options.caddyfiletest"
+    },
+    {
+      "path": "adapter/tracing.caddyfiletest",
+      "sha256": "ce80f52f6552f4914192bc8e8a005db7a2d0e62aa2b910a321dc46c8760b1055",
+      "size": 417,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/tracing.caddyfiletest"
+    },
+    {
+      "path": "adapter/uri_query_operations.caddyfiletest",
+      "sha256": "f864b324ab8adac6e39d66c2cd0d80d65b4c8309fc0f3525a9aba9a3c05457d2",
+      "size": 1762,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/uri_query_operations.caddyfiletest"
+    },
+    {
+      "path": "adapter/uri_replace_brace_escape.caddyfiletest",
+      "sha256": "10efbeaa86b09cf688440c36058e319726080e41f698ca1bd86985bf867b8479",
+      "size": 700,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/uri_replace_brace_escape.caddyfiletest"
+    },
+    {
+      "path": "adapter/wildcard_pattern.caddyfiletest",
+      "sha256": "b410e4deec72326ac8851ee0a5ab3281af918d3bd38e1726b3af216fa9364774",
+      "size": 2693,
+      "upstreamPath": "caddytest/integration/caddyfile_adapt/wildcard_pattern.caddyfiletest"
+    },
+    {
+      "path": "source-tests/dispenser_test.go",
+      "sha256": "29da7aed00ac973df9d28a090c15b9059aa96bb5977931368678d2fffb9cd102",
+      "size": 11373,
+      "upstreamPath": "caddyconfig/caddyfile/dispenser_test.go"
+    },
+    {
+      "path": "source-tests/lexer_test.go",
+      "sha256": "4548afff85cbdb624e49054fc7650b1f8ddc962b08fa6c6189267e0920e15f65",
+      "size": 12990,
+      "upstreamPath": "caddyconfig/caddyfile/lexer_test.go"
+    },
+    {
+      "path": "source-tests/parse_test.go",
+      "sha256": "7831caadcada5b5cc505e02d11d66c0239e5a802f222f55232be49c7bfc48108",
+      "size": 24874,
+      "upstreamPath": "caddyconfig/caddyfile/parse_test.go"
+    }
+  ]
+}

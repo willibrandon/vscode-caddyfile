@@ -225,6 +225,10 @@
   },
   "scripts": {
     "clean": "node ./scripts/clean.mjs",
+    "fixtures:caddy:formatter": "node ./scripts/sync-caddy-formatter-fixtures.mjs",
+    "fixtures:caddy:corpus": "node ./scripts/sync-caddy-corpus.mjs",
+    "fixtures:caddy:registry": "node ./scripts/sync-caddy-registry.mjs",
+    "fixtures:tree-sitter:corpus": "node ./scripts/sync-tree-sitter-corpus.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
@@ -232,6 +236,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "build": "node ./esbuild.mjs",
+    "check:caddy:formatter": "node ./scripts/check-caddy-formatter.mjs",
     "vscode:prepublish": "npm run build",
     "package": "npm run build && vsce package --no-dependencies --out dist/caddyfile.vsix",
     "package:list": "vsce ls --no-dependencies",

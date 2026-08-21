@@ -55,6 +55,35 @@ example.com {
     expect(parsed.diagnostics).toEqual([]);
   });
 
+  it("groups multiline comma-separated site addresses", () => {
+    const parsed = parseCaddyfile("mysite.example,\nmyother.example {\n respond ok\n}\n");
+    expect(parsed.diagnostics).toEqual([]);
+    expect(parsed.statements[0]).toMatchObject({
+      kind: "site",
+      name: "mysite.example, myother.example",
+      opensBlock: true,
+    });
+    expect(parsed.statements[1]).toMatchObject({
+      kind: "directive",
+      name: "respond",
+    });
+  });
+
+  it("keeps PR 64 regex matcher arguments from consuming later blocks", () => {
+    const parsed = parseCaddyfile(`:80 {
+ @broken path_regexp /foo/(bar|baz).*
+ @digits path_regexp /foo/[0-9]+
+ handle /xyz {
+  file_server
+ }
+}
+`);
+    expect(parsed.diagnostics).toEqual([]);
+    expect(parsed.statements.map(({ name }) => name)).toEqual(
+      expect.arrayContaining(["@broken", "@digits", "handle", "file_server"]),
+    );
+  });
+
   it("reports brace recovery and global option placement", () => {
     const parsed = parseCaddyfile("example.com {\n respond ok\n}\n{\n debug\n}\n}\n");
     expect(parsed.diagnostics.map(({ code }) => code)).toEqual([

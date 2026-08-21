@@ -29,10 +29,17 @@ export function parseCaddyfile(text: string): ParsedDocument {
     );
     const nameToken = current[0];
     if (nameToken === undefined) return undefined;
+    const name =
+      kind === "site"
+        ? current
+            .filter(({ kind: tokenKind }) => tokenKind !== "open-brace")
+            .map(({ value }) => value)
+            .join(" ")
+        : nameToken.value;
     const statement: Statement = {
       depth: stack.length,
       kind,
-      name: nameToken.value,
+      name,
       nameSpan: nameToken.span,
       opensBlock,
       parent,
@@ -68,6 +75,13 @@ export function parseCaddyfile(text: string): ParsedDocument {
   for (const token of tokenization.tokens) {
     if (token.kind === "comment") continue;
     if (token.kind === "newline") {
+      if (
+        stack.length === 0 &&
+        current.length > 0 &&
+        current.at(-1)?.value.endsWith(",") === true
+      ) {
+        continue;
+      }
       flush(false);
       continue;
     }
