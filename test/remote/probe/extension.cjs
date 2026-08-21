@@ -43,10 +43,15 @@ exports.activate = async function activate() {
       new vscode.Position(6, 5),
     );
     assert.ok(completion.items.some(({ label }) => label === "reverse_proxy"));
-    const definitions = await vscode.commands.executeCommand(
-      "vscode.executeDefinitionProvider",
-      caddyfileUri,
-      new vscode.Position(9, "\tinvoke back".length),
+    const definitions = await waitFor(
+      () =>
+        vscode.commands.executeCommand(
+          "vscode.executeDefinitionProvider",
+          caddyfileUri,
+          new vscode.Position(9, "\tinvoke back".length),
+        ),
+      (locations) => locations[0]?.uri.toString() === referencedUri.toString(),
+      "the cross-file definition",
     );
     assert.equal(definitions[0]?.uri.toString(), referencedUri.toString());
 
@@ -93,10 +98,14 @@ function diagnosticCode(diagnostic) {
 }
 
 async function waitForDiagnostics(uri, predicate, description) {
+  return waitFor(() => vscode.languages.getDiagnostics(uri), predicate, description);
+}
+
+async function waitFor(read, predicate, description) {
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
-    const diagnostics = vscode.languages.getDiagnostics(uri);
-    if (predicate(diagnostics)) return diagnostics;
+    const value = await read();
+    if (predicate(value)) return value;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error(`Timed out waiting for ${description}.`);

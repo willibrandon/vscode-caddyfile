@@ -41,6 +41,7 @@ jobs:
         uses: willibrandon/picket@4c9f7d28260bfe0a7334865c84db093519f6f57f # v0.2.12
         with:
           docker-archive: ${{ runner.temp }}/devcontainer.tar
+          ignore-path: .picketignore
           cache: "false"
           report-directory: ${{ runner.temp }}/devcontainer-picket
           fail-on: findings
