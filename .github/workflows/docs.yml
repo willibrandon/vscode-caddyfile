@@ -2,14 +2,6 @@ name: Docs
 
 on:
   pull_request:
-    paths:
-      - ".github/workflows/docs.yml"
-      - "docs-site/**"
-      - "media/icon.*"
-      - "package.json"
-      - "package-lock.json"
-      - "scripts/test-docs-popup.mjs"
-      - "syntaxes/*.json"
   push:
     branches:
       - main
