@@ -92,6 +92,19 @@ describe("language intelligence", () => {
     expect(completionsAt(parseCaddyfile(fileServer), fileServer.indexOf("br") + 2)).toMatchObject([
       { kind: "value", label: "browse" },
     ]);
+
+    const sortField = ":80 {\n file_server {\n  browse {\n   sort na\n  }\n }\n}\n";
+    expect(
+      completionsAt(parseCaddyfile(sortField), sortField.indexOf("sort na") + 7).map(
+        ({ label }) => label,
+      ),
+    ).toEqual(["name", "namedirfirst"]);
+    const sortDirection = sortField.replace("sort na", "sort name d");
+    expect(
+      completionsAt(parseCaddyfile(sortDirection), sortDirection.indexOf("sort name d") + 11).map(
+        ({ label }) => label,
+      ),
+    ).toEqual(["desc"]);
   });
 
   it("provides behavioral hover documentation and official links", () => {
@@ -149,9 +162,11 @@ describe("language intelligence", () => {
   });
 
   it("produces semantic spans for comments, variables, values, and names", () => {
-    const source = ":{$PORT} {\n # hello\n respond {env.HOME} 200\n}\n";
+    const source =
+      ":{$PORT} {\n # hello\n respond {env.HOME} 200\n import block {$domain:localhost} {args[0]} {block[:]}\n}\n";
     const types = semanticSpans(parseCaddyfile(source)).map(({ type }) => type);
     expect(types).toEqual(expect.arrayContaining(["comment", "variable", "number", "keyword"]));
+    expect(types.filter((type) => type === "variable")).toHaveLength(5);
   });
 
   it("scans adversarial environment placeholders in linear time", () => {

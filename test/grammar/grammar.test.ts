@@ -170,6 +170,13 @@ https://two.example {
     expect(scopesAt(grammar, variables, 1, "{block[1]}")).toContain(
       "variable.other.placeholder.caddyfile",
     );
+    const cel = '  @post expression `{http.request.method} == "POST"`';
+    expect(scopesAt(grammar, cel + "\n", 0, "expression")).toContain(
+      "keyword.control.matcher.caddyfile",
+    );
+    expect(scopesAt(grammar, cel + "\n", 0, "{http.request.method}")).toContain(
+      "variable.other.placeholder.caddyfile",
+    );
     for (const [line, operator] of [
       [2, "+One"],
       [3, "-Two"],
