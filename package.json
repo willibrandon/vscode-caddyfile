@@ -208,7 +208,7 @@
           "type": "boolean",
           "default": false,
           "scope": "resource",
-          "description": "Run caddy adapt after saving a trusted local Caddyfile."
+          "description": "Run caddy adapt after saving a trusted Caddyfile."
         },
         "caddyfile.trace.server": {
           "type": "string",
@@ -275,6 +275,12 @@
     "glob": "13.0.6",
     "keytar": "npm:@github/keytar@7.10.6",
     "serialize-javascript": "7.1.0"
+  },
+  "allowScripts": {
+    "@github/keytar@7.10.6": true,
+    "@playwright/browser-chromium@1.62.1": true,
+    "@vscode/vsce-sign@2.1.0": true,
+    "esbuild@0.28.2": true
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

@@ -2,8 +2,8 @@
 
 ## Caddy
 
-The formatter implementation is derived from Caddy at the revisions recorded in
-`upstream-lock.json`.
+The formatter implementation and Caddy test fixtures are derived from Caddy at the revisions
+recorded in `upstream-lock.json`.
 
 Copyright The Caddy Authors
 
@@ -12,6 +12,19 @@ SPDX-License-Identifier: Apache-2.0
 Source: <https://github.com/caddyserver/caddy>
 
 License: `LICENSES/Caddy-Apache-2.0.txt`
+
+## tree-sitter-caddyfile
+
+Syntax regression fixtures are derived from tree-sitter-caddyfile at the revisions recorded in
+`upstream-lock.json`.
+
+Copyright (c) 2025 Matthew Penner
+
+SPDX-License-Identifier: MIT
+
+Source: <https://github.com/caddyserver/tree-sitter-caddyfile>
+
+License: `LICENSES/tree-sitter-caddyfile-MIT.txt`
 
 ## Bundled packages
 

@@ -62,6 +62,7 @@ try {
 
   await extractPackagedExtension(vsix, browserExtensionDirectory);
   await requirePackagedMetadata(browserExtensionDirectory, manifest);
+  await requirePackagedStaticFiles(browserExtensionDirectory);
   await mkdir(dirname(packagedWebTests), { recursive: true });
   await writeFile(packagedWebTests, await readFile(webTests));
   await runWebTests({
@@ -100,6 +101,26 @@ async function requirePackagedMetadata(extensionDirectory, expected) {
   const readme = await readFile(resolve(extensionDirectory, "readme.md"), "utf8");
   if (!readme.includes("Caddyfile") || !readme.includes("Visual Studio Code")) {
     throw new Error("The packaged README is not the Caddyfile extension documentation.");
+  }
+}
+
+async function requirePackagedStaticFiles(extensionDirectory) {
+  const paths = [
+    "language-configuration.json",
+    "media/icon.png",
+    "snippets/caddyfile.json",
+    "syntaxes/caddyfile-markdown.tmLanguage.json",
+    "syntaxes/caddyfile-test.tmLanguage.json",
+    "syntaxes/caddyfile.tmLanguage.json",
+  ];
+  for (const path of paths) {
+    const [source, packaged] = await Promise.all([
+      readFile(resolve(root, path)),
+      readFile(resolve(extensionDirectory, path)),
+    ]);
+    if (!source.equals(packaged)) {
+      throw new Error(`Packaged ${path} differs from the tested source file.`);
+    }
   }
 }
 
