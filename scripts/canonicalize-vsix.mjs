@@ -31,6 +31,7 @@ export function canonicalizeVsix(value) {
     throw new Error("VSIX central directory is malformed.");
   }
 
+  const parsedEntries = [];
   let offset = centralOffset;
   for (let index = 0; index < entries; index += 1) {
     assertSignature(archive, offset, centralDirectorySignature, "central directory");
@@ -49,17 +50,73 @@ export function canonicalizeVsix(value) {
     if (localOffset + 30 + localFilenameLength + localExtraLength > centralOffset) {
       throw new Error("VSIX local file entry is malformed.");
     }
-    archive.writeUInt16LE(canonicalTime, localOffset + 10);
-    archive.writeUInt16LE(canonicalDate, localOffset + 12);
-    archive.writeUInt16LE(canonicalTime, offset + 12);
-    archive.writeUInt16LE(canonicalDate, offset + 14);
+    const filename = Buffer.from(archive.subarray(filenameStart, filenameStart + filenameLength));
+    const localFilename = archive.subarray(
+      localOffset + 30,
+      localOffset + 30 + localFilenameLength,
+    );
+    if (!filename.equals(localFilename)) {
+      throw new Error("VSIX local and central filenames do not match.");
+    }
     const directory = archive[filenameStart + filenameLength - 1] === 0x2f;
-    const unixMode = directory ? 0o40755 : 0o100644;
-    archive.writeUInt32LE(((unixMode << 16) | (directory ? 0x10 : 0)) >>> 0, offset + 38);
+    parsedEntries.push({
+      centralRecord: Buffer.from(archive.subarray(offset, next)),
+      directory,
+      filename,
+      localOffset,
+    });
     offset = next;
   }
   if (offset !== centralEnd) throw new Error("VSIX central directory entry count is malformed.");
-  return archive;
+
+  const localOrder = [...parsedEntries].sort((left, right) => left.localOffset - right.localOffset);
+  if (localOrder[0]?.localOffset !== 0) {
+    throw new Error("VSIX must start with a local file entry.");
+  }
+  for (let index = 0; index < localOrder.length; index += 1) {
+    const entry = localOrder[index];
+    if (entry === undefined) throw new Error("VSIX local file entry is missing.");
+    const localEnd = localOrder[index + 1]?.localOffset ?? centralOffset;
+    if (localEnd <= entry.localOffset) {
+      throw new Error("VSIX local file entries overlap.");
+    }
+    entry.localRecord = Buffer.from(archive.subarray(entry.localOffset, localEnd));
+    entry.localRecord.writeUInt16LE(canonicalTime, 10);
+    entry.localRecord.writeUInt16LE(canonicalDate, 12);
+  }
+
+  const canonicalEntries = [...parsedEntries].sort((left, right) =>
+    Buffer.compare(left.filename, right.filename),
+  );
+  for (let index = 1; index < canonicalEntries.length; index += 1) {
+    if (canonicalEntries[index - 1]?.filename.equals(canonicalEntries[index]?.filename)) {
+      throw new Error("VSIX contains duplicate filenames.");
+    }
+  }
+
+  const localRecords = [];
+  let canonicalCentralOffset = 0;
+  for (const entry of canonicalEntries) {
+    if (entry.localRecord === undefined) throw new Error("VSIX local file entry is missing.");
+    entry.canonicalLocalOffset = canonicalCentralOffset;
+    localRecords.push(entry.localRecord);
+    canonicalCentralOffset += entry.localRecord.length;
+  }
+
+  const centralRecords = canonicalEntries.map((entry) => {
+    const record = entry.centralRecord;
+    record.writeUInt16LE(canonicalTime, 12);
+    record.writeUInt16LE(canonicalDate, 14);
+    const unixMode = entry.directory ? 0o40755 : 0o100644;
+    record.writeUInt32LE(((unixMode << 16) | (entry.directory ? 0x10 : 0)) >>> 0, 38);
+    record.writeUInt32LE(entry.canonicalLocalOffset, 42);
+    return record;
+  });
+  const canonicalCentralSize = centralRecords.reduce((size, record) => size + record.length, 0);
+  const endRecord = Buffer.from(archive.subarray(end));
+  endRecord.writeUInt32LE(canonicalCentralSize, 12);
+  endRecord.writeUInt32LE(canonicalCentralOffset, 16);
+  return Buffer.concat([...localRecords, ...centralRecords, endRecord]);
 }
 
 function findEndOfCentralDirectory(archive) {
