@@ -33,35 +33,68 @@ describe("VSIX canonicalization", () => {
       "VSIX must be a single-disk, non-ZIP64 archive.",
     );
   });
+
+  it("sorts local and central entries by filename", () => {
+    const first = archiveEntries([
+      ["extension/z.txt", "last"],
+      ["extension/a.txt", "first"],
+    ]);
+    const second = archiveEntries([
+      ["extension/a.txt", "first"],
+      ["extension/z.txt", "last"],
+    ]);
+    expect(canonicalizeVsix(first)).toEqual(canonicalizeVsix(second));
+  });
 });
 
 function archive(time: number, date: number, mode: number, text: string): Buffer {
-  const filename = Buffer.from("extension/file.txt");
-  const data = Buffer.from(text);
-  const local = Buffer.alloc(30);
-  local.writeUInt32LE(0x04034b50, 0);
-  local.writeUInt16LE(20, 4);
-  local.writeUInt16LE(time, 10);
-  local.writeUInt16LE(date, 12);
-  local.writeUInt32LE(data.length, 18);
-  local.writeUInt32LE(data.length, 22);
-  local.writeUInt16LE(filename.length, 26);
-  const centralOffset = local.length + filename.length + data.length;
-  const central = Buffer.alloc(46);
-  central.writeUInt32LE(0x02014b50, 0);
-  central.writeUInt16LE(0x0314, 4);
-  central.writeUInt16LE(20, 6);
-  central.writeUInt16LE(time, 12);
-  central.writeUInt16LE(date, 14);
-  central.writeUInt32LE(data.length, 20);
-  central.writeUInt32LE(data.length, 24);
-  central.writeUInt16LE(filename.length, 28);
-  central.writeUInt32LE((mode << 16) >>> 0, 38);
+  return archiveEntries([["extension/file.txt", text]], { date, mode, time });
+}
+
+function archiveEntries(
+  values: readonly (readonly [filename: string, data: string])[],
+  metadata: Readonly<{ date: number; mode: number; time: number }> = {
+    date: 1,
+    mode: 0o100644,
+    time: 1,
+  },
+): Buffer {
+  const locals: Buffer[] = [];
+  const centrals: Buffer[] = [];
+  let localOffset = 0;
+  for (const [name, text] of values) {
+    const filename = Buffer.from(name);
+    const data = Buffer.from(text);
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0);
+    local.writeUInt16LE(20, 4);
+    local.writeUInt16LE(metadata.time, 10);
+    local.writeUInt16LE(metadata.date, 12);
+    local.writeUInt32LE(data.length, 18);
+    local.writeUInt32LE(data.length, 22);
+    local.writeUInt16LE(filename.length, 26);
+    locals.push(local, filename, data);
+
+    const central = Buffer.alloc(46);
+    central.writeUInt32LE(0x02014b50, 0);
+    central.writeUInt16LE(0x0314, 4);
+    central.writeUInt16LE(20, 6);
+    central.writeUInt16LE(metadata.time, 12);
+    central.writeUInt16LE(metadata.date, 14);
+    central.writeUInt32LE(data.length, 20);
+    central.writeUInt32LE(data.length, 24);
+    central.writeUInt16LE(filename.length, 28);
+    central.writeUInt32LE((metadata.mode << 16) >>> 0, 38);
+    central.writeUInt32LE(localOffset, 42);
+    centrals.push(central, filename);
+    localOffset += local.length + filename.length + data.length;
+  }
+  const centralSize = centrals.reduce((size, part) => size + part.length, 0);
   const end = Buffer.alloc(22);
   end.writeUInt32LE(0x06054b50, 0);
-  end.writeUInt16LE(1, 8);
-  end.writeUInt16LE(1, 10);
-  end.writeUInt32LE(central.length + filename.length, 12);
-  end.writeUInt32LE(centralOffset, 16);
-  return Buffer.concat([local, filename, data, central, filename, end]);
+  end.writeUInt16LE(values.length, 8);
+  end.writeUInt16LE(values.length, 10);
+  end.writeUInt32LE(centralSize, 12);
+  end.writeUInt32LE(localOffset, 16);
+  return Buffer.concat([...locals, ...centrals, end]);
 }
