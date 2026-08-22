@@ -67,6 +67,8 @@ export const directives: readonly LanguageItem[] = [
     "Serve files from the configured site root.",
     "file_server [<matcher>] [browse] [{ ... }]",
     "file_server",
+    undefined,
+    guidance([value("browse", "Enable directory listings.")]),
   ),
   directive(
     "forward_auth",

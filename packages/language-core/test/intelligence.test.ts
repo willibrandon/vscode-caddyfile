@@ -87,6 +87,11 @@ describe("language intelligence", () => {
         ({ label }) => label,
       ),
     ).toEqual(["http/1.1", "http/2", "http/3"]);
+
+    const fileServer = ":80 {\n file_server br\n}\n";
+    expect(completionsAt(parseCaddyfile(fileServer), fileServer.indexOf("br") + 2)).toMatchObject([
+      { kind: "value", label: "browse" },
+    ]);
   });
 
   it("provides behavioral hover documentation and official links", () => {
