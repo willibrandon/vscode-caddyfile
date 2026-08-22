@@ -3,8 +3,10 @@ import { TextDocument } from "vscode-languageserver-textdocument";
 import {
   WorkspaceIndex,
   definitionAtWorkspace,
+  importEditsForFileRenames,
   importTargets,
   occurrencesAtWorkspace,
+  referencesAtWorkspace,
   workspaceImportDiagnostics,
 } from "../src/workspace-index.js";
 
@@ -87,6 +89,102 @@ import common
     );
     expect(occurrences).toHaveLength(2);
     expect(occurrences.every(({ document }) => document.uri === mainUri)).toBe(true);
+  });
+
+  it("finds every import reference that resolves to the same file", () => {
+    const nestedUri = "file:///workspace/sites/Caddyfile";
+    const index = new WorkspaceIndex();
+    index.replace([
+      { text: "import ./parts.caddy\n", uri: mainUri },
+      { text: "respond ok\n", uri: partsUri },
+      { text: "import ../parts.caddy\n", uri: nestedUri },
+    ]);
+    const references = referencesAtWorkspace(
+      mainUri,
+      "import ./parts.caddy".indexOf("parts"),
+      index.merged([]),
+    );
+    expect(references.map(({ definition, document }) => [document.uri, definition])).toEqual([
+      [partsUri, true],
+      [mainUri, false],
+      [nestedUri, false],
+    ]);
+  });
+
+  it("updates relative, quoted, and moved-source imports for file operations", () => {
+    const nestedUri = "file:///workspace/sites/Caddyfile";
+    const spacedUri = "file:///workspace/parts%20file.caddy";
+    const index = new WorkspaceIndex();
+    index.replace([
+      { text: 'import "./parts file.caddy"\n', uri: mainUri },
+      { text: "import ../parts.caddy\n", uri: nestedUri },
+      { text: "respond spaced\n", uri: spacedUri },
+      { text: "respond ok\n", uri: partsUri },
+    ]);
+    expect(
+      importEditsForFileRenames(
+        [
+          {
+            newUri: "file:///workspace/renamed%20file.caddy",
+            oldUri: spacedUri,
+          },
+          {
+            newUri: "file:///workspace/nested/sites",
+            oldUri: "file:///workspace/sites",
+          },
+        ],
+        index.merged([]),
+      ).map(({ document, replacement }) => [document.uri, replacement]),
+    ).toEqual([
+      [mainUri, "./renamed file.caddy"],
+      [nestedUri, "../../parts.caddy"],
+    ]);
+  });
+
+  it("resolves absolute Windows imports without treating the drive as a relative folder", () => {
+    const windowsMain = "file:///c%3A/workspace/Caddyfile";
+    const windowsPart = "file:///c%3A/caddy/parts.caddy";
+    const source = String.raw`import C:\caddy\parts.caddy` + "\n";
+    const index = new WorkspaceIndex();
+    index.replace([
+      { text: source, uri: windowsMain },
+      { text: "respond ok\n", uri: windowsPart },
+    ]);
+    expect(
+      definitionAtWorkspace(windowsMain, source.indexOf("parts"), index.merged([])),
+    ).toMatchObject({ document: { uri: windowsPart } });
+
+    const remoteMain = "vscode-remote://ssh-remote%2Bwindows/C:/workspace/Caddyfile";
+    const remotePart = "vscode-remote://ssh-remote%2Bwindows/C:/caddy/parts.caddy";
+    const remoteIndex = new WorkspaceIndex();
+    remoteIndex.replace([
+      { text: source, uri: remoteMain },
+      { text: "respond ok\n", uri: remotePart },
+    ]);
+    expect(
+      definitionAtWorkspace(remoteMain, source.indexOf("parts"), remoteIndex.merged([])),
+    ).toMatchObject({ document: { uri: remotePart } });
+  });
+
+  it("uses an absolute path when a Windows import crosses drives", () => {
+    const windowsMain = "file:///c%3A/workspace/Caddyfile";
+    const windowsPart = "file:///c%3A/workspace/parts.caddy";
+    const index = new WorkspaceIndex();
+    index.replace([
+      { text: "import ./parts.caddy\n", uri: windowsMain },
+      { text: "respond ok\n", uri: windowsPart },
+    ]);
+    expect(
+      importEditsForFileRenames(
+        [
+          {
+            newUri: "file:///d%3A/caddy/parts.caddy",
+            oldUri: windowsPart,
+          },
+        ],
+        index.merged([]),
+      ).map(({ replacement }) => replacement),
+    ).toEqual(["d:/caddy/parts.caddy"]);
   });
 
   it("diagnoses unresolved imports and every edge that participates in a cycle", () => {
