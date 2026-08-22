@@ -9,6 +9,7 @@ import {
   semanticSpans,
 } from "../src/intelligence.js";
 import { parseCaddyfile } from "../src/parser.js";
+import { allLanguageItems } from "../src/registry.js";
 
 describe("language intelligence", () => {
   it("offers directives and filters by the typed prefix", () => {
@@ -192,5 +193,25 @@ describe("language intelligence", () => {
     expect(names).toContain("http_port");
     expect(names).toHaveLength(250);
     expect(new Set(names).size).toBeLessThan(names.length);
+  });
+
+  it("documents every registry item, value, and deprecation", () => {
+    for (const item of allLanguageItems) {
+      expect(item.name.trim()).toBe(item.name);
+      expect(item.summary.trim().length).toBeGreaterThan(0);
+      expect(item.summary.length).toBeLessThanOrEqual(100);
+      expect(item.syntax).toContain(item.name);
+      expect(item.url).toMatch(/^https:\/\/caddyserver\.com\/docs\/caddyfile\//u);
+      if (item.kind === "subdirective") expect(item.parents ?? []).not.toHaveLength(0);
+      for (const value of item.values ?? []) {
+        expect(value.name.trim()).toBe(value.name);
+        expect(value.summary.trim().length).toBeGreaterThan(0);
+        expect(value.summary.length).toBeLessThanOrEqual(100);
+      }
+      if (item.deprecated !== undefined) {
+        expect(item.deprecated.message.trim().length).toBeGreaterThan(0);
+        expect(item.deprecated.replacement.trim().length).toBeGreaterThan(0);
+      }
+    }
   });
 });

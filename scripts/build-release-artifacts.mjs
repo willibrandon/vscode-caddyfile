@@ -5,7 +5,7 @@ import { basename, resolve } from "node:path";
 import { promisify } from "node:util";
 import { createVSIX } from "@vscode/vsce";
 import { canonicalizeVsix } from "./canonicalize-vsix.mjs";
-import { prepareCycloneDxForAttestation } from "./release-sbom.mjs";
+import { createCycloneDxForBundle } from "./release-sbom.mjs";
 
 const execute = promisify(execFile);
 const root = resolve(import.meta.dirname, "..");
@@ -33,20 +33,11 @@ await createVSIX({
   preRelease: false,
 });
 await writeFile(vsix, canonicalizeVsix(await readFile(vsix)));
-const npmCli = process.env.npm_execpath;
-if (npmCli === undefined || npmCli.length === 0) {
-  throw new Error("The release artifact build must run through npm.");
-}
-const { stdout: generatedText } = await execute(
-  process.execPath,
-  [npmCli, "sbom", "--package-lock-only", "--omit", "dev", "--sbom-format", "cyclonedx"],
-  { cwd: root, maxBuffer: 8 * 1024 * 1024 },
-);
-const generated = JSON.parse(generatedText);
-const prepared = prepareCycloneDxForAttestation(
-  generated,
-  `${manifest.publisher}.${manifest.name}@${manifest.version}:${revision}`,
-);
+const [lock, metafiles] = await Promise.all([
+  readFile(resolve(root, "package-lock.json"), "utf8").then(JSON.parse),
+  readFile(resolve(root, "dist/metafile.json"), "utf8").then(JSON.parse),
+]);
+const prepared = createCycloneDxForBundle({ manifest, lock, metafiles, revision });
 await writeFile(sbom, `${JSON.stringify(prepared, null, 2)}\n`, "utf8");
 const digest = createHash("sha256")
   .update(await readFile(vsix))

@@ -6,7 +6,7 @@ GitHub release.
 ## Requirements
 
 - `main` is clean and every required check passes.
-- The version is available in both registries.
+- Publisher access is configured for both registries.
 - `CHANGELOG.md` has the version and release date.
 - `VSCE_PAT` and `OVSX_PAT` are repository secrets.
 - The final VSIX has been tested and approved.

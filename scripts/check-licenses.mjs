@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { bundledPackageRecords } from "./bundled-packages.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const approvedLicenses = new Set([
@@ -38,6 +39,7 @@ const expectedRuntimePackages = new Map([
   ["vscode-languageserver@10.1.0", "vscode-languageserver-10.1.0.txt"],
   ["vscode-languageserver-protocol@3.18.2", "vscode-languageserver-protocol-3.18.2.txt"],
   ["vscode-languageserver-textdocument@1.0.12", "vscode-languageserver-textdocument-1.0.12.txt"],
+  ["vscode-languageserver-textdocument@1.0.13", "vscode-languageserver-textdocument-1.0.13.txt"],
   ["vscode-languageserver-types@3.18.0", "vscode-languageserver-types-3.18.0.txt"],
   ["vscode-uri@3.1.0", "vscode-uri-3.1.0.txt"],
 ]);
@@ -66,6 +68,10 @@ const expectedLicenseHashes = new Map([
   ],
   [
     "vscode-languageserver-textdocument-1.0.12.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
+    "vscode-languageserver-textdocument-1.0.13.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
@@ -123,22 +129,8 @@ if (
   failures.push("third-party notice missing for tree-sitter-caddyfile fixtures");
 }
 const metafiles = JSON.parse(await readFile(resolve(root, "dist/metafile.json"), "utf8"));
-const bundledNames = new Set();
-for (const metafile of metafiles) {
-  for (const input of Object.keys(metafile.inputs)) {
-    const match = /node_modules\/(?:@[^/]+\/[^/]+|[^/]+)/u.exec(input);
-    if (match !== null) bundledNames.add(match[0].slice("node_modules/".length));
-  }
-}
 const bundledPackages = new Set(
-  [...bundledNames].map((name) => {
-    const entry = lock.packages[`node_modules/${name}`];
-    if (entry?.version === undefined) {
-      failures.push(`bundled dependency ${name} has no root lockfile entry`);
-      return `${name}@unknown`;
-    }
-    return `${name}@${entry.version}`;
-  }),
+  bundledPackageRecords(metafiles, lock).map(({ name, version }) => `${name}@${version}`),
 );
 for (const [packageId, licenseFile] of expectedRuntimePackages) {
   if (!bundledPackages.has(packageId))
