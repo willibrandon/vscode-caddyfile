@@ -13,6 +13,7 @@ import {
   sshConfigPath,
   sshNullDevice,
 } from "./remote-smoke-host.mjs";
+import { isTransientExtensionServiceError, retryTransient } from "./retry-transient.mjs";
 import { createIsolatedVSCodeEnvironment } from "./vscode-test-environment.mjs";
 
 const executeFile = promisify(execFile);
@@ -134,18 +135,30 @@ try {
   const version = process.env.VSCODE_VERSION ?? "stable";
   const vscodeExecutable = await downloadAndUnzipVSCode(version);
   const commandEnvironment = createIsolatedVSCodeEnvironment();
-  await runCodeCommand(
-    [
-      "--user-data-dir",
-      bootstrapUserDataDirectory,
-      "--extensions-dir",
-      extensionsDirectory,
-      "--install-extension",
-      `ms-vscode-remote.remote-ssh@${remoteSshVersion}`,
-      "--force",
-    ],
-    version,
-    commandEnvironment,
+  await retryTransient(
+    () =>
+      runCodeCommand(
+        [
+          "--user-data-dir",
+          bootstrapUserDataDirectory,
+          "--extensions-dir",
+          extensionsDirectory,
+          "--install-extension",
+          `ms-vscode-remote.remote-ssh@${remoteSshVersion}`,
+          "--force",
+        ],
+        version,
+        commandEnvironment,
+      ),
+    {
+      attempts: 3,
+      isRetryable: isTransientExtensionServiceError,
+      onRetry: ({ attempt, delayMilliseconds }) => {
+        process.stderr.write(
+          `Remote SSH download attempt ${attempt} failed; retrying in ${delayMilliseconds / 1_000} seconds.\n`,
+        );
+      },
+    },
   );
   const { stdout: versionOutput } = await runCodeCommand(
     ["--version", "--user-data-dir", bootstrapUserDataDirectory],
