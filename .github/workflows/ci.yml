@@ -34,7 +34,7 @@ jobs:
   quality:
     name: Quality and bundles
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,3 +46,241 @@ jobs:
           node-version: 24.19.0
       - run: npm ci
       - run: npm run verify
+      - name: Stage verified bundles
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: verified-bundles
+          path: |
+            dist/browser.js
+            dist/browserServer.js
+            dist/extension.cjs
+            dist/metafile.json
+            dist/nodeServer.cjs
+            dist/test/web/index.cjs
+          if-no-files-found: error
+          retention-days: 3
+
+  package:
+    name: Package exact VSIX
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - run: npm ci
+      - name: Consume verified bundles
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: verified-bundles
+          path: dist
+      - run: npm run check:bundles
+      - run: npm run check:licenses
+      - run: npm run check:package
+      - run: npm run package:artifacts
+      - run: npm run check:release-reproducibility
+      - run: xvfb-run -a npm run test:vsix:prepared
+      - name: Stage candidate artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-candidate
+          path: |
+            dist/*.vsix
+            dist/*.sha256
+            dist/*.cdx.json
+          if-no-files-found: error
+          retention-days: 7
+
+  desktop:
+    name: Desktop (${{ matrix.os }}, VS Code ${{ matrix.vscode }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        vscode: [1.102.0, stable]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - run: npm ci
+      - name: Test on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:integration
+        env:
+          VSCODE_VERSION: ${{ matrix.vscode }}
+      - name: Test on macOS or Windows
+        if: runner.os != 'Linux'
+        run: npm run test:integration
+        env:
+          VSCODE_VERSION: ${{ matrix.vscode }}
+
+  web:
+    name: Browser Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - run: npm ci
+      - run: npm run test:web
+
+  upstream:
+    name: Pinned upstream conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out extension source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out pinned stable Caddy source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: caddyserver/caddy
+          ref: e2eee6a7fce366321294c9c2a79f3146891dcbdf
+          path: .caddy-stable
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out pinned current Caddy source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: caddyserver/caddy
+          ref: 45ba3278b5822f6fa6107a44ca41669b6e722482
+          path: .caddy-current
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out pinned Caddy website source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: caddyserver/website
+          ref: 15ac087cfd9c21a53b2ddfa10359fdc63d5ec9b6
+          path: .website-upstream
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out pinned tree-sitter source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: caddyserver/tree-sitter-caddyfile
+          ref: a8669017cb7b3e600dfc1346d11d0943bfd47bf3
+          path: .tree-sitter-upstream
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch pinned tree-sitter pull request
+        working-directory: .tree-sitter-upstream
+        run: git fetch --no-tags origin pull/64/head
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: 1.25.1
+          cache-dependency-path: |
+            .caddy-stable/go.sum
+            .caddy-current/go.sum
+      - run: npm ci
+      - name: Verify pinned source identities and documentation links
+        run: npm run check:upstream
+        env:
+          CADDY_CURRENT_SOURCE: ${{ github.workspace }}/.caddy-current
+          CADDY_STABLE_SOURCE: ${{ github.workspace }}/.caddy-stable
+          CADDY_WEBSITE_SOURCE: ${{ github.workspace }}/.website-upstream
+          TREE_SITTER_CADDYFILE_SOURCE: ${{ github.workspace }}/.tree-sitter-upstream
+      - name: Re-extract and compare pinned language data
+        run: |
+          npm run fixtures:caddy:formatter
+          npm run fixtures:caddy:corpus
+          npm run fixtures:caddy:registry
+          npm run fixtures:tree-sitter:corpus
+          git diff --exit-code -- test/fixtures/upstream
+        env:
+          CADDY_SOURCE: ${{ github.workspace }}/.caddy-current
+          TREE_SITTER_CADDYFILE_SOURCE: ${{ github.workspace }}/.tree-sitter-upstream
+      - name: Run stable Caddy parser and adapter tests
+        working-directory: .caddy-stable
+        run: go test ./caddyconfig/caddyfile ./caddyconfig/httpcaddyfile
+      - name: Run current Caddy parser, adapter, and integration tests
+        working-directory: .caddy-current
+        run: |
+          go test ./caddyconfig/caddyfile ./caddyconfig/httpcaddyfile
+          go test ./caddytest/integration -run '^TestCaddyfileAdaptToJSON$'
+      - name: Build pinned Caddy and compare formatting byte for byte
+        run: |
+          mkdir -p .cache
+          cd .caddy-current
+          go build -o ../.cache/caddy-integration ./cmd/caddy
+          cd ..
+          npm run check:caddy:formatter
+        env:
+          CADDY_BIN: ${{ github.workspace }}/.cache/caddy-integration
+      - name: Run extension upstream conformance tests
+        run: npm test -- test/upstream
+
+  insiders:
+    name: VS Code Insiders early warning
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - run: npm ci
+      - run: xvfb-run -a npm run test:integration
+        env:
+          VSCODE_VERSION: insiders
+
+  remote_ssh:
+    name: Remote SSH host
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+      - run: npm ci
+      - name: Consume the exact release-candidate VSIX
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-candidate
+          path: dist
+      - run: npm run test:remote:prepared
+      - name: Upload remote extension-host evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: remote-ssh-smoke
+          path: dist/remote-smoke
+          if-no-files-found: error
+          retention-days: 7

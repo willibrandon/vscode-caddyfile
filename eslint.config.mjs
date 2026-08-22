@@ -10,6 +10,10 @@ export default tseslint.config(
       ".vscode-test/**",
       ".vscode-test-web/**",
       ".upstream/**",
+      ".caddy-current/**",
+      ".caddy-stable/**",
+      ".tree-sitter-upstream/**",
+      ".website-upstream/**",
       "packages/*/lib/**",
       "packages/language-core/src/generated/**",
       "syntaxes/*.json",
@@ -48,6 +52,24 @@ export default tseslint.config(
         fetch: "readonly",
         process: "readonly",
       },
+    },
+  },
+  {
+    files: ["**/*.cjs"],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      globals: {
+        Buffer: "readonly",
+        exports: "readonly",
+        process: "readonly",
+        require: "readonly",
+        setTimeout: "readonly",
+        TextEncoder: "readonly",
+      },
+    },
+    rules: {
+      ...tseslint.configs.disableTypeChecked.rules,
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 );

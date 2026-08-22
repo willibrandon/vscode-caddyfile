@@ -1,0 +1,7 @@
+(shared) {
+	encode zstd gzip
+}
+
+&(backend) {
+	respond "from backend"
+}

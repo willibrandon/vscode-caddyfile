@@ -10,7 +10,12 @@ const config: ViteUserConfig = defineConfig({
     restoreMocks: true,
     coverage: {
       provider: "v8",
-      include: ["packages/language-core/src/**/*.ts"],
+      include: [
+        "packages/language-core/src/**/*.ts",
+        "packages/language-server/src/{server,workspace-index}.ts",
+        "packages/vscode-client/src/caddy-output.ts",
+        "packages/vscode-client/src/caddy-runner.ts",
+      ],
       exclude: [
         "packages/language-core/src/generated/**",
         "packages/language-server/src/{node,browser}.ts",

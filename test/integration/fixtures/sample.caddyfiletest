@@ -1,0 +1,5 @@
+example.com {
+	respond ok
+}
+----------
+{}

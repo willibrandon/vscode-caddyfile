@@ -8,6 +8,7 @@
     { "path": "./packages/vscode-client" },
     { "path": "./packages/vscode-client/tsconfig.desktop.json" },
     { "path": "./packages/vscode-client/tsconfig.browser.json" },
-    { "path": "./tsconfig.tests.json" }
+    { "path": "./tsconfig.tests.json" },
+    { "path": "./test/tsconfig.integration.json" }
   ]
 }
