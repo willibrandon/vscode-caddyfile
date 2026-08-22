@@ -43,6 +43,10 @@ const expectedRuntimePackages = new Map([
 ]);
 const expectedLicenseHashes = new Map([
   ["Caddy-Apache-2.0.txt", "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"],
+  [
+    "tree-sitter-caddyfile-MIT.txt",
+    "0f28bf29704477f340986f65b1342b841523388e3cf5fd83dd9994239b30a532",
+  ],
   ["balanced-match-4.0.4.txt", "d408f38ffa3355c5faec517153295338892eb0f1ea43f57874bb23c6075979b5"],
   ["brace-expansion-5.0.9.txt", "9c63a23124d68cd30cd316a94a1a0bca34f032786df6df69fc4b5f136bac8d2e"],
   ["minimatch-10.2.6.txt", "2c7c5d22ed5a8ee968c64757710979afcd77438c48b4a265b94e615babd8a901"],
@@ -104,8 +108,19 @@ for (const [fileName, expectedHash] of expectedLicenseHashes) {
 }
 
 const notices = await readFile(resolve(root, "THIRD-PARTY-NOTICES.md"), "utf8");
-if (!notices.includes("Caddy-Apache-2.0.txt") || !notices.includes("Apache-2.0")) {
-  failures.push("third-party notice missing for the Caddy-derived formatter");
+if (
+  !notices.includes("Caddy-Apache-2.0.txt") ||
+  !notices.includes("Apache-2.0") ||
+  !notices.includes("Caddy test fixtures")
+) {
+  failures.push("third-party notice missing for Caddy-derived code or fixtures");
+}
+if (
+  !notices.includes("tree-sitter-caddyfile-MIT.txt") ||
+  !notices.includes("tree-sitter-caddyfile") ||
+  !notices.includes("Copyright (c) 2025 Matthew Penner")
+) {
+  failures.push("third-party notice missing for tree-sitter-caddyfile fixtures");
 }
 const metafiles = JSON.parse(await readFile(resolve(root, "dist/metafile.json"), "utf8"));
 const bundledNames = new Set();
