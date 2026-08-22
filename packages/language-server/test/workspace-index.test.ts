@@ -125,4 +125,26 @@ import common
     ]);
     expect([...index.merged([]).keys()]).toEqual([partsUri]);
   });
+
+  it("does not index import-like text from adapter test JSON", () => {
+    const testUri = "file:///workspace/adapter.caddyfiletest";
+    const text = `import ./parts.caddy
+----------
+{"import":"./escape.caddy","snippet":"(fake)"}
+`;
+    const index = new WorkspaceIndex();
+    index.replace([
+      { text, uri: testUri },
+      { text: "respond ok\n", uri: partsUri },
+      { text: "respond escaped\n", uri: "file:///workspace/escape.caddy" },
+    ]);
+    const snapshot = index.merged([]).get(testUri);
+    expect(snapshot?.tree.references.map(({ name }) => name)).toEqual(["./parts.caddy"]);
+    expect(snapshot?.tree.definitions).toEqual([]);
+
+    const open = TextDocument.create(testUri, "caddyfile-test", 2, text);
+    const merged = index.merged([open]).get(testUri);
+    expect(merged?.tree.references.map(({ name }) => name)).toEqual(["./parts.caddy"]);
+    expect(merged?.tree.definitions).toEqual([]);
+  });
 });

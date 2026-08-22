@@ -39,6 +39,54 @@ describe("language intelligence", () => {
         ({ label }) => label,
       ),
     ).toContain("header_up");
+
+    const emptyProxySource = ":80 {\n reverse_proxy localhost {\n  \n }\n}\n";
+    const emptyProxyCompletions = completionsAt(
+      parseCaddyfile(emptyProxySource),
+      emptyProxySource.indexOf("  \n") + 2,
+    ).map(({ label }) => label);
+    expect(emptyProxyCompletions).toContain("header_up");
+    expect(emptyProxyCompletions).not.toContain("respond");
+
+    const accessLog = ":80 {\n log {\n  \n }\n}\n";
+    const accessLogCompletions = completionsAt(
+      parseCaddyfile(accessLog),
+      accessLog.indexOf("  \n") + 2,
+    ).map(({ label }) => label);
+    expect(accessLogCompletions).toContain("hostnames");
+    expect(accessLogCompletions).not.toContain("include");
+
+    const processLog = "{\n log default {\n  \n }\n}\n";
+    const processLogCompletions = completionsAt(
+      parseCaddyfile(processLog),
+      processLog.indexOf("  \n") + 2,
+    ).map(({ label }) => label);
+    expect(processLogCompletions).toContain("include");
+    expect(processLogCompletions).not.toContain("hostnames");
+  });
+
+  it("offers documented values only at their accepted argument positions", () => {
+    const autoHttps = "{\n auto_https dis\n}\n";
+    expect(completionsAt(parseCaddyfile(autoHttps), autoHttps.indexOf("dis") + 3)).toMatchObject([
+      { kind: "value", label: "disable_certs" },
+      { kind: "value", label: "disable_redirects" },
+    ]);
+
+    const order = "{\n order reverse_proxy be\n}\n";
+    expect(completionsAt(parseCaddyfile(order), order.indexOf("be") + 2)).toMatchObject([
+      { kind: "value", label: "before" },
+    ]);
+    const firstOrderArgument = "{\n order rev\n}\n";
+    expect(
+      completionsAt(parseCaddyfile(firstOrderArgument), firstOrderArgument.indexOf("rev") + 3),
+    ).toEqual([]);
+
+    const matcher = ":80 {\n @secure protocol http/\n}\n";
+    expect(
+      completionsAt(parseCaddyfile(matcher), matcher.indexOf("http/") + 5).map(
+        ({ label }) => label,
+      ),
+    ).toEqual(["http/1.1", "http/2", "http/3"]);
   });
 
   it("provides behavioral hover documentation and official links", () => {
@@ -48,6 +96,18 @@ describe("language intelligence", () => {
     expect(hover?.markdown).toContain(
       "https://caddyserver.com/docs/caddyfile/directives/reverse_proxy",
     );
+  });
+
+  it("uses parent-specific hover documentation and explains selected values", () => {
+    const proxy = ":80 {\n reverse_proxy localhost {\n  method POST\n }\n}\n";
+    expect(hoverAt(parseCaddyfile(proxy), proxy.indexOf("method") + 2)?.markdown).toContain(
+      "Change the method sent upstream.",
+    );
+
+    const global = "{\n auto_https disable_redirects\n}\n";
+    const hover = hoverAt(parseCaddyfile(global), global.indexOf("disable_redirects") + 3);
+    expect(hover?.markdown).toContain("Keep certificate automation but disable HTTP redirects.");
+    expect(hover?.markdown).toContain("Value for `auto_https`");
   });
 
   it("includes values and deprecation guidance in hover documentation", () => {
@@ -102,7 +162,7 @@ describe("language intelligence", () => {
       directives: 43,
       globalOptions: 40,
       matchers: 16,
-      subdirectives: 22,
+      subdirectives: 151,
     });
   });
 
@@ -110,7 +170,7 @@ describe("language intelligence", () => {
     const names = allKnownNames();
     expect(names).toContain("reverse_proxy");
     expect(names).toContain("http_port");
-    expect(names).toHaveLength(121);
+    expect(names).toHaveLength(250);
     expect(new Set(names).size).toBeLessThan(names.length);
   });
 });

@@ -1,4 +1,4 @@
-import { parseCaddyfile, spanContains } from "@caddyfile/language-core";
+import { parseCaddyfile, spanContains, splitCaddyfileTest } from "@caddyfile/language-core";
 import type {
   ParsedDocument,
   SymbolDefinition,
@@ -55,8 +55,9 @@ export class WorkspaceIndex {
       if (!validFile(file) || file.text.length > maximumFileLength) continue;
       totalLength += file.text.length;
       if (totalLength > maximumSnapshotLength) break;
-      const document = TextDocument.create(file.uri, "caddyfile", 0, file.text);
-      next.set(file.uri, { document, tree: parseCaddyfile(file.text) });
+      const languageId = languageIdForUri(file.uri);
+      const document = TextDocument.create(file.uri, languageId, 0, file.text);
+      next.set(file.uri, { document, tree: parseCaddyfile(languageSource(document)) });
     }
     this.#snapshot.clear();
     for (const [uri, entry] of next) this.#snapshot.set(uri, entry);
@@ -66,10 +67,25 @@ export class WorkspaceIndex {
   merged(openDocuments: readonly TextDocument[]): ReadonlyMap<string, IndexedDocument> {
     const result = new Map(this.#snapshot);
     for (const document of openDocuments) {
-      result.set(document.uri, { document, tree: parseCaddyfile(document.getText()) });
+      result.set(document.uri, { document, tree: parseCaddyfile(languageSource(document)) });
     }
     return result;
   }
+}
+
+function languageIdForUri(uri: string): "caddyfile" | "caddyfile-test" {
+  try {
+    return URI.parse(uri).path.toLocaleLowerCase().endsWith(".caddyfiletest")
+      ? "caddyfile-test"
+      : "caddyfile";
+  } catch {
+    return "caddyfile";
+  }
+}
+
+function languageSource(document: TextDocument): string {
+  const text = document.getText();
+  return document.languageId === "caddyfile-test" ? splitCaddyfileTest(text).caddyfile : text;
 }
 
 export function definitionAtWorkspace(
