@@ -4,10 +4,6 @@ out/
 coverage/
 .vscode-test/
 .vscode-test-web/
-.upstream/
-.caddy-upstream/
-.tree-sitter-upstream/
-.website-upstream/
 .eslintcache
 .astro/
 .playwright-cli/

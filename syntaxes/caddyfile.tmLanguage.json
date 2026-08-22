@@ -211,8 +211,8 @@
     "siteAddress": {
       "patterns": [
         {
-          "begin": "^\\s*(?=[^#{}]+\\s*\\{)",
-          "end": "(?=\\s*\\{)",
+          "begin": "^\\s*(?=[^#\\r\\n]+\\s+\\{\\s*(?:#.*)?$)",
+          "end": "(?=\\s*\\{\\s*(?:#.*)?$)",
           "contentName": "entity.name.namespace.site-address.caddyfile",
           "patterns": [
             { "include": "#environment" },

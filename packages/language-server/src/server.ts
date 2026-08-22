@@ -60,8 +60,10 @@ import { URI, Utils } from "vscode-uri";
 import {
   WorkspaceIndex,
   definitionAtWorkspace,
+  importEditsForFileRenames,
   importTargets,
   occurrencesAtWorkspace,
+  referencesAtWorkspace,
   workspaceImportDiagnostics,
 } from "./workspace-index.js";
 
@@ -156,6 +158,16 @@ export function startLanguageServer(connection: Connection): void {
         },
         signatureHelpProvider: { triggerCharacters: [" ", "@"] },
         textDocumentSync: TextDocumentSyncKind.Incremental,
+        workspace: {
+          fileOperations: {
+            willRename: {
+              filters: [
+                { pattern: { glob: "**/*", matches: "file" } },
+                { pattern: { glob: "**/*", matches: "folder" } },
+              ],
+            },
+          },
+        },
         workspaceSymbolProvider: true,
       },
       serverInfo: {
@@ -278,7 +290,7 @@ export function startLanguageServer(connection: Connection): void {
     const document = documents.get(params.textDocument.uri);
     if (document === undefined || parsed(document) === undefined) return [];
     const offset = document.offsetAt(params.position);
-    return occurrencesAtWorkspace(document.uri, offset, workspaceIndex.merged(documents.all()))
+    return referencesAtWorkspace(document.uri, offset, workspaceIndex.merged(documents.all()))
       .filter(({ definition }) => params.context.includeDeclaration || !definition)
       .map((occurrence) => ({
         range: toRange(occurrence.document, occurrence.span),
@@ -340,6 +352,23 @@ export function startLanguageServer(connection: Connection): void {
     return {
       changes,
     };
+  });
+
+  connection.workspace.onWillRenameFiles((params): WorkspaceEdit | null => {
+    const changes: Record<string, TextEdit[]> = {};
+    for (const edit of importEditsForFileRenames(
+      params.files,
+      workspaceIndex.merged(documents.all()),
+    )) {
+      const edits = changes[edit.document.uri] ?? [];
+      const range = toRange(edit.document, edit.span);
+      edits.push({
+        newText: renamedImportText(edit.document.getText(range), edit.replacement),
+        range,
+      });
+      changes[edit.document.uri] = edits;
+    }
+    return Object.keys(changes).length === 0 ? null : { changes };
   });
 
   connection.onDocumentSymbol((params): DocumentSymbol[] => {
@@ -632,6 +661,16 @@ function renamedText(original: string, name: string): string {
   if (original.startsWith("&(")) return `&(${name})`;
   if (original.startsWith("(")) return `(${name})`;
   if (original.startsWith("@")) return `@${name}`;
+  return name;
+}
+
+function renamedImportText(original: string, name: string): string {
+  if (original.startsWith("`") && original.endsWith("`") && !name.includes("`")) {
+    return `\`${name}\``;
+  }
+  if (original.startsWith('"') || /[\s#"`]/u.test(name)) {
+    return `"${name.replaceAll('"', '\\"')}"`;
+  }
   return name;
 }
 

@@ -93,6 +93,16 @@ describe("language server JSON-RPC contract", () => {
       hoverProvider: true,
       renameProvider: { prepareProvider: true },
       semanticTokensProvider: { full: true },
+      workspace: {
+        fileOperations: {
+          willRename: {
+            filters: [
+              { pattern: { glob: "**/*", matches: "file" } },
+              { pattern: { glob: "**/*", matches: "folder" } },
+            ],
+          },
+        },
+      },
     });
     await client.sendNotification("initialized", {});
   });
@@ -454,6 +464,13 @@ import shared
       uri: partsUri,
     });
 
+    const importReferences = await request<Location[]>(client, "textDocument/references", {
+      context: { includeDeclaration: true },
+      textDocument: { uri },
+      position: positionOf(workspaceSource, "./parts.caddy", 3),
+    });
+    expect(importReferences).toMatchObject([{ uri: partsUri }, { uri }]);
+
     const snippet = await request<Location | null>(client, "textDocument/definition", {
       textDocument: { uri },
       position: positionOf(workspaceSource, "shared", 2),
@@ -489,6 +506,16 @@ import shared
       textDocument: { uri },
     });
     expect(links[0]?.target).toBe(partsUri);
+
+    const fileRename = await request<WorkspaceEdit | null>(client, "workspace/willRenameFiles", {
+      files: [
+        {
+          newUri: "file:///workspace/renamed%20part.caddy",
+          oldUri: partsUri,
+        },
+      ],
+    });
+    expect(fileRename?.changes?.[uri]).toMatchObject([{ newText: '"./renamed part.caddy"' }]);
   });
 
   it("keeps adapter test JSON outside Caddyfile language features and formatting", async () => {

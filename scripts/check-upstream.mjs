@@ -18,7 +18,7 @@ const sources = [
   {
     commits: [lock.website.commit],
     label: "Caddy website",
-    path: process.env.CADDY_WEBSITE_SOURCE ?? resolve(root, ".website-upstream"),
+    path: process.env.CADDY_WEBSITE_SOURCE ?? resolve(root, "..", "caddyserver-website"),
     repository: lock.website.repository,
   },
   {

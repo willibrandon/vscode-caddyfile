@@ -28,6 +28,17 @@ export interface WorkspaceOccurrence {
   readonly span: TextSpan;
 }
 
+export interface WorkspaceImportEdit {
+  readonly document: TextDocument;
+  readonly replacement: string;
+  readonly span: TextSpan;
+}
+
+export interface WorkspaceFileRename {
+  readonly newUri: string;
+  readonly oldUri: string;
+}
+
 export interface WorkspaceImportDiagnostic {
   readonly code: "import-cycle" | "unresolved-import";
   readonly message: string;
@@ -115,6 +126,64 @@ export function occurrencesAtWorkspace(
 ): readonly WorkspaceOccurrence[] {
   const symbol = symbolAt(uri, offset, documents);
   return symbol === undefined ? [] : occurrencesFor(uri, symbol, documents);
+}
+
+export function referencesAtWorkspace(
+  uri: string,
+  offset: number,
+  documents: ReadonlyMap<string, IndexedDocument>,
+): readonly WorkspaceOccurrence[] {
+  const current = documents.get(uri);
+  const reference = current === undefined ? undefined : referenceAt(current.tree, offset);
+  if (reference?.kind !== "import") return occurrencesAtWorkspace(uri, offset, documents);
+  const resolved = resolveImportUri(uri, reference.name);
+  if (resolved === undefined) return [];
+  const result: WorkspaceOccurrence[] = resolveImportTargets(uri, reference.name, documents).map(
+    ({ document }) => ({ definition: true, document, span: { end: 0, start: 0 } }),
+  );
+  for (const [candidateUri, entry] of documents) {
+    for (const candidate of entry.tree.references) {
+      if (candidate.kind !== "import") continue;
+      const candidateTarget = resolveImportUri(candidateUri, candidate.name);
+      if (candidateTarget === undefined || !sameUri(candidateTarget, resolved)) continue;
+      result.push({ definition: false, document: entry.document, span: candidate.span });
+    }
+  }
+  return result;
+}
+
+export function importEditsForFileRenames(
+  renames: readonly WorkspaceFileRename[],
+  documents: ReadonlyMap<string, IndexedDocument>,
+): readonly WorkspaceImportEdit[] {
+  const parsedRenames = renames
+    .map(({ newUri, oldUri }) => ({ newUri: parseUri(newUri), oldUri: parseUri(oldUri) }))
+    .filter(
+      (rename): rename is Readonly<{ readonly newUri: URI; readonly oldUri: URI }> =>
+        rename.newUri !== undefined && rename.oldUri !== undefined,
+    )
+    .sort((left, right) => right.oldUri.path.length - left.oldUri.path.length);
+  if (parsedRenames.length === 0) return [];
+  const edits: WorkspaceImportEdit[] = [];
+  for (const [sourceUri, entry] of documents) {
+    const source = parseUri(sourceUri);
+    if (source === undefined) continue;
+    const movedSource = renamedUri(source, parsedRenames) ?? source;
+    for (const reference of entry.tree.references) {
+      if (reference.kind !== "import") continue;
+      const target = resolveImportUri(sourceUri, reference.name);
+      if (target === undefined) continue;
+      const movedTarget = renamedUri(target, parsedRenames) ?? target;
+      if (sameUri(source, movedSource) && sameUri(target, movedTarget)) continue;
+      const replacement = importNameForUri(movedSource, reference.name, movedTarget);
+      if (replacement === undefined || replacement === reference.name) continue;
+      edits.push({ document: entry.document, replacement, span: reference.span });
+    }
+  }
+  return edits.sort(
+    (left, right) =>
+      left.document.uri.localeCompare(right.document.uri) || left.span.start - right.span.start,
+  );
 }
 
 export function importTargets(
@@ -255,17 +324,9 @@ function resolveImportTargets(
   name: string,
   documents: ReadonlyMap<string, IndexedDocument>,
 ): readonly IndexedDocument[] {
-  if (/[${}]/u.test(name)) return [];
-  let resolved: URI;
-  try {
-    resolved = Utils.resolvePath(Utils.dirname(URI.parse(sourceUri)), name.replaceAll("\\", "/"));
-  } catch {
-    return [];
-  }
-  const pattern = globPattern(
-    resolved.path,
-    resolved.scheme.toLocaleLowerCase() === "file" && /^\/[A-Za-z]:\//u.test(resolved.path),
-  );
+  const resolved = resolveImportUri(sourceUri, name);
+  if (resolved === undefined) return [];
+  const pattern = globPattern(resolved.path, windowsUri(resolved));
   const authority = resolved.authority.toLocaleLowerCase();
   const scheme = resolved.scheme.toLocaleLowerCase();
   return [...documents.values()]
@@ -278,6 +339,126 @@ function resolveImportTargets(
       );
     })
     .sort((left, right) => left.document.uri.localeCompare(right.document.uri));
+}
+
+function resolveImportUri(sourceUri: string, name: string): URI | undefined {
+  if (/[${}]/u.test(name)) return undefined;
+  const normalized = name.replaceAll("\\", "/");
+  try {
+    const source = URI.parse(sourceUri);
+    if (/^[A-Za-z]:\//u.test(normalized)) {
+      return source.scheme.toLocaleLowerCase() === "file"
+        ? URI.file(normalized)
+        : source.with({ fragment: "", path: `/${normalized}`, query: "" });
+    }
+    if (normalized.startsWith("//")) {
+      return URI.file(normalized);
+    }
+    return Utils.resolvePath(Utils.dirname(source), normalized);
+  } catch {
+    return undefined;
+  }
+}
+
+function renamedUri(
+  uri: URI,
+  renames: readonly Readonly<{ readonly newUri: URI; readonly oldUri: URI }>[],
+): URI | undefined {
+  for (const rename of renames) {
+    if (!sameOrigin(uri, rename.oldUri)) continue;
+    const oldPath = rename.oldUri.path.replace(/\/$/u, "");
+    const comparedPath = windowsUri(uri) ? uri.path.toLocaleLowerCase() : uri.path;
+    const comparedOldPath = windowsUri(rename.oldUri) ? oldPath.toLocaleLowerCase() : oldPath;
+    if (comparedPath !== comparedOldPath && !comparedPath.startsWith(comparedOldPath + "/")) {
+      continue;
+    }
+    const newPath = rename.newUri.path.replace(/\/$/u, "") + uri.path.slice(oldPath.length);
+    return rename.newUri.with({ path: newPath });
+  }
+  return undefined;
+}
+
+function importNameForUri(source: URI, original: string, target: URI): string | undefined {
+  if (!sameOrigin(source, target)) return undefined;
+  const separator = original.includes("\\") && !original.includes("/") ? "\\" : "/";
+  let replacement: string;
+  if (/^[A-Za-z]:[\\/]/u.test(original)) {
+    replacement = target.path.replace(/^\/(?=[A-Za-z]:\/)/u, "");
+  } else if (original.startsWith("//") || original.startsWith("\\\\")) {
+    replacement = `//${target.authority}${target.path}`;
+  } else if (original.startsWith("/") || original.startsWith("\\")) {
+    replacement = target.path;
+  } else {
+    const sourceDrive = driveForPath(source.path);
+    const targetDrive = driveForPath(target.path);
+    replacement =
+      sourceDrive !== undefined &&
+      targetDrive !== undefined &&
+      sourceDrive.toLocaleLowerCase() !== targetDrive.toLocaleLowerCase()
+        ? target.path.replace(/^\//u, "")
+        : relativeUriPath(Utils.dirname(source).path, target.path);
+    if (
+      /^\.?[\\/]/u.test(original) &&
+      !replacement.startsWith(".") &&
+      !/^[A-Za-z]:\//u.test(replacement)
+    ) {
+      replacement = `./${replacement}`;
+    }
+  }
+  return separator === "\\" ? replacement.replaceAll("/", "\\") : replacement;
+}
+
+function relativeUriPath(from: string, to: string): string {
+  const fromParts = from.split("/").filter((part) => part.length > 0);
+  const toParts = to.split("/").filter((part) => part.length > 0);
+  const windows = /^[A-Za-z]:$/u.test(fromParts[0] ?? "") && /^[A-Za-z]:$/u.test(toParts[0] ?? "");
+  let shared = 0;
+  while (
+    shared < fromParts.length &&
+    shared < toParts.length &&
+    (windows
+      ? fromParts[shared]?.toLocaleLowerCase() === toParts[shared]?.toLocaleLowerCase()
+      : fromParts[shared] === toParts[shared])
+  ) {
+    shared += 1;
+  }
+  return [
+    ...Array.from({ length: fromParts.length - shared }, () => ".."),
+    ...toParts.slice(shared),
+  ].join("/");
+}
+
+function parseUri(value: string): URI | undefined {
+  try {
+    return URI.parse(value);
+  } catch {
+    return undefined;
+  }
+}
+
+function sameOrigin(left: URI, right: URI): boolean {
+  return (
+    left.scheme.toLocaleLowerCase() === right.scheme.toLocaleLowerCase() &&
+    left.authority.toLocaleLowerCase() === right.authority.toLocaleLowerCase()
+  );
+}
+
+function sameUri(left: URI, right: URI): boolean {
+  const windows = windowsUri(left) || windowsUri(right);
+  return (
+    sameOrigin(left, right) &&
+    (windows
+      ? left.path.toLocaleLowerCase() === right.path.toLocaleLowerCase()
+      : left.path === right.path)
+  );
+}
+
+function driveForPath(path: string): string | undefined {
+  return /^\/([A-Za-z]:)\//u.exec(path)?.[1];
+}
+
+function windowsUri(uri: URI): boolean {
+  return driveForPath(uri.path) !== undefined;
 }
 
 function looksLikeFileImport(name: string): boolean {
