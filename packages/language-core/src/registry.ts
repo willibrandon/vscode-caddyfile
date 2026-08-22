@@ -1055,12 +1055,12 @@ export const subdirectives: readonly LanguageItem[] = [
     ["browse"],
     guidance(
       [
-        value("name", "Sort entries by name."),
-        value("namedirfirst", "Sort directories first, then by name."),
-        value("size", "Sort entries by size."),
-        value("time", "Sort entries by modification time."),
-        value("asc", "Sort in ascending order."),
-        value("desc", "Sort in descending order."),
+        value("name", "Sort entries by name.", [0]),
+        value("namedirfirst", "Sort directories first, then by name.", [0]),
+        value("size", "Sort entries by size.", [0]),
+        value("time", "Sort entries by modification time.", [0]),
+        value("asc", "Sort in ascending order.", [1]),
+        value("desc", "Sort in descending order.", [1]),
       ],
       0,
       true,
@@ -1305,8 +1305,8 @@ function subdirective(
   );
 }
 
-function value(name: string, summary: string): LanguageValue {
-  return { name, summary };
+function value(name: string, summary: string, arguments_?: readonly number[]): LanguageValue {
+  return { ...(arguments_ === undefined ? {} : { arguments: arguments_ }), name, summary };
 }
 
 function guidance(

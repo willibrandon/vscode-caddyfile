@@ -467,6 +467,21 @@ export function startLanguageServer(connection: Connection): void {
         }
         return [quickFix(document.uri, diagnostic, `Use ${replacement}`, replacement)];
       }
+      if (code === "invalid-value") {
+        const replacement = object(diagnostic.data)?.["replacement"];
+        const tree = parsed(document);
+        const item =
+          tree === undefined
+            ? undefined
+            : languageItemAt(tree, document.offsetAt(diagnostic.range.start));
+        if (
+          typeof replacement !== "string" ||
+          item?.values?.some(({ name }) => name === replacement) !== true
+        ) {
+          return [];
+        }
+        return [quickFix(document.uri, diagnostic, `Use ${replacement}`, replacement)];
+      }
       return [];
     });
   });

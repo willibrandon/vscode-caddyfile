@@ -1,4 +1,5 @@
 import { allLanguageItems, languageItemFor, languageItemsFor } from "./registry.js";
+import { selectionFor, subdirectivesForParent, valuesAtArgument } from "./language-selection.js";
 import { spanContains } from "./parser.js";
 import type {
   CoreCompletion,
@@ -12,26 +13,15 @@ import type {
   Token,
 } from "./types.js";
 
-interface LanguageSelection {
-  readonly arguments: readonly Token[];
-  readonly item: LanguageItem;
-  readonly nameToken: Token;
-  readonly statement: Statement;
-}
-
 export function completionsAt(document: ParsedDocument, offset: number): readonly CoreCompletion[] {
   const current = statementOnLine(document, offset);
   const selection = current === undefined ? undefined : selectionFor(document, current);
   if (selection !== undefined && isAfterName(document.text, selection.nameToken, offset)) {
     const argumentIndex = activeArgumentIndex(selection.arguments, offset);
-    const valueArgument = selection.item.valueArgument ?? 0;
-    const acceptsValues =
-      selection.item.values !== undefined &&
-      (argumentIndex === valueArgument ||
-        (selection.item.repeatValues === true && argumentIndex >= valueArgument));
-    if (!acceptsValues) return [];
+    const values = valuesAtArgument(selection.item, argumentIndex);
+    if (values.length === 0) return [];
     const prefix = argumentPrefix(selection.arguments, argumentIndex, offset);
-    return (selection.item.values ?? [])
+    return values
       .filter(({ name }) => prefix.length === 0 || name.startsWith(prefix))
       .map((value) => valueCompletion(selection.item, value))
       .sort((left, right) => left.label.localeCompare(right.label));
@@ -54,12 +44,10 @@ export function hoverAt(document: ParsedDocument, offset: number): CoreHover | u
     return { markdown: itemMarkdown(selection.item), span: token.span };
   }
   const argumentIndex = selection.arguments.findIndex(({ span }) => sameSpan(span, token.span));
-  const valueArgument = selection.item.valueArgument ?? 0;
-  if (
-    argumentIndex >= valueArgument &&
-    (argumentIndex === valueArgument || selection.item.repeatValues === true)
-  ) {
-    const value = selection.item.values?.find(({ name }) => name === token.value);
+  if (argumentIndex >= 0) {
+    const value = valuesAtArgument(selection.item, argumentIndex).find(
+      ({ name }) => name === token.value,
+    );
     if (value !== undefined) {
       return {
         markdown: `**${value.name}**\n\n${value.summary}\n\nValue for \`${selection.item.name}\`.\n\n[Official documentation](${selection.item.url})`,
@@ -158,6 +146,13 @@ function placeholderSpans(value: string): readonly TextSpan[] {
       const nameStart = index;
       while (isPlaceholderNamePart(value[index])) index += 1;
       if (index === nameStart) continue;
+      const name = value.slice(nameStart, index);
+      if ((name === "args" || name === "block") && value[index] === "[") {
+        index += 1;
+        while (index < value.length && value[index] !== "]" && value[index] !== "\n") index += 1;
+        if (value[index] !== "]") continue;
+        index += 1;
+      }
     }
     if (value[index] === "}") spans.push({ start, end: index + 1 });
   }
@@ -165,7 +160,10 @@ function placeholderSpans(value: string): readonly TextSpan[] {
 }
 
 function isEnvironmentNameStart(value: string | undefined): boolean {
-  return value !== undefined && ((value >= "A" && value <= "Z") || value === "_");
+  return (
+    value !== undefined &&
+    ((value >= "A" && value <= "Z") || (value >= "a" && value <= "z") || value === "_")
+  );
 }
 
 function isEnvironmentNamePart(value: string | undefined): boolean {
@@ -289,74 +287,6 @@ function enclosingBlock(document: ParsedDocument, offset: number): Statement | u
   return document.statements
     .filter(({ opensBlock, span }) => opensBlock && span.start <= offset && span.end >= offset)
     .sort((left, right) => right.depth - left.depth)[0];
-}
-
-function selectionFor(
-  document: ParsedDocument,
-  statement: Statement,
-): LanguageSelection | undefined {
-  if (statement.kind === "matcher") {
-    const nameToken = statement.tokens[1];
-    const item =
-      nameToken === undefined ? undefined : languageItemFor(nameToken.value, ["matcher"]);
-    return nameToken === undefined || item === undefined
-      ? undefined
-      : {
-          arguments: valueArguments(statement.tokens, nameToken, item),
-          item,
-          nameToken,
-          statement,
-        };
-  }
-  const nameToken = statement.tokens[0];
-  if (nameToken === undefined) return undefined;
-  const parent = statement.parent === undefined ? undefined : document.statements[statement.parent];
-  const contextual =
-    parent === undefined
-      ? undefined
-      : parent.kind === "global-options"
-        ? languageItemFor(statement.name, ["global-option"])
-        : parent.kind === "matcher"
-          ? languageItemFor(statement.name, ["matcher"])
-          : subdirectivesForParent(parent).find(({ name }) => name === statement.name);
-  const item =
-    contextual ??
-    languageItemFor(
-      statement.name,
-      statement.kind === "global-option"
-        ? ["global-option"]
-        : statement.kind === "subdirective"
-          ? ["subdirective"]
-          : ["directive"],
-    );
-  return item === undefined
-    ? undefined
-    : {
-        arguments: valueArguments(statement.tokens, nameToken, item),
-        item,
-        nameToken,
-        statement,
-      };
-}
-
-function subdirectivesForParent(parent: Statement): readonly LanguageItem[] {
-  const qualified = `${parent.kind}:${parent.name}`;
-  return languageItemsFor("subdirective").filter(({ parents }) =>
-    parents?.some((candidate) => candidate === parent.name || candidate === qualified),
-  );
-}
-
-function valueArguments(
-  tokens: readonly Token[],
-  nameToken: Token,
-  item: LanguageItem,
-): readonly Token[] {
-  const args = tokens.filter(
-    ({ kind, span }) => kind !== "open-brace" && span.start >= nameToken.span.end,
-  );
-  return item.kind === "directive" && args[0]?.value.startsWith("@") === true
-    ? args.slice(1)
-    : args;
 }
 
 function isAfterName(text: string, token: Token, offset: number): boolean {

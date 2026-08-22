@@ -272,6 +272,25 @@ describe("language server JSON-RPC contract", () => {
       },
     ]);
 
+    const valueDiagnostics = nextDiagnostics(client);
+    const invalidValueSource = "{\n\tauto_https disble_redirects\n}\n";
+    await change(client, invalidValueSource, 3);
+    const valueProblems = await valueDiagnostics;
+    const invalidValue = valueProblems.find(({ code }) => code === "invalid-value");
+    expect(invalidValue?.data).toEqual({ replacement: "disable_redirects" });
+    const valueActions = await request<CodeAction[]>(client, "textDocument/codeAction", {
+      context: { diagnostics: invalidValue === undefined ? [] : [invalidValue] },
+      range: invalidValue?.range,
+      textDocument: { uri },
+    });
+    expect(valueActions).toMatchObject([
+      {
+        edit: { changes: { [uri]: [{ newText: "disable_redirects" }] } },
+        isPreferred: true,
+        title: "Use disable_redirects",
+      },
+    ]);
+
     const next = nextDiagnostics(client);
     await client.sendNotification("workspace/didChangeConfiguration", {
       settings: {
@@ -284,7 +303,7 @@ describe("language server JSON-RPC contract", () => {
     expect((await next).map(({ code }) => code)).not.toContain("unknown-directive");
 
     const malformedDiagnostics = nextDiagnostics(client);
-    await change(client, "example.com{\n\trespond ok\n", 2);
+    await change(client, "example.com{\n\trespond ok\n", 4);
     const malformed = await malformedDiagnostics;
     const braceProblem = malformed.find(({ code }) => code === "missing-space-before-brace");
     expect(braceProblem).toBeDefined();

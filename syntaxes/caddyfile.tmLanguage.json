@@ -11,6 +11,7 @@
       "patterns": [
         { "include": "#comments" },
         { "include": "#heredoc" },
+        { "include": "#escapedQuote" },
         { "include": "#doubleQuoted" },
         { "include": "#backtickQuoted" },
         { "include": "#environment" },
@@ -23,6 +24,7 @@
         { "include": "#siteAddress" },
         { "include": "#headerOperator" },
         { "include": "#braces" },
+        { "include": "#ipAddresses" },
         { "include": "#numbers" },
         { "include": "#constants" }
       ]
@@ -95,6 +97,14 @@
             { "include": "#environment" },
             { "include": "#placeholder" }
           ]
+        }
+      ]
+    },
+    "escapedQuote": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.caddyfile",
+          "match": "\\\\\""
         }
       ]
     },
@@ -225,6 +235,18 @@
         {
           "name": "punctuation.section.block.caddyfile",
           "match": "[{}]"
+        }
+      ]
+    },
+    "ipAddresses": {
+      "patterns": [
+        {
+          "name": "constant.numeric.ipv4.caddyfile",
+          "match": "(?<![A-Za-z0-9_.-])(?:[0-9]{1,3}\\.){3}[0-9]{1,3}(?![A-Za-z0-9_.-])"
+        },
+        {
+          "name": "constant.numeric.ipv6.caddyfile",
+          "match": "\\[[0-9A-Fa-f:.%]+\\]|(?<![A-Za-z0-9_.-])(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}(?:%[A-Za-z0-9_.-]+)?(?![A-Za-z0-9_.-])"
         }
       ]
     },

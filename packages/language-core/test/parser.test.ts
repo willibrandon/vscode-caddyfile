@@ -104,6 +104,21 @@ example.com {
     );
   });
 
+  it("does not report duplicate globals for comments, closing braces, or ordinary files", () => {
+    const sources = [
+      "# one\n# two\nexample.com {\n respond ok\n}\n",
+      "{\n # one\n # two\n log first\n log second\n}\n",
+      "example.com {\n respond ok\n}\nexample.net {\n respond ok\n}\n",
+    ];
+    for (const source of sources) {
+      expect(
+        analyzeCaddyfile(parseCaddyfile(source)).filter(({ code }) =>
+          code.startsWith("duplicate-global"),
+        ),
+      ).toEqual([]);
+    }
+  });
+
   it("treats custom modules as hints instead of syntax errors", () => {
     const diagnostics = analyzeCaddyfile(parseCaddyfile(":80 {\n custom_handler\n}\n"));
     expect(diagnostics).toMatchObject([
@@ -139,5 +154,45 @@ example.com {
       { code: "unknown-global-option", severity: "warning" },
     ]);
     expect(analyzeCaddyfile(parsed, { maxProblems: 0 })).toEqual([]);
+  });
+
+  it("diagnoses literal invalid known values without rejecting substitutions", () => {
+    const parsed = parseCaddyfile(`{
+ auto_https disble_redirects
+ order reverse_proxy sideways
+ key_type {$KEY_TYPE:p256}
+}
+:80 {
+ @api protocol http/9
+ file_server browse
+ reverse_proxy localhost {
+  transport http {
+   versions h2c h9
+  }
+ }
+ file_server {
+  browse {
+   sort name sideways
+  }
+ }
+}
+`);
+    const diagnostics = analyzeCaddyfile(parsed, { unknownItems: "off" }).filter(
+      ({ code }) => code === "invalid-value",
+    );
+    expect(diagnostics).toMatchObject([
+      { replacement: "disable_redirects", severity: "warning" },
+      { severity: "warning" },
+      { severity: "warning" },
+      { severity: "warning" },
+      { severity: "warning" },
+    ]);
+    expect(diagnostics.map(({ message }) => message)).toEqual([
+      expect.stringContaining("'disble_redirects' is not an accepted value for 'auto_https'"),
+      expect.stringContaining("'sideways' is not an accepted value for 'order'"),
+      expect.stringContaining("'http/9' is not an accepted value for 'protocol'"),
+      expect.stringContaining("'h9' is not an accepted value for 'versions'"),
+      expect.stringContaining("'sideways' is not an accepted value for 'sort'"),
+    ]);
   });
 });

@@ -82,6 +82,113 @@ BODY
     expect(scopesAt(grammar, source, 4, "true")).toContain("constant.language.json");
   });
 
+  it("covers the applicable upstream syntax regressions", async () => {
+    const grammar = await loadGrammar("source.caddyfile");
+
+    const singleSite = `localhost
+root * src
+file_server
+reverse_proxy /api/* 127.0.0.1:4444
+`;
+    expect(scopesAt(grammar, singleSite, 1, "root")).toContain(
+      "keyword.control.directive.caddyfile",
+    );
+    expect(scopesAt(grammar, singleSite, 3, "127.0.0.1")).toContain(
+      "constant.numeric.ipv4.caddyfile",
+    );
+
+    const addresses = `https://one.example {
+  handle_path /assets/* {
+    file_server
+  }
+}
+https://two.example {
+  reverse_proxy @api http://[2001:db8::1]:3000
+}
+`;
+    expect(scopesAt(grammar, addresses, 5, "https://two.example")).toContain(
+      "entity.name.namespace.site-address.caddyfile",
+    );
+    expect(scopesAt(grammar, addresses, 6, "reverse_proxy")).toContain(
+      "keyword.control.directive.caddyfile",
+    );
+    expect(scopesAt(grammar, addresses, 6, "@api")).toContain("variable.other.matcher.caddyfile");
+    expect(scopesAt(grammar, addresses, 6, "[2001:db8::1]")).toContain(
+      "constant.numeric.ipv6.caddyfile",
+    );
+
+    const contentTypes = `(encode) {
+  encode {
+    match {
+      header Content-Type text/*
+    }
+  }
+}
+:80 {
+  respond ok
+}
+`;
+    expect(
+      scopesAt(grammar, contentTypes, 3, "text/*").some((scope) => scope.startsWith("comment.")),
+    ).toBe(false);
+    expect(scopesAt(grammar, contentTypes, 8, "respond")).toContain(
+      "keyword.control.directive.caddyfile",
+    );
+
+    const escapedQuotes = String.raw`example.com {
+  respond "\"hello"
+  map x y {
+    default "unknown domain" \"""
+  }
+  respond ok
+}
+`;
+    expect(scopesAt(grammar, escapedQuotes, 1, String.raw`\"`)).toContain(
+      "constant.character.escape.caddyfile",
+    );
+    expect(scopesAt(grammar, escapedQuotes, 3, String.raw`\"`)).toContain(
+      "constant.character.escape.caddyfile",
+    );
+    expect(scopesAt(grammar, escapedQuotes, 5, "respond")).toContain(
+      "keyword.control.directive.caddyfile",
+    );
+
+    const variables = `{$DOMAIN:localhost} {
+  import block {args[0]} {block[1]}
+  header +One value
+  header -Two
+  header ?Three value
+  header >Four value
+}
+`;
+    expect(scopesAt(grammar, variables, 0, "{$DOMAIN")).toContain(
+      "variable.other.environment.caddyfile",
+    );
+    expect(scopesAt(grammar, variables, 1, "{args[0]}")).toContain(
+      "variable.other.placeholder.caddyfile",
+    );
+    expect(scopesAt(grammar, variables, 1, "{block[1]}")).toContain(
+      "variable.other.placeholder.caddyfile",
+    );
+    const cel = '  @post expression `{http.request.method} == "POST"`';
+    expect(scopesAt(grammar, cel + "\n", 0, "expression")).toContain(
+      "keyword.control.matcher.caddyfile",
+    );
+    expect(scopesAt(grammar, cel + "\n", 0, "{http.request.method}")).toContain(
+      "variable.other.placeholder.caddyfile",
+    );
+    for (const [line, operator] of [
+      [2, "+One"],
+      [3, "-Two"],
+      [4, "?Three"],
+      [5, ">Four"],
+    ] as const) {
+      expect(scopesAt(grammar, variables, line, operator)).toContain(
+        "keyword.operator.header.caddyfile",
+      );
+    }
+  });
+
   it("keeps grammar registries synchronized with language metadata", async () => {
     const grammar = JSON.parse(
       await readFile(resolve(root, "syntaxes/caddyfile.tmLanguage.json"), "utf8"),

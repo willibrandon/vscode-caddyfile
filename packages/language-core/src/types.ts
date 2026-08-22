@@ -82,6 +82,7 @@ export interface ParsedDocument {
 export type LanguageItemKind = "directive" | "global-option" | "matcher" | "subdirective";
 
 export interface LanguageValue {
+  readonly arguments?: readonly number[];
   readonly name: string;
   readonly summary: string;
 }

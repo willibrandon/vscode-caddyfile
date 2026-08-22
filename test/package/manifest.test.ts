@@ -5,10 +5,27 @@ interface PackageManifest {
   readonly activationEvents?: readonly string[];
   readonly browser?: string;
   readonly contributes?: Readonly<{
-    readonly languages?: readonly Readonly<{ readonly id?: string }>[];
+    readonly configuration?: Readonly<{
+      readonly properties?: Readonly<
+        Record<string, Readonly<{ readonly default?: unknown; readonly type?: string }>>
+      >;
+    }>;
+    readonly configurationDefaults?: Readonly<Record<string, unknown>>;
+    readonly languages?: readonly Readonly<{
+      readonly extensions?: readonly string[];
+      readonly filenamePatterns?: readonly string[];
+      readonly filenames?: readonly string[];
+      readonly id?: string;
+    }>[];
+    readonly views?: unknown;
+    readonly viewsContainers?: unknown;
   }>;
+  readonly devDependencies?: Readonly<Record<string, string>>;
+  readonly extensionDependencies?: readonly string[];
+  readonly extensionPack?: readonly string[];
   readonly main?: string;
   readonly name?: string;
+  readonly packageManager?: string;
   readonly publisher?: string;
   readonly version?: string;
 }
@@ -26,5 +43,46 @@ describe("extension manifest", () => {
       "caddyfile",
       "caddyfile-test",
     ]);
+    expect(manifest.extensionDependencies).toBeUndefined();
+    expect(manifest.extensionPack).toBeUndefined();
+  });
+
+  it("recognizes the intended files without claiming other configuration languages", async () => {
+    const manifest = JSON.parse(await readFile("package.json", "utf8")) as PackageManifest;
+    expect(manifest.contributes?.languages?.[0]).toMatchObject({
+      extensions: [".caddyfile", ".Caddyfile"],
+      filenamePatterns: ["Caddyfile.*", "Caddyfile-*"],
+      filenames: ["Caddyfile"],
+      id: "caddyfile",
+    });
+    expect(manifest.contributes?.languages?.[1]).toMatchObject({
+      extensions: [".caddyfiletest"],
+      id: "caddyfile-test",
+    });
+    expect(JSON.stringify(manifest.contributes?.languages)).not.toMatch(/Corefile|Wedgefile/u);
+  });
+
+  it("keeps optional execution off and leaves standard VS Code UI behavior alone", async () => {
+    const manifest = JSON.parse(await readFile("package.json", "utf8")) as PackageManifest;
+    const properties = manifest.contributes?.configuration?.properties;
+    expect(properties?.["caddyfile.caddy.command"]).toMatchObject({
+      default: ["caddy"],
+      type: "array",
+    });
+    expect(properties?.["caddyfile.caddy.checkOnSave"]).toMatchObject({
+      default: false,
+      type: "boolean",
+    });
+    expect(manifest.contributes?.configurationDefaults).toBeUndefined();
+    expect(manifest.contributes?.views).toBeUndefined();
+    expect(manifest.contributes?.viewsContainers).toBeUndefined();
+    expect(JSON.stringify(manifest)).not.toContain("editor.formatOnSave");
+  });
+
+  it("uses the current supported build toolchain without Turbo or pnpm", async () => {
+    const manifest = JSON.parse(await readFile("package.json", "utf8")) as PackageManifest;
+    expect(manifest.packageManager).toBe("npm@12.0.2");
+    expect(manifest.devDependencies?.["esbuild"]).toBe("0.28.2");
+    expect(manifest.devDependencies?.["turbo"]).toBeUndefined();
   });
 });

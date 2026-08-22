@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const { TextDecoder } = require("node:util");
 const vscode = require("vscode");
 
 const extensionId = "willibrandon.caddyfile";
@@ -89,6 +90,11 @@ exports.run = async function run() {
   );
   const formatted = applyEdits(unformatted, edits);
   assert.equal(formatted, "example.test {\n\trespond ok\n}\n");
+  assert.equal(
+    new TextDecoder().decode(await vscode.workspace.fs.readFile(unformattedUri)),
+    "example.test {\n  respond ok\n}\n",
+    "formatting must return edits without changing the file on disk",
+  );
 
   for (const [name, expectedLanguage] of [
     ["Caddyfile.production", "caddyfile"],
