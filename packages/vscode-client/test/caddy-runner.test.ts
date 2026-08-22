@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, realpath, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -47,6 +47,7 @@ describe("Caddy process runner", () => {
 
   it("appends adapt arguments literally and sends the in-memory source over stdin", async () => {
     const workingDirectory = await mkdtemp(join(tmpdir(), "caddy-runner-"));
+    const canonicalWorkingDirectory = await realpath(workingDirectory);
     const script =
       "let input='';process.stdin.on('data',c=>input+=c);process.stdin.on('end',()=>process.stdout.write(JSON.stringify({args:process.argv.slice(1),cwd:process.cwd(),input})))";
     try {
@@ -68,7 +69,7 @@ describe("Caddy process runner", () => {
       });
       expect(JSON.parse(result.stdout)).toEqual({
         args: ["wrapper argument", "adapt", "--config", "-", "--adapter", "caddyfile"],
-        cwd: workingDirectory,
+        cwd: canonicalWorkingDirectory,
         input: ":80 {\n\trespond ok\n}\n",
       });
     } finally {
