@@ -104,6 +104,21 @@ example.com {
     );
   });
 
+  it("does not report duplicate globals for comments, closing braces, or ordinary files", () => {
+    const sources = [
+      "# one\n# two\nexample.com {\n respond ok\n}\n",
+      "{\n # one\n # two\n log first\n log second\n}\n",
+      "example.com {\n respond ok\n}\nexample.net {\n respond ok\n}\n",
+    ];
+    for (const source of sources) {
+      expect(
+        analyzeCaddyfile(parseCaddyfile(source)).filter(({ code }) =>
+          code.startsWith("duplicate-global"),
+        ),
+      ).toEqual([]);
+    }
+  });
+
   it("treats custom modules as hints instead of syntax errors", () => {
     const diagnostics = analyzeCaddyfile(parseCaddyfile(":80 {\n custom_handler\n}\n"));
     expect(diagnostics).toMatchObject([

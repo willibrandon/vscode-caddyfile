@@ -100,6 +100,35 @@ describe("Caddy process runner", () => {
     ).toThrow("too many arguments");
   });
 
+  it("preserves Windows paths and wrapper command arrays literally", () => {
+    expect(caddyInvocation([String.raw`C:\Program Files\Caddy\caddy.exe`], ["version"])).toEqual({
+      arguments: ["version"],
+      executable: String.raw`C:\Program Files\Caddy\caddy.exe`,
+    });
+    expect(
+      caddyInvocation(
+        ["flatpak-spawn", "--host", "podman", "run", "--rm", "-i", "caddy:2.11.4", "caddy"],
+        ["adapt", "--config", "-", "--adapter", "caddyfile"],
+      ),
+    ).toEqual({
+      arguments: [
+        "--host",
+        "podman",
+        "run",
+        "--rm",
+        "-i",
+        "caddy:2.11.4",
+        "caddy",
+        "adapt",
+        "--config",
+        "-",
+        "--adapter",
+        "caddyfile",
+      ],
+      executable: "flatpak-spawn",
+    });
+  });
+
   it("reports a missing executable without hanging", async () => {
     await expect(
       runCaddy(
