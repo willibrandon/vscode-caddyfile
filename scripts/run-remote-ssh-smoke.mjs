@@ -482,10 +482,23 @@ function validateResult(result) {
     !result.diagnosticCodes.includes("unknown-directive") ||
     !Array.isArray(result.completionLabels) ||
     !result.completionLabels.includes("reverse_proxy") ||
-    result.definitionUri !== "file:///home/vscode/workspace/parts.caddy"
+    result.definitionUri !== "file:///home/vscode/workspace/parts.caddy" ||
+    !sameRemoteCaddyCommand(result.caddyCommand)
   ) {
     throw new Error(`Remote smoke evidence is incomplete: ${JSON.stringify(result)}.`);
   }
+}
+
+function sameRemoteCaddyCommand(value) {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    JSON.stringify(value.args) ===
+      JSON.stringify(["adapt", "--config", "-", "--adapter", "caddyfile", "--pretty"]) &&
+    value.cwd === "/home/vscode/workspace" &&
+    Number.isSafeInteger(value.received) &&
+    value.received > 0
+  );
 }
 
 function requireInstalledExtension(output, expected) {

@@ -1,45 +1,122 @@
 {
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "vscode-caddyfile",
+  "name": "vscode-caddyfile (${devcontainerId})",
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."
   },
   "mounts": [
     {
-      "source": "vscode-caddyfile-node-modules",
+      "source": "/var/run/docker.sock",
+      "target": "/var/run/docker-host.sock",
+      "type": "bind"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-node-modules",
       "target": "${containerWorkspaceFolder}/node_modules",
       "type": "volume"
     },
     {
-      "source": "vscode-caddyfile-dist",
+      "source": "vscode-caddyfile-${devcontainerId}-dist",
       "target": "${containerWorkspaceFolder}/dist",
       "type": "volume"
     },
     {
-      "source": "vscode-caddyfile-coverage",
+      "source": "vscode-caddyfile-${devcontainerId}-coverage",
       "target": "${containerWorkspaceFolder}/coverage",
       "type": "volume"
     },
     {
-      "source": "vscode-caddyfile-npm-cache",
+      "source": "vscode-caddyfile-${devcontainerId}-vscode-test",
+      "target": "${containerWorkspaceFolder}/.vscode-test",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-vscode-test-web",
+      "target": "${containerWorkspaceFolder}/.vscode-test-web",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-language-core-lib",
+      "target": "${containerWorkspaceFolder}/packages/language-core/lib",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-language-server-lib",
+      "target": "${containerWorkspaceFolder}/packages/language-server/lib",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-vscode-client-lib",
+      "target": "${containerWorkspaceFolder}/packages/vscode-client/lib",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-docs-node-modules",
+      "target": "${containerWorkspaceFolder}/docs-site/node_modules",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-docs-dist",
+      "target": "${containerWorkspaceFolder}/docs-site/dist",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-docs-astro",
+      "target": "${containerWorkspaceFolder}/docs-site/.astro",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-npm-cache",
       "target": "/home/vscode/.npm",
+      "type": "volume"
+    },
+    {
+      "source": "vscode-caddyfile-${devcontainerId}-cache",
+      "target": "/home/vscode/.cache",
       "type": "volume"
     }
   ],
+  "containerEnv": {
+    "ASTRO_TELEMETRY_DISABLED": "1",
+    "CADDY_BIN": "/usr/local/bin/caddy",
+    "CADDY_CURRENT_SOURCE": "/home/vscode/.cache/vscode-caddyfile/caddy",
+    "CADDY_STABLE_SOURCE": "/home/vscode/.cache/vscode-caddyfile/caddy",
+    "CADDY_WEBSITE_SOURCE": "/home/vscode/.cache/vscode-caddyfile/website",
+    "CHROME_PATH": "/usr/bin/chromium",
+    "CHROMIUM_PATH": "/usr/bin/chromium",
+    "TREE_SITTER_CADDYFILE_SOURCE": "/home/vscode/.cache/vscode-caddyfile/tree-sitter-caddyfile"
+  },
   "postCreateCommand": ["bash", ".devcontainer/post-create.sh"],
+  "postStartCommand": ["bash", ".devcontainer/start-docker-proxy.sh"],
   "waitFor": "postCreateCommand",
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "init": true,
   "hostRequirements": {
-    "cpus": 2,
-    "memory": "4gb",
-    "storage": "8gb"
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [3000, 4321],
+  "portsAttributes": {
+    "3000": {
+      "label": "VS Code for the Web tests",
+      "onAutoForward": "silent"
+    },
+    "4321": {
+      "label": "Caddyfile documentation",
+      "onAutoForward": "notify"
+    }
   },
   "customizations": {
     "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+      "extensions": [
+        "astro-build.astro-vscode",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-containers"
+      ]
     }
   }
 }

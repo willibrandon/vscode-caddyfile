@@ -276,6 +276,12 @@
     "keytar": "npm:@github/keytar@7.10.6",
     "serialize-javascript": "7.1.0"
   },
+  "allowScripts": {
+    "@github/keytar@7.10.6": true,
+    "@playwright/browser-chromium@1.62.1": true,
+    "@vscode/vsce-sign@2.1.0": true,
+    "esbuild@0.28.2": true
+  },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/node": "24.13.3",

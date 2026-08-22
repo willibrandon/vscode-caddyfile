@@ -55,6 +55,27 @@ exports.activate = async function activate() {
     );
     assert.equal(definitions[0]?.uri.toString(), referencedUri.toString());
 
+    const fakeCaddy =
+      "let input='';process.stdin.on('data',chunk=>input+=chunk);process.stdin.on('end',()=>process.stdout.write(JSON.stringify({args:process.argv.slice(1),cwd:process.cwd(),received:input.length})))";
+    await vscode.workspace
+      .getConfiguration("caddyfile", caddyfileUri)
+      .update(
+        "caddy.command",
+        [process.execPath, "-e", fakeCaddy, "--"],
+        vscode.ConfigurationTarget.Workspace,
+      );
+    await vscode.window.showTextDocument(document);
+    await vscode.commands.executeCommand("caddyfile.showAdaptedJson");
+    const adapted = vscode.window.activeTextEditor?.document;
+    assert.ok(adapted, "Show Adapted JSON did not open a document on the remote host");
+    assert.equal(adapted.languageId, "json");
+    const caddyCommand = JSON.parse(adapted.getText());
+    assert.deepEqual(caddyCommand, {
+      args: ["adapt", "--config", "-", "--adapter", "caddyfile", "--pretty"],
+      cwd: folder.uri.fsPath,
+      received: document.getText().length,
+    });
+
     const { stdout: processes } = await execute("ps", ["-eo", "args="], {
       maxBuffer: 1024 * 1024,
       timeout: 10_000,
@@ -75,6 +96,7 @@ exports.activate = async function activate() {
       diagnosticCodes: diagnostics.map(diagnosticCode).map(String).sort(),
       completionLabels: completion.items.map(({ label }) => String(label)).sort(),
       definitionUri: definitions[0]?.uri.toString(),
+      caddyCommand,
     };
   } catch (error) {
     result = {

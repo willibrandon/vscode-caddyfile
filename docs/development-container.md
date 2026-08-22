@@ -1,13 +1,17 @@
 # Development container
 
-Open the repository in VS Code and choose **Dev Containers: Reopen in Container**. The container
-uses Node.js 24 and installs the tools needed by the repository checks.
+Open the repository in VS Code and choose **Dev Containers: Rebuild and Reopen in Container**. The
+container includes the pinned Node.js, npm, Caddy, browser, and test tools.
 
 ```sh
-npm ci
-npm run verify
+node --version
+npm --version
+bash .devcontainer/verify.sh
 ```
 
-CI builds the same container, verifies its configuration, runs the extension inside it, exports the
-image, and scans that image with Picket. `.picketignore` contains only exact fingerprints confirmed
-in the pinned Debian base image documentation.
+The full check covers pinned upstream data, real Caddy, desktop, browser, packaged VSIX, Remote SSH,
+and the documentation site. Dependencies, generated files, editor downloads, and caches use volumes
+scoped to this Dev Container.
+
+The container is not privileged. Remote SSH tests use the host Docker socket, which grants control
+of that Docker host. CI builds, verifies, exports, and scans the same image with Picket.
