@@ -12,6 +12,9 @@ client.
 `language-core` has no Node.js, DOM, or VS Code dependency. Node IPC and browser Worker servers use
 the same implementation.
 
+Adapter test files are split at their exact separator. The language server parses and formats only
+the Caddyfile section; VS Code's JSON language support owns the expected result.
+
 `npm run build` creates desktop, remote, and browser bundles in `dist`. The exact files allowed in
 the VSIX are listed in `scripts/package-files.json`.
 
