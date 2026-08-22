@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## [0.1.0] - 2026-08-21
 
 - Caddyfile syntax highlighting, completion, hover, diagnostics, quick fixes, and formatting.
 - Navigation across imports, snippets, matchers, and named routes.

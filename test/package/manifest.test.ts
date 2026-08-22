@@ -47,6 +47,13 @@ describe("extension manifest", () => {
     expect(manifest.extensionPack).toBeUndefined();
   });
 
+  it("has a dated changelog entry for the packaged version", async () => {
+    const manifest = JSON.parse(await readFile("package.json", "utf8")) as PackageManifest;
+    const changelog = await readFile("CHANGELOG.md", "utf8");
+    const version = (manifest.version ?? "").replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    expect(changelog).toMatch(new RegExp(`^## \\[${version}\\] - \\d{4}-\\d{2}-\\d{2}$`, "mu"));
+  });
+
   it("recognizes the intended files without claiming other configuration languages", async () => {
     const manifest = JSON.parse(await readFile("package.json", "utf8")) as PackageManifest;
     expect(manifest.contributes?.languages?.[0]).toMatchObject({
