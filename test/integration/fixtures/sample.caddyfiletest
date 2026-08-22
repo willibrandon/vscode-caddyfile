@@ -1,5 +1,8 @@
 example.com {
-	respond ok
+  respond ok
 }
 ----------
-{}
+{
+  "reverse_proxy": "not Caddyfile syntax",
+  "import": "./escape.caddy"
+}

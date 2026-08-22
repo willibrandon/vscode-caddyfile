@@ -19,15 +19,24 @@ export function parseCaddyOutput(
     .slice(0, 200);
   return lines.map((line) => {
     const location = /(?:^|[\s'"])(?:-|[^\s:'"]+):(\d+)(?::(\d+))?(?=$|[\s:'",)}-])/u.exec(line);
-    const reportedLine = Number(location?.[1] ?? 1);
-    const reportedCharacter = Number(location?.[2] ?? 1);
+    const jsonLine = /"line"\s*:\s*(\d+)/u.exec(line)?.[1];
+    const jsonColumn = /"(?:column|character)"\s*:\s*(\d+)/u.exec(line)?.[1];
+    const reportedLine = Number(location?.[1] ?? jsonLine ?? 1);
+    const reportedCharacter = Number(location?.[2] ?? jsonColumn ?? 1);
     return {
       character: Math.max(0, reportedCharacter - 1),
       line: Math.max(0, Math.min(Math.max(0, lineCount - 1), reportedLine - 1)),
       message: safeOutputMessage(line),
-      severity: /(?:^|\W)warning(?:\W|$)/iu.test(line) ? "warning" : "error",
+      severity: isWarning(line) ? "warning" : "error",
     };
   });
+}
+
+export function parseCaddyWarnings(
+  stderr: string,
+  lineCount: number,
+): readonly CaddyOutputMessage[] {
+  return parseCaddyOutput("", stderr, lineCount).filter(({ severity }) => severity === "warning");
 }
 
 export function caddyResultSummary(
@@ -54,4 +63,8 @@ function safeOutputMessage(value: string): string {
       ? value
       : jsonMessage.replace(/\\(["\\/])/gu, "$1").replace(/\\n/gu, " ");
   return selected.replace(/[\r\n\0]+/gu, " ").slice(0, 500);
+}
+
+function isWarning(value: string): boolean {
+  return /(?:^|\W)warning(?:\W|$)/iu.test(value) || /"level"\s*:\s*"warn(?:ing)?"/iu.test(value);
 }

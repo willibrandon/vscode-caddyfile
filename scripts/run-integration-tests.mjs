@@ -47,7 +47,10 @@ try {
       "--user-data-dir=" + userData,
       ...(installedExtensions === undefined ? [] : ["--extensions-dir=" + installedExtensions]),
     ],
-    extensionTestsEnv: createIsolatedVSCodeEnvironment(),
+    extensionTestsEnv: {
+      ...createIsolatedVSCodeEnvironment(),
+      CADDYFILE_TEST_NODE_PATH: process.execPath,
+    },
   });
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));

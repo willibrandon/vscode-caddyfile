@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { caddyResultSummary, parseCaddyOutput } from "../src/caddy-output.js";
+import { caddyResultSummary, parseCaddyOutput, parseCaddyWarnings } from "../src/caddy-output.js";
 
 describe("Caddy output diagnostics", () => {
   it("maps Caddy stdin locations to zero-based document positions", () => {
@@ -38,6 +38,21 @@ describe("Caddy output diagnostics", () => {
         severity: "error",
       },
     ]);
+  });
+
+  it("keeps successful Caddy warnings separate from adapted JSON", () => {
+    const stderr =
+      '{"level":"warn","ts":1787352636,"msg":"Caddyfile input is not formatted; run caddy fmt","adapter":"caddyfile","file":"-","line":3}';
+    expect(parseCaddyWarnings(stderr, 8)).toEqual([
+      {
+        character: 0,
+        line: 2,
+        message: "Caddyfile input is not formatted; run caddy fmt",
+        severity: "warning",
+      },
+    ]);
+    expect(parseCaddyWarnings('{"level":"info","msg":"using config from file"}', 8)).toEqual([]);
+    expect(parseCaddyWarnings('{"apps":{"http":{"servers":{}}}}', 8)).toEqual([]);
   });
 
   it("caps messages and produces bounded summaries", () => {
