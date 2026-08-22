@@ -9,6 +9,7 @@ on:
       - ".github/workflows/docs.yml"
       - "docs-site/**"
       - "media/icon.*"
+      - "media/robots.txt"
       - "package.json"
       - "package-lock.json"
       - "scripts/test-docs-popup.mjs"
