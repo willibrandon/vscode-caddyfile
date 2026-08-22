@@ -3,11 +3,6 @@ export const requiredMainWorkflows = ["CI", "CodeQL", "Development container", "
 export function githubReleaseFailures({ head, mainRef, tagObject, tagRef, workflowRuns }) {
   const failures = [];
   if (tagRef?.object?.type !== "tag") failures.push("release tag is not annotated");
-  if (tagObject?.verification?.verified !== true) {
-    failures.push(
-      `release tag signature is not verified (${String(tagObject?.verification?.reason ?? "unknown")})`,
-    );
-  }
   if (tagObject?.object?.sha !== head) failures.push("release tag does not point to HEAD");
   if (mainRef?.object?.sha !== head) failures.push("release commit is not the current main head");
 

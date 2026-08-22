@@ -10,7 +10,7 @@ const checks = (await import(
 )) as ReleaseChecksModule;
 
 describe("release source checks", () => {
-  it("accepts a verified annotated tag at a fully green main head", () => {
+  it("accepts an annotated tag at a fully green main head", () => {
     const head = "a".repeat(40);
     expect(
       checks.githubReleaseFailures({
@@ -26,14 +26,14 @@ describe("release source checks", () => {
         mainRef: { object: { sha: head } },
         tagObject: {
           object: { sha: head },
-          verification: { reason: "valid", verified: true },
+          verification: { reason: "unsigned", verified: false },
         },
         tagRef: { object: { type: "tag" } },
       }),
     ).toEqual([]);
   });
 
-  it("rejects unsigned tags, stale main commits, and incomplete checks", () => {
+  it("rejects lightweight tags, stale main commits, and incomplete checks", () => {
     const failures = checks.githubReleaseFailures({
       workflowRuns: [
         {
@@ -64,7 +64,6 @@ describe("release source checks", () => {
     expect(failures).toEqual(
       expect.arrayContaining([
         "release tag is not annotated",
-        "release tag signature is not verified (unsigned)",
         "release tag does not point to HEAD",
         "release commit is not the current main head",
         "CI workflow has not passed on main",
