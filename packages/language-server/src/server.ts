@@ -599,9 +599,18 @@ function toRange(document: TextDocument, span: TextSpan): Range {
 }
 
 function deepestStatementAt(tree: ParsedDocument, offset: number): Statement | undefined {
-  return tree.statements
-    .filter(({ span }) => spanContains(span, offset))
+  const lineStart = tree.text.lastIndexOf("\n", Math.max(0, offset - 1)) + 1;
+  const nextLine = tree.text.indexOf("\n", offset);
+  const lineEnd = nextLine < 0 ? tree.text.length : nextLine;
+  const onLine = tree.statements
+    .filter(({ nameSpan }) => nameSpan.start >= lineStart && nameSpan.start <= lineEnd)
     .sort((left, right) => right.depth - left.depth)[0];
+  return (
+    onLine ??
+    tree.statements
+      .filter(({ span }) => spanContains(span, offset))
+      .sort((left, right) => right.depth - left.depth)[0]
+  );
 }
 
 function renamedText(original: string, name: string): string {

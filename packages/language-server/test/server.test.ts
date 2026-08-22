@@ -321,6 +321,22 @@ describe("language server JSON-RPC contract", () => {
     );
   });
 
+  it("uses the nested subdirective for signature help after trailing whitespace", async () => {
+    const nested = ":80 {\n\treverse_proxy localhost {\n\t\theader_up Host \n\t}\n}\n";
+    await open(client, nested);
+    const signature = await request<SignatureHelp | null>(client, "textDocument/signatureHelp", {
+      textDocument: { uri },
+      position: positionOf(nested, "header_up Host ", "header_up Host ".length),
+    });
+    expect(signature?.signatures[0]).toMatchObject({
+      activeParameter: 0,
+      label: "header_up <field> [<value>]",
+    });
+    expect(JSON.stringify(signature?.signatures[0]?.documentation)).toContain(
+      "Change a request header sent upstream.",
+    );
+  });
+
   it("returns neutral results for unopened documents and invalid renames", async () => {
     const missing = { textDocument: { uri: "file:///workspace/missing.Caddyfile" } };
     expect(
