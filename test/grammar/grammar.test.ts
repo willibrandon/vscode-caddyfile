@@ -170,6 +170,18 @@ https://two.example {
     expect(scopesAt(grammar, variables, 1, "{block[1]}")).toContain(
       "variable.other.placeholder.caddyfile",
     );
+    const headerPlaceholder = `dotsider.dev {
+  reverse_proxy localhost:5100 {
+    header_up X-Forwarded-For {remote_host}
+  }
+}
+`;
+    expect(scopesAt(grammar, headerPlaceholder, 2, "X-Forwarded-For")).not.toContain(
+      "entity.name.namespace.site-address.caddyfile",
+    );
+    expect(scopesAt(grammar, headerPlaceholder, 2, "{remote_host}")).toContain(
+      "variable.other.placeholder.caddyfile",
+    );
     const cel = '  @post expression `{http.request.method} == "POST"`';
     expect(scopesAt(grammar, cel + "\n", 0, "expression")).toContain(
       "keyword.control.matcher.caddyfile",
