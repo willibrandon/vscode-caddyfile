@@ -100,6 +100,39 @@ exports.run = async function run() {
     assert.equal(configured.languageId, expectedLanguage, name);
   }
 
+  const adapterTestUri = vscode.Uri.joinPath(root, "sample.caddyfiletest");
+  const adapterTest = await vscode.workspace.openTextDocument(adapterTestUri);
+  const jsonCompletion = await vscode.commands.executeCommand(
+    "vscode.executeCompletionItemProvider",
+    adapterTestUri,
+    new vscode.Position(5, 8),
+  );
+  assert.ok(
+    jsonCompletion.items.every(
+      (item) =>
+        !String(item.documentation?.value ?? item.documentation ?? "").includes(
+          "Official documentation",
+        ),
+    ),
+    "adapter JSON must not receive Caddy completions",
+  );
+  const adapterEdits = await vscode.commands.executeCommand(
+    "vscode.executeFormatDocumentProvider",
+    adapterTestUri,
+    { insertSpaces: true, tabSize: 2 },
+  );
+  assert.equal(
+    applyEdits(adapterTest, adapterEdits),
+    'example.com {\n\trespond ok\n}\n----------\n{\n  "reverse_proxy": "not Caddyfile syntax",\n  "import": "./escape.caddy"\n}\n',
+    "formatting must preserve adapter JSON byte for byte",
+  );
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  assert.equal(
+    vscode.languages.getDiagnostics(adapterTestUri).length,
+    0,
+    "adapter JSON must not produce Caddyfile diagnostics",
+  );
+
   const commands = await vscode.commands.getCommands(true);
   for (const command of [
     "caddyfile.checkWithCaddy",
@@ -111,6 +144,35 @@ exports.run = async function run() {
   ]) {
     assert.ok(commands.includes(command), command + " must be registered.");
   }
+
+  await vscode.commands.executeCommand("caddyfile.restartLanguageServer");
+  const restartedCompletion = await vscode.commands.executeCommand(
+    "vscode.executeCompletionItemProvider",
+    uri,
+    new vscode.Position(6, 5),
+  );
+  assert.ok(
+    restartedCompletion.items.some((item) => item.label === "reverse_proxy"),
+    "language features must return after a server restart",
+  );
+
+  const nodePath = process.env.CADDYFILE_TEST_NODE_PATH;
+  assert.ok(nodePath, "The integration test Node.js path is required.");
+  const fakeCaddy =
+    "let input='';process.stdin.on('data',chunk=>input+=chunk);process.stdin.on('end',()=>process.stdout.write(JSON.stringify({received:input.length})))";
+  await vscode.workspace
+    .getConfiguration("caddyfile", uri)
+    .update(
+      "caddy.command",
+      [nodePath, "-e", fakeCaddy, "--"],
+      vscode.ConfigurationTarget.Workspace,
+    );
+  await vscode.window.showTextDocument(document);
+  await vscode.commands.executeCommand("caddyfile.showAdaptedJson");
+  const adapted = vscode.window.activeTextEditor?.document;
+  assert.ok(adapted, "Show Adapted JSON must open a document.");
+  assert.equal(adapted.languageId, "json");
+  assert.deepEqual(JSON.parse(adapted.getText()), { received: document.getText().length });
 };
 
 function applyEdits(document, edits) {

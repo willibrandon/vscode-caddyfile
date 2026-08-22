@@ -4,10 +4,12 @@ import {
   completionsAt,
   formatCaddyfile,
   hoverAt,
+  languageItemAt,
   languageItemFor,
   parseCaddyfile,
   referencesAt,
   semanticSpans,
+  splitCaddyfileTest,
   spanContains,
 } from "@caddyfile/language-core";
 import type {
@@ -86,7 +88,7 @@ export function startLanguageServer(connection: Connection): void {
   let workspaceRoots: readonly string[] = [];
 
   const parsed = (document: TextDocument): ParsedDocument | undefined =>
-    languageIds.has(document.languageId) ? parseCaddyfile(document.getText()) : undefined;
+    languageIds.has(document.languageId) ? parseCaddyfile(languageSource(document)) : undefined;
 
   const settingsFor = (uri: string): Promise<ServerSettings> => {
     if (!supportsConfiguration) return Promise.resolve(fallbackSettings);
@@ -187,12 +189,14 @@ export function startLanguageServer(connection: Connection): void {
     const document = documents.get(params.textDocument.uri);
     const tree = document === undefined ? undefined : parsed(document);
     if (document === undefined || tree === undefined) return [];
-    return completionsAt(tree, document.offsetAt(params.position)).map((item): CompletionItem => ({
+    const offset = document.offsetAt(params.position);
+    if (!isLanguageOffset(document, offset)) return [];
+    return completionsAt(tree, offset).map((item): CompletionItem => ({
       ...(item.deprecated === true ? { tags: [1] } : {}),
       detail: item.detail,
       documentation: { kind: MarkupKind.Markdown, value: item.documentation },
       ...(item.insertText === undefined ? {} : { insertText: item.insertText }),
-      kind: CompletionItemKind.Keyword,
+      kind: item.kind === "value" ? CompletionItemKind.Value : CompletionItemKind.Keyword,
       label: item.label,
     }));
   });
@@ -217,7 +221,7 @@ export function startLanguageServer(connection: Connection): void {
     const offset = document.offsetAt(params.position);
     const statement = deepestStatementAt(tree, offset);
     if (statement === undefined) return undefined;
-    const item = languageItemFor(statement.name);
+    const item = languageItemAt(tree, offset);
     if (item === undefined) return undefined;
     const parameters = [...item.syntax.matchAll(/<[^>]+>/gu)].map((match) => ({
       label: match[0],
@@ -533,6 +537,18 @@ function toDiagnostic(document: TextDocument, item: CoreDiagnostic): Diagnostic 
 
 function fullDocumentFormat(document: TextDocument): TextEdit[] {
   const original = document.getText();
+  if (document.languageId === "caddyfile-test") {
+    const parts = splitCaddyfileTest(original);
+    const formattedCaddyfile = formatCaddyfile(parts.caddyfile);
+    return parts.caddyfile === formattedCaddyfile
+      ? []
+      : [
+          {
+            newText: formattedCaddyfile,
+            range: toRange(document, { end: parts.delimiterOffset, start: 0 }),
+          },
+        ];
+  }
   const formatted = formatCaddyfile(original);
   return original === formatted
     ? []
@@ -540,7 +556,11 @@ function fullDocumentFormat(document: TextDocument): TextEdit[] {
 }
 
 function rangeDocumentFormat(document: TextDocument, requested: Range): TextEdit[] {
-  const source = document.getText();
+  const completeSource = document.getText();
+  const parts =
+    document.languageId === "caddyfile-test" ? splitCaddyfileTest(completeSource) : undefined;
+  if (parts !== undefined && document.offsetAt(requested.start) >= parts.delimiterOffset) return [];
+  const source = parts?.caddyfile ?? completeSource;
   const formatted = formatCaddyfile(source);
   if (source === formatted) return [];
   const sourceLines = source.split("\n");
@@ -549,7 +569,10 @@ function rangeDocumentFormat(document: TextDocument, requested: Range): TextEdit
   const startLine = requested.start.line;
   const endLine = requested.end.character === 0 ? requested.end.line : requested.end.line + 1;
   const start = document.offsetAt({ character: 0, line: startLine });
-  const end = document.offsetAt({ character: 0, line: endLine });
+  const end = Math.min(
+    document.offsetAt({ character: 0, line: endLine }),
+    parts?.delimiterOffset ?? completeSource.length,
+  );
   const original = source.slice(start, end);
   const replacement =
     formattedLines.slice(startLine, endLine).join("\n") +
@@ -559,14 +582,35 @@ function rangeDocumentFormat(document: TextDocument, requested: Range): TextEdit
     : [{ newText: replacement, range: toRange(document, { end, start }) }];
 }
 
+function languageSource(document: TextDocument): string {
+  const text = document.getText();
+  return document.languageId === "caddyfile-test" ? splitCaddyfileTest(text).caddyfile : text;
+}
+
+function isLanguageOffset(document: TextDocument, offset: number): boolean {
+  return (
+    document.languageId !== "caddyfile-test" ||
+    offset < splitCaddyfileTest(document.getText()).delimiterOffset
+  );
+}
+
 function toRange(document: TextDocument, span: TextSpan): Range {
   return { end: document.positionAt(span.end), start: document.positionAt(span.start) };
 }
 
 function deepestStatementAt(tree: ParsedDocument, offset: number): Statement | undefined {
-  return tree.statements
-    .filter(({ span }) => spanContains(span, offset))
+  const lineStart = tree.text.lastIndexOf("\n", Math.max(0, offset - 1)) + 1;
+  const nextLine = tree.text.indexOf("\n", offset);
+  const lineEnd = nextLine < 0 ? tree.text.length : nextLine;
+  const onLine = tree.statements
+    .filter(({ nameSpan }) => nameSpan.start >= lineStart && nameSpan.start <= lineEnd)
     .sort((left, right) => right.depth - left.depth)[0];
+  return (
+    onLine ??
+    tree.statements
+      .filter(({ span }) => spanContains(span, offset))
+      .sort((left, right) => right.depth - left.depth)[0]
+  );
 }
 
 function renamedText(original: string, name: string): string {

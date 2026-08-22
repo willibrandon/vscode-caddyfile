@@ -10,6 +10,7 @@ GitHub release.
 - `CHANGELOG.md` has the version and release date.
 - `VSCE_PAT` and `OVSX_PAT` are repository secrets.
 - The final VSIX has been tested and approved.
+- The release tag is annotated, signed, and verified by GitHub.
 
 ## Prepare
 
@@ -36,5 +37,8 @@ git push origin "v$release_version"
 The workflow rebuilds and reproduces the artifacts, tests the exact VSIX on desktop, browser, and
 Remote SSH hosts, creates attestations and a draft GitHub release, publishes both registries,
 verifies them, then publishes the GitHub release.
+
+The workflow stops before building if the tag is unsigned, is not at the current `main` head, or any
+required `main` check is not green.
 
 Never move or reuse a published tag or version.

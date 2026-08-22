@@ -24,4 +24,7 @@ CI tests minimum and current VS Code on Linux, macOS, and Windows. It also tests
 Remote SSH, the development container, pinned upstream fixtures, CodeQL, dependency review, Picket,
 secret scanning, and artifact reproduction.
 
+The pinned upstream job also sends valid and invalid in-memory files through the production process
+runner and a Caddy binary built from the reviewed source.
+
 Generated bundles, coverage, downloaded hosts, test profiles, and VSIX files are ignored outputs.

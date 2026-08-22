@@ -126,7 +126,11 @@ async function importedFiles(source: vscode.Uri, text: string): Promise<readonly
           "**/{.git,node_modules,.cache,dist,coverage}/**",
           2_000,
         );
-        for (const target of matches) result.set(target.toString(), target);
+        for (const target of matches) {
+          if (vscode.workspace.getWorkspaceFolder(target) !== undefined) {
+            result.set(target.toString(), target);
+          }
+        }
       } catch {
         // Invalid import globs are diagnosed by Caddy and the language server.
       }

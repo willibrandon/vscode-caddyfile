@@ -305,6 +305,38 @@ describe("language server JSON-RPC contract", () => {
     ]);
   });
 
+  it("returns accepted values as value completions", async () => {
+    const valueSource = "{\n\tauto_https dis\n}\n";
+    await open(client, valueSource);
+    const values = await request<CompletionItem[]>(client, "textDocument/completion", {
+      textDocument: { uri },
+      position: positionOf(valueSource, "dis", 3),
+    });
+    expect(values).toMatchObject([
+      { detail: "Value for auto_https", kind: 12, label: "disable_certs" },
+      { detail: "Value for auto_https", kind: 12, label: "disable_redirects" },
+    ]);
+    expect(JSON.stringify(values[0]?.documentation)).toContain(
+      "Disable automatic certificate management.",
+    );
+  });
+
+  it("uses the nested subdirective for signature help after trailing whitespace", async () => {
+    const nested = ":80 {\n\treverse_proxy localhost {\n\t\theader_up Host \n\t}\n}\n";
+    await open(client, nested);
+    const signature = await request<SignatureHelp | null>(client, "textDocument/signatureHelp", {
+      textDocument: { uri },
+      position: positionOf(nested, "header_up Host ", "header_up Host ".length),
+    });
+    expect(signature?.signatures[0]).toMatchObject({
+      activeParameter: 0,
+      label: "header_up <field> [<value>]",
+    });
+    expect(JSON.stringify(signature?.signatures[0]?.documentation)).toContain(
+      "Change a request header sent upstream.",
+    );
+  });
+
   it("returns neutral results for unopened documents and invalid renames", async () => {
     const missing = { textDocument: { uri: "file:///workspace/missing.Caddyfile" } };
     expect(
@@ -439,11 +471,81 @@ import shared
     });
     expect(links[0]?.target).toBe(partsUri);
   });
+
+  it("keeps adapter test JSON outside Caddyfile language features and formatting", async () => {
+    const adapterTest = `:80 {
+  respond ok
+}
+----------
+{"import":"./escape.caddy","reverse_proxy":"not Caddyfile syntax"}
+`;
+    const diagnosticsPromise = nextDiagnostics(client);
+    await open(client, adapterTest, "caddyfile-test");
+    expect(await diagnosticsPromise).toEqual([]);
+
+    const jsonPosition = positionOf(adapterTest, "reverse_proxy", 4);
+    expect(
+      await request<CompletionItem[]>(client, "textDocument/completion", {
+        textDocument: { uri },
+        position: jsonPosition,
+      }),
+    ).toEqual([]);
+    expect(
+      await request<Hover | null>(client, "textDocument/hover", {
+        textDocument: { uri },
+        position: jsonPosition,
+      }),
+    ).toBeNull();
+    expect(
+      await request<DocumentLink[]>(client, "textDocument/documentLink", {
+        textDocument: { uri },
+      }),
+    ).toEqual([]);
+
+    const formatting = await request<TextEdit[]>(client, "textDocument/formatting", {
+      options: { insertSpaces: true, tabSize: 2 },
+      textDocument: { uri },
+    });
+    expect(formatting).toEqual([
+      {
+        newText: ":80 {\n\trespond ok\n}\n",
+        range: {
+          end: { character: 0, line: 3 },
+          start: { character: 0, line: 0 },
+        },
+      },
+    ]);
+    expect(applyEdits(adapterTest, formatting)).toBe(
+      `:80 {
+\trespond ok
+}
+----------
+{"import":"./escape.caddy","reverse_proxy":"not Caddyfile syntax"}
+`,
+    );
+
+    const rangeFormatting = await request<TextEdit[]>(client, "textDocument/rangeFormatting", {
+      options: { insertSpaces: true, tabSize: 2 },
+      range: {
+        end: { character: 0, line: 5 },
+        start: { character: 0, line: 0 },
+      },
+      textDocument: { uri },
+    });
+    expect(rangeFormatting[0]?.range.end).toEqual({ character: 0, line: 3 });
+    expect(applyEdits(adapterTest, rangeFormatting).slice(adapterTest.indexOf("----------"))).toBe(
+      adapterTest.slice(adapterTest.indexOf("----------")),
+    );
+  });
 });
 
-async function open(client: MessageConnection, text: string): Promise<void> {
+async function open(
+  client: MessageConnection,
+  text: string,
+  languageId = "caddyfile",
+): Promise<void> {
   await client.sendNotification("textDocument/didOpen", {
-    textDocument: { languageId: "caddyfile", text, uri, version: 1 },
+    textDocument: { languageId, text, uri, version: 1 },
   });
 }
 
@@ -468,6 +570,27 @@ function nextDiagnostics(client: MessageConnection): Promise<Diagnostic[]> {
 
 async function request<T>(client: MessageConnection, method: string, params: unknown): Promise<T> {
   return client.sendRequest<T>(method, params);
+}
+
+function applyEdits(text: string, edits: readonly TextEdit[]): string {
+  return [...edits]
+    .sort((left, right) => offsetAt(text, right.range.start) - offsetAt(text, left.range.start))
+    .reduce((current, edit) => {
+      const start = offsetAt(current, edit.range.start);
+      const end = offsetAt(current, edit.range.end);
+      return current.slice(0, start) + edit.newText + current.slice(end);
+    }, text);
+}
+
+function offsetAt(
+  text: string,
+  position: { readonly character: number; readonly line: number },
+): number {
+  const lines = text.split("\n");
+  return (
+    lines.slice(0, position.line).reduce((length, line) => length + line.length + 1, 0) +
+    position.character
+  );
 }
 
 function positionOf(

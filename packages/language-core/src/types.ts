@@ -81,13 +81,20 @@ export interface ParsedDocument {
 
 export type LanguageItemKind = "directive" | "global-option" | "matcher" | "subdirective";
 
+export interface LanguageValue {
+  readonly name: string;
+  readonly summary: string;
+}
+
 export interface LanguageItem {
   readonly name: string;
   readonly kind: LanguageItemKind;
   readonly summary: string;
   readonly syntax: string;
   readonly url: string;
-  readonly values?: readonly string[];
+  readonly values?: readonly LanguageValue[];
+  readonly valueArgument?: number;
+  readonly repeatValues?: boolean;
   readonly deprecated?: Readonly<{ readonly replacement: string; readonly message: string }>;
   readonly parents?: readonly string[];
 }
@@ -98,6 +105,7 @@ export interface CoreCompletion {
   readonly documentation: string;
   readonly insertText?: string;
   readonly deprecated?: boolean;
+  readonly kind?: "item" | "value";
 }
 
 export interface CoreHover {

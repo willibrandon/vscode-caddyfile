@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { LanguageClient, TransportKind } from "vscode-languageclient/node";
 import type { ServerOptions } from "vscode-languageclient/node";
-import { caddyResultSummary, parseCaddyOutput } from "./caddy-output.js";
+import { caddyResultSummary, parseCaddyOutput, parseCaddyWarnings } from "./caddy-output.js";
 import { runCaddy } from "./caddy-runner.js";
 import type { CaddyRunResult } from "./caddy-runner.js";
 import {
@@ -98,7 +98,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const result = await executeAdapt(vscode.window.activeTextEditor?.document, true, false);
       if (result === undefined) return;
       if (successful(result)) {
-        await vscode.window.showInformationMessage("Caddy accepted this configuration.");
+        const warningCount = parseCaddyWarnings(result.stderr, 1).length;
+        await vscode.window.showInformationMessage(
+          warningCount === 0
+            ? "Caddy accepted this configuration."
+            : `Caddy accepted this configuration with ${String(warningCount)} warning${warningCount === 1 ? "" : "s"}.`,
+        );
       } else {
         await vscode.window.showWarningMessage(caddyResultSummary(result, "Caddy adapt"));
       }
@@ -207,8 +212,19 @@ function diagnosticsFromResult(
   document: vscode.TextDocument,
   result: CaddyRunResult,
 ): vscode.Diagnostic[] {
-  if (successful(result)) return [];
-  const parsed = parseCaddyOutput(result.stdout, result.stderr, document.lineCount);
+  const parsed = successful(result)
+    ? parseCaddyWarnings(result.stderr, document.lineCount)
+    : parseCaddyOutput(result.stdout, result.stderr, document.lineCount);
+  if (successful(result))
+    return parsed.map((message) =>
+      createDiagnostic(
+        document,
+        message.line,
+        message.character,
+        message.message,
+        vscode.DiagnosticSeverity.Warning,
+      ),
+    );
   if (parsed.length === 0) {
     return [
       createDiagnostic(
@@ -260,7 +276,10 @@ function logResult(output: vscode.LogOutputChannel, result: CaddyRunResult): voi
   const stdout = result.stdout.trim();
   const stderr = result.stderr.trim();
   if (stdout !== "") output.info(ensureSingleLine(stdout));
-  if (stderr !== "") output.error(ensureSingleLine(stderr));
+  if (stderr !== "") {
+    if (successful(result)) output.warn(ensureSingleLine(stderr));
+    else output.error(ensureSingleLine(stderr));
+  }
 }
 
 function safeMessage(error: unknown): string {

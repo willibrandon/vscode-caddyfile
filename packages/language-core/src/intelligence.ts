@@ -12,9 +12,31 @@ import type {
   Token,
 } from "./types.js";
 
+interface LanguageSelection {
+  readonly arguments: readonly Token[];
+  readonly item: LanguageItem;
+  readonly nameToken: Token;
+  readonly statement: Statement;
+}
+
 export function completionsAt(document: ParsedDocument, offset: number): readonly CoreCompletion[] {
-  const statement = statementAt(document, offset);
-  const items = completionItemsFor(document, statement, offset);
+  const current = statementOnLine(document, offset);
+  const selection = current === undefined ? undefined : selectionFor(document, current);
+  if (selection !== undefined && isAfterName(document.text, selection.nameToken, offset)) {
+    const argumentIndex = activeArgumentIndex(selection.arguments, offset);
+    const valueArgument = selection.item.valueArgument ?? 0;
+    const acceptsValues =
+      selection.item.values !== undefined &&
+      (argumentIndex === valueArgument ||
+        (selection.item.repeatValues === true && argumentIndex >= valueArgument));
+    if (!acceptsValues) return [];
+    const prefix = argumentPrefix(selection.arguments, argumentIndex, offset);
+    return (selection.item.values ?? [])
+      .filter(({ name }) => prefix.length === 0 || name.startsWith(prefix))
+      .map((value) => valueCompletion(selection.item, value))
+      .sort((left, right) => left.label.localeCompare(right.label));
+  }
+  const items = completionItemsFor(document, current, offset);
   const prefix = wordPrefix(document.text, offset);
   return items
     .filter(({ name }) => prefix.length === 0 || name.startsWith(prefix))
@@ -25,16 +47,32 @@ export function completionsAt(document: ParsedDocument, offset: number): readonl
 export function hoverAt(document: ParsedDocument, offset: number): CoreHover | undefined {
   const token = tokenAt(document, offset);
   if (token === undefined || token.kind === "comment" || token.kind === "newline") return undefined;
-  const statement = document.statements.find(({ nameSpan }) => spanContains(nameSpan, offset));
-  const kinds =
-    statement?.kind === "global-option"
-      ? (["global-option"] as const)
-      : statement?.kind === "subdirective"
-        ? (["subdirective", "directive", "matcher"] as const)
-        : (["directive", "global-option", "matcher", "subdirective"] as const);
-  const item = languageItemFor(token.value, kinds);
-  if (item === undefined) return symbolHover(document, token);
-  return { markdown: itemMarkdown(item), span: token.span };
+  const statement = statementForToken(document, token);
+  const selection = statement === undefined ? undefined : selectionFor(document, statement);
+  if (selection === undefined) return symbolHover(document, token);
+  if (sameSpan(token.span, selection.nameToken.span)) {
+    return { markdown: itemMarkdown(selection.item), span: token.span };
+  }
+  const argumentIndex = selection.arguments.findIndex(({ span }) => sameSpan(span, token.span));
+  const valueArgument = selection.item.valueArgument ?? 0;
+  if (
+    argumentIndex >= valueArgument &&
+    (argumentIndex === valueArgument || selection.item.repeatValues === true)
+  ) {
+    const value = selection.item.values?.find(({ name }) => name === token.value);
+    if (value !== undefined) {
+      return {
+        markdown: `**${value.name}**\n\n${value.summary}\n\nValue for \`${selection.item.name}\`.\n\n[Official documentation](${selection.item.url})`,
+        span: token.span,
+      };
+    }
+  }
+  return symbolHover(document, token);
+}
+
+export function languageItemAt(document: ParsedDocument, offset: number): LanguageItem | undefined {
+  const statement = statementOnLine(document, offset) ?? statementAt(document, offset);
+  return statement === undefined ? undefined : selectionFor(document, statement)?.item;
 }
 
 export function definitionAt(
@@ -160,22 +198,23 @@ function completionItemsFor(
   statement: Statement | undefined,
   offset: number,
 ): readonly LanguageItem[] {
-  if (statement?.kind === "global-option") return languageItemsFor("global-option");
-  if (statement?.kind === "matcher") return languageItemsFor("matcher");
-  if (statement?.kind === "subdirective") {
-    const parent =
-      statement.parent === undefined ? undefined : document.statements[statement.parent];
-    if (parent?.kind === "matcher") return languageItemsFor("matcher");
-    if (parent !== undefined) {
-      const matching = languageItemsFor("subdirective").filter(({ parents }) =>
-        parents?.includes(parent.name),
-      );
-      if (matching.length > 0) return matching;
-    }
-  }
   const lineStart = document.text.lastIndexOf("\n", Math.max(0, offset - 1)) + 1;
   if (document.text.slice(lineStart, offset).trimStart().startsWith("@")) {
     return languageItemsFor("matcher");
+  }
+  const parent =
+    statement?.parent === undefined
+      ? enclosingBlock(document, offset)
+      : document.statements[statement.parent];
+  if (statement?.kind === "global-option" || parent?.kind === "global-options") {
+    return languageItemsFor("global-option");
+  }
+  if (statement?.kind === "matcher" || parent?.kind === "matcher") {
+    return languageItemsFor("matcher");
+  }
+  if (parent !== undefined && !["site", "snippet", "named-route"].includes(parent.kind)) {
+    const matching = subdirectivesForParent(parent);
+    if (matching.length > 0) return matching;
   }
   return languageItemsFor("directive");
 }
@@ -186,13 +225,29 @@ function toCompletion(item: LanguageItem): CoreCompletion {
     detail: item.syntax,
     documentation: `${item.summary}\n\n[Official documentation](${item.url})`,
     label: item.name,
+    kind: "item",
+  };
+}
+
+function valueCompletion(
+  item: LanguageItem,
+  value: Readonly<{ readonly name: string; readonly summary: string }>,
+): CoreCompletion {
+  return {
+    detail: `Value for ${item.name}`,
+    documentation: `${value.summary}\n\n[Official documentation](${item.url})`,
+    kind: "value",
+    label: value.name,
   };
 }
 
 function itemMarkdown(item: LanguageItem): string {
   const deprecated =
     item.deprecated === undefined ? "" : `\n\n**Deprecated:** ${item.deprecated.message}`;
-  const values = item.values === undefined ? "" : `\n\nValues: ${item.values.join(", ")}.`;
+  const values =
+    item.values === undefined
+      ? ""
+      : `\n\nAccepted values:\n${item.values.map(({ name, summary }) => `- \`${name}\`: ${summary}`).join("\n")}`;
   return `**${item.name}**\n\n${item.summary}\n\n\`\`\`caddyfile\n${item.syntax}\n\`\`\`${values}${deprecated}\n\n[Official documentation](${item.url})`;
 }
 
@@ -213,6 +268,115 @@ function statementAt(document: ParsedDocument, offset: number): Statement | unde
         right.depth - left.depth ||
         left.span.end - left.span.start - (right.span.end - right.span.start),
     )[0];
+}
+
+function statementOnLine(document: ParsedDocument, offset: number): Statement | undefined {
+  const start = document.text.lastIndexOf("\n", Math.max(0, offset - 1)) + 1;
+  const newline = document.text.indexOf("\n", offset);
+  const end = newline < 0 ? document.text.length : newline;
+  return document.statements
+    .filter(({ nameSpan }) => nameSpan.start >= start && nameSpan.start <= end)
+    .sort((left, right) => right.depth - left.depth)[0];
+}
+
+function statementForToken(document: ParsedDocument, token: Token): Statement | undefined {
+  return document.statements
+    .filter(({ tokens }) => tokens.some(({ span }) => sameSpan(span, token.span)))
+    .sort((left, right) => right.depth - left.depth)[0];
+}
+
+function enclosingBlock(document: ParsedDocument, offset: number): Statement | undefined {
+  return document.statements
+    .filter(({ opensBlock, span }) => opensBlock && span.start <= offset && span.end >= offset)
+    .sort((left, right) => right.depth - left.depth)[0];
+}
+
+function selectionFor(
+  document: ParsedDocument,
+  statement: Statement,
+): LanguageSelection | undefined {
+  if (statement.kind === "matcher") {
+    const nameToken = statement.tokens[1];
+    const item =
+      nameToken === undefined ? undefined : languageItemFor(nameToken.value, ["matcher"]);
+    return nameToken === undefined || item === undefined
+      ? undefined
+      : {
+          arguments: valueArguments(statement.tokens, nameToken, item),
+          item,
+          nameToken,
+          statement,
+        };
+  }
+  const nameToken = statement.tokens[0];
+  if (nameToken === undefined) return undefined;
+  const parent = statement.parent === undefined ? undefined : document.statements[statement.parent];
+  const contextual =
+    parent === undefined
+      ? undefined
+      : parent.kind === "global-options"
+        ? languageItemFor(statement.name, ["global-option"])
+        : parent.kind === "matcher"
+          ? languageItemFor(statement.name, ["matcher"])
+          : subdirectivesForParent(parent).find(({ name }) => name === statement.name);
+  const item =
+    contextual ??
+    languageItemFor(
+      statement.name,
+      statement.kind === "global-option"
+        ? ["global-option"]
+        : statement.kind === "subdirective"
+          ? ["subdirective"]
+          : ["directive"],
+    );
+  return item === undefined
+    ? undefined
+    : {
+        arguments: valueArguments(statement.tokens, nameToken, item),
+        item,
+        nameToken,
+        statement,
+      };
+}
+
+function subdirectivesForParent(parent: Statement): readonly LanguageItem[] {
+  const qualified = `${parent.kind}:${parent.name}`;
+  return languageItemsFor("subdirective").filter(({ parents }) =>
+    parents?.some((candidate) => candidate === parent.name || candidate === qualified),
+  );
+}
+
+function valueArguments(
+  tokens: readonly Token[],
+  nameToken: Token,
+  item: LanguageItem,
+): readonly Token[] {
+  const args = tokens.filter(
+    ({ kind, span }) => kind !== "open-brace" && span.start >= nameToken.span.end,
+  );
+  return item.kind === "directive" && args[0]?.value.startsWith("@") === true
+    ? args.slice(1)
+    : args;
+}
+
+function isAfterName(text: string, token: Token, offset: number): boolean {
+  return offset > token.span.end && /\s/u.test(text.slice(token.span.end, offset));
+}
+
+function activeArgumentIndex(arguments_: readonly Token[], offset: number): number {
+  const containing = arguments_.findIndex(({ span }) => span.start <= offset && span.end >= offset);
+  return containing >= 0 ? containing : arguments_.filter(({ span }) => span.end < offset).length;
+}
+
+function argumentPrefix(arguments_: readonly Token[], index: number, offset: number): string {
+  const token = arguments_[index];
+  return token === undefined || offset < token.span.start
+    ? ""
+    : token.value.slice(0, Math.max(0, offset - token.span.start));
+}
+
+function sameSpan(left: TextSpan, right: TextSpan): boolean {
+  return left.start === right.start && left.end === right.end;
 }
 
 function tokenAt(document: ParsedDocument, offset: number): Token | undefined {
