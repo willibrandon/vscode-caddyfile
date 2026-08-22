@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -122,6 +122,8 @@ describe("Caddy process runner", () => {
   it.skipIf(process.platform === "win32")(
     "force-kills a process that ignores graceful termination",
     async () => {
+      const workingDirectory = await mkdtemp(join(tmpdir(), "caddy-runner-"));
+      const readyFile = join(workingDirectory, "ready");
       const controller = new AbortController();
       const result = runCaddy(
         {
@@ -129,16 +131,23 @@ describe("Caddy process runner", () => {
           command: [
             process.execPath,
             "-e",
-            "process.on('SIGTERM',()=>{});process.stdout.write('ready');setInterval(()=>{},1000)",
+            "process.on('SIGTERM',()=>{});process.stdout.write('ready',()=>require('node:fs').writeFileSync(process.argv[1],''));setInterval(()=>{},1000)",
+            readyFile,
           ],
-          cwd: process.cwd(),
+          cwd: workingDirectory,
         },
         controller.signal,
         () => true,
       );
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      controller.abort();
-      await expect(result).resolves.toMatchObject({ cancelled: true, stdout: "ready" });
+      try {
+        await waitForFile(readyFile);
+        controller.abort();
+        await expect(result).resolves.toMatchObject({ cancelled: true, stdout: "ready" });
+      } finally {
+        controller.abort();
+        await result.catch(() => undefined);
+        await rm(workingDirectory, { force: true, recursive: true });
+      }
     },
   );
 
@@ -185,3 +194,16 @@ describe("Caddy process runner", () => {
     expect(defaulted.stdout).toBe("ok");
   });
 });
+
+async function waitForFile(path: string): Promise<void> {
+  const deadline = Date.now() + 5_000;
+  while (Date.now() < deadline) {
+    try {
+      await access(path);
+      return;
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+  }
+  throw new Error(`Timed out waiting for child process readiness: ${path}`);
+}
