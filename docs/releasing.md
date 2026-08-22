@@ -10,7 +10,7 @@ GitHub release.
 - `CHANGELOG.md` has the version and release date.
 - `VSCE_PAT` and `OVSX_PAT` are repository secrets.
 - The final VSIX has been tested and approved.
-- The release tag is annotated, signed, and verified by GitHub.
+- The release tag is annotated and protected.
 
 ## Prepare
 
@@ -26,11 +26,11 @@ and push the release preparation, then wait for every required workflow.
 
 ## Publish
 
-Create the signed tag interactively and push only that tag:
+Create the annotated tag and push only that tag:
 
 ```sh
 release_version=$(node -p "require('./package.json').version")
-git tag -s "v$release_version" -m "Caddyfile $release_version"
+git tag -a "v$release_version" -m "Caddyfile $release_version"
 git push origin "v$release_version"
 ```
 
@@ -38,7 +38,7 @@ The workflow rebuilds and reproduces the artifacts, tests the exact VSIX on desk
 Remote SSH hosts, creates attestations and a draft GitHub release, publishes both registries,
 verifies them, then publishes the GitHub release.
 
-The workflow stops before building if the tag is unsigned, is not at the current `main` head, or any
-required `main` check is not green.
+The workflow stops before building if the tag is not annotated, is not at the current `main` head,
+or any required `main` check is not green.
 
 Never move or reuse a published tag or version.
