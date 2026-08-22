@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 interface ReleaseChecksModule {
   readonly githubReleaseFailures: (state: Record<string, unknown>) => readonly string[];
-  readonly requiredMainChecks: readonly string[];
+  readonly requiredMainWorkflows: readonly string[];
 }
 
 const checks = (await import(
@@ -14,9 +14,11 @@ describe("release source checks", () => {
     const head = "a".repeat(40);
     expect(
       checks.githubReleaseFailures({
-        checkRuns: checks.requiredMainChecks.map((name, index) => ({
-          check_suite: { head_branch: "main" },
+        workflowRuns: checks.requiredMainWorkflows.map((name, index) => ({
           conclusion: "success",
+          event: "push",
+          head_branch: "main",
+          head_sha: head,
           id: index + 1,
           name,
         })),
@@ -33,18 +35,22 @@ describe("release source checks", () => {
 
   it("rejects unsigned tags, stale main commits, and incomplete checks", () => {
     const failures = checks.githubReleaseFailures({
-      checkRuns: [
+      workflowRuns: [
         {
-          check_suite: { head_branch: "pull/2" },
           conclusion: "success",
+          event: "pull_request",
+          head_branch: "pull/2",
+          head_sha: "a".repeat(40),
           id: 2,
-          name: "Secret scan",
+          name: "CI",
         },
         {
-          check_suite: { head_branch: "main" },
           conclusion: "failure",
+          event: "push",
+          head_branch: "main",
+          head_sha: "a".repeat(40),
           id: 3,
-          name: "Secret scan",
+          name: "CI",
         },
       ],
       head: "a".repeat(40),
@@ -61,8 +67,8 @@ describe("release source checks", () => {
         "release tag signature is not verified (unsigned)",
         "release tag does not point to HEAD",
         "release commit is not the current main head",
-        "Secret scan has not passed on main",
-        "Quality and bundles has not passed on main",
+        "CI workflow has not passed on main",
+        "CodeQL workflow has not passed on main",
       ]),
     );
   });

@@ -58,20 +58,22 @@ if (process.env.GITHUB_ACTIONS === "true") {
     try {
       const tagRef = await githubJson(`repos/${repository}/git/ref/tags/${expectedTag}`);
       const tagSha = tagRef?.object?.sha;
-      const [tagObject, mainRef, checks] = await Promise.all([
+      const [tagObject, mainRef, workflows] = await Promise.all([
         typeof tagSha === "string"
           ? githubJson(`repos/${repository}/git/tags/${tagSha}`)
           : Promise.resolve(undefined),
         githubJson(`repos/${repository}/git/ref/heads/main`),
-        githubJson(`repos/${repository}/commits/${head}/check-runs?per_page=100`),
+        githubJson(
+          `repos/${repository}/actions/runs?head_sha=${head}&branch=main&status=completed&per_page=100`,
+        ),
       ]);
       failures.push(
         ...githubReleaseFailures({
-          checkRuns: checks?.check_runs,
           head,
           mainRef,
           tagObject,
           tagRef,
+          workflowRuns: workflows?.workflow_runs,
         }),
       );
     } catch (error) {
