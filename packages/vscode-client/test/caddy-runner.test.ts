@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { access, mkdtemp, readFile, realpath, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -47,7 +47,6 @@ describe("Caddy process runner", () => {
 
   it("appends adapt arguments literally and sends the in-memory source over stdin", async () => {
     const workingDirectory = await mkdtemp(join(tmpdir(), "caddy-runner-"));
-    const canonicalWorkingDirectory = await realpath(workingDirectory);
     const script =
       "let input='';process.stdin.on('data',c=>input+=c);process.stdin.on('end',()=>process.stdout.write(JSON.stringify({args:process.argv.slice(1),cwd:process.cwd(),input})))";
     try {
@@ -67,10 +66,18 @@ describe("Caddy process runner", () => {
         timedOut: false,
         truncated: false,
       });
-      expect(JSON.parse(result.stdout)).toEqual({
+      const probe = parseProcessProbe(result.stdout);
+      expect(probe).toMatchObject({
         args: ["wrapper argument", "adapt", "--config", "-", "--adapter", "caddyfile"],
-        cwd: canonicalWorkingDirectory,
         input: ":80 {\n\trespond ok\n}\n",
+      });
+      const [expectedDirectory, actualDirectory] = await Promise.all([
+        stat(workingDirectory),
+        stat(probe.cwd),
+      ]);
+      expect({ dev: actualDirectory.dev, ino: actualDirectory.ino }).toEqual({
+        dev: expectedDirectory.dev,
+        ino: expectedDirectory.ino,
       });
     } finally {
       await rm(workingDirectory, { force: true, recursive: true });
@@ -266,6 +273,28 @@ describe("Caddy process runner", () => {
     expect(defaulted.stdout).toBe("ok");
   });
 });
+
+function parseProcessProbe(serialized: string): {
+  args: string[];
+  cwd: string;
+  input: string;
+} {
+  const value: unknown = JSON.parse(serialized);
+  if (typeof value !== "object" || value === null) throw new TypeError("Expected an object");
+  const record = value as Record<string, unknown>;
+  const args = record["args"];
+  const cwd = record["cwd"];
+  const input = record["input"];
+  if (
+    !Array.isArray(args) ||
+    !args.every((argument: unknown) => typeof argument === "string") ||
+    typeof cwd !== "string" ||
+    typeof input !== "string"
+  ) {
+    throw new TypeError("Expected a valid process probe");
+  }
+  return { args, cwd, input };
+}
 
 async function waitForFile(path: string): Promise<void> {
   const deadline = Date.now() + 5_000;
