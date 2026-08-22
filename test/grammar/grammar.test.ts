@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { directives, globalOptions } from "@caddyfile/language-core";
+import { directives, globalOptions, subdirectives } from "@caddyfile/language-core";
 import { describe, expect, it } from "vitest";
 import { loadGrammar, tokenAt } from "./tokenize.js";
 
@@ -179,6 +179,9 @@ https://two.example {
     expect(scopesAt(grammar, headerPlaceholder, 2, "X-Forwarded-For")).not.toContain(
       "entity.name.namespace.site-address.caddyfile",
     );
+    expect(scopesAt(grammar, headerPlaceholder, 2, "header_up")).toContain(
+      "keyword.control.subdirective.caddyfile",
+    );
     expect(scopesAt(grammar, headerPlaceholder, 2, "{remote_host}")).toContain(
       "variable.other.placeholder.caddyfile",
     );
@@ -213,8 +216,15 @@ https://two.example {
       grammar.repository.globalOptionLine.patterns[0]?.match ?? "",
       "u",
     );
+    const subdirectivePattern = new RegExp(
+      grammar.repository.subdirectives.patterns[0]?.match ?? "",
+      "u",
+    );
     for (const { name } of directives) expect(directivePattern.test(name + " ")).toBe(true);
     for (const { name } of globalOptions) expect(optionPattern.test(name + " ")).toBe(true);
+    for (const { name } of subdirectives) {
+      expect(subdirectivePattern.test(name + " ")).toBe(true);
+    }
   });
 
   it("uses VS Code's current line-comment configuration shape", async () => {
@@ -245,6 +255,9 @@ interface GrammarShape {
       readonly patterns: readonly Readonly<{ readonly match?: string }>[];
     };
     readonly globalOptionLine: {
+      readonly patterns: readonly Readonly<{ readonly match?: string }>[];
+    };
+    readonly subdirectives: {
       readonly patterns: readonly Readonly<{ readonly match?: string }>[];
     };
   };

@@ -21,6 +21,7 @@
         { "include": "#matcherDefinition" },
         { "include": "#namedMatcher" },
         { "include": "#directives" },
+        { "include": "#subdirectives" },
         { "include": "#siteAddress" },
         { "include": "#headerOperator" },
         { "include": "#braces" },
@@ -204,6 +205,16 @@
           "match": "^\\s*(abort|acme_server|basic_auth|basicauth|bind|copy_response|copy_response_headers|encode|error|file_server|forward_auth|fs|handle|handle_errors|handle_path|header|import|intercept|invoke|log|log_append|log_name|log_skip|map|method|metrics|php_fastcgi|push|redir|request_body|request_header|respond|reverse_proxy|rewrite|root|route|skip_log|templates|tls|tracing|try_files|uri|vars)(?=\\s|$)",
           "captures": {
             "1": { "name": "keyword.control.directive.caddyfile" }
+          }
+        }
+      ]
+    },
+    "subdirectives": {
+      "patterns": [
+        {
+          "match": "^\\s*(allow_wildcard_names|alpn|any_common_name|ask|between|body|browse|ca|ca_root|capture_stderr|challenges|ciphers|client_auth|client_ip_headers|close|compression|copy_headers|curves|dial_timeout|disable_canonical_uris|dns|dns_challenge_override_domain|dns_ttl|dynamic|eab|enable_full_duplex|enforce_origin|env|exclude|expect_continue_timeout|fail_duration|file_limit|flush_interval|force_automate|format|fs|get_certificate|gzip|handle_response|header_down|header_up|health_body|health_fails|health_follow_redirects|health_interval|health_method|health_passes|health_port|health_request_body|health_status|health_timeout|health_upstream|health_uri|hide|hostnames|include|index|insecure_secrets_log|issuer|keepalive|keepalive_count|keepalive_idle|keepalive_idle_conns|keepalive_idle_conns_per_host|keepalive_interval|key_id|lb_policy|lb_retries|lb_retry_match|lb_try_duration|lb_try_interval|level|lifetime|listener_wrappers|load|log_credentials|mac_key|match|max_conns_per_host|max_fails|max_header_size|max_size|method|mime|minimum_length|mode|name|no_hostname|observe_catchall_hosts|on_demand|origins|otlp|output|pass_thru|per_host|permission|precompressed|propagation_delay|propagation_timeout|protocols|proxy_protocol|read_buffer|read_timeout|renewal_window_ratio|replace_status|request_buffers|resolve_root_symlink|resolvers|response_buffers|response_header_timeout|reuse_private_keys|reveal_symlinks|rewrite|root|root_common_name|sampling|set|sort|span|split|status|stream_close_delay|stream_timeout|strict_sni_host|timeouts|tls|tls_client_auth|tls_insecure_skip_verify|tls_server_name|tls_trusted_ca_certs|to|trace|transport|trust_pool|trusted_proxies|trusted_proxies_strict|try_files|unhealthy_latency|unhealthy_request_count|unhealthy_status|uri|versions|write_buffer|write_timeout|zstd)(?=\\s|$)",
+          "captures": {
+            "1": { "name": "keyword.control.subdirective.caddyfile" }
           }
         }
       ]
