@@ -14,9 +14,29 @@ The extension does not require Caddy for normal editing and never downloads or s
 
 ## Install
 
-Marketplace and Open VSX links will be added with the first release.
+Search for **Caddyfile** in the Extensions view or run:
 
-Documentation: <https://willibrandon.github.io/vscode-caddyfile/>
+```sh
+code --install-extension willibrandon.caddyfile
+```
+
+[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=willibrandon.caddyfile)
+and [Open VSX](https://open-vsx.org/extension/willibrandon/caddyfile) publish the same extension.
+
+[Documentation](https://willibrandon.github.io/vscode-caddyfile/) · [Changelog](CHANGELOG.md) ·
+[Issues](https://github.com/willibrandon/vscode-caddyfile/issues)
+
+## Development
+
+Requires Node.js 24 and npm 12.
+
+```sh
+npm ci
+npm run verify
+npm run package
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [maintainer documentation](docs/).
 
 ## License
 

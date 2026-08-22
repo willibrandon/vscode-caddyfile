@@ -23,6 +23,11 @@ const approvedLicenses = new Set([
   "SEE LICENSE IN LICENSE.txt",
   "WTFPL",
 ]);
+const approvedDevelopmentOnlyLicenses = new Set([
+  "Apache-2.0 AND LGPL-3.0-or-later",
+  "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+  "LGPL-3.0-or-later",
+]);
 const expectedRuntimePackages = new Map([
   ["balanced-match@4.0.4", "balanced-match-4.0.4.txt"],
   ["brace-expansion@5.0.9", "brace-expansion-5.0.9.txt"],
@@ -80,7 +85,10 @@ for (const [packagePath, metadata] of Object.entries(lock.packages)) {
   const license = metadata.license;
   if (typeof license !== "string") {
     failures.push(`${packagePath} has no declared license`);
-  } else if (!approvedLicenses.has(license)) {
+  } else if (
+    !approvedLicenses.has(license) &&
+    !(metadata.dev === true && approvedDevelopmentOnlyLicenses.has(license))
+  ) {
     failures.push(
       `${packagePath} introduced unreviewed license expression ${JSON.stringify(license)}`,
     );

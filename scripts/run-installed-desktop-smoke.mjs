@@ -48,6 +48,25 @@ export async function runInstalledDesktopSmoke(options) {
   );
   if (exitCode !== 0)
     throw new Error(`Installed-extension smoke test exited with code ${exitCode}.`);
+
+  const extensionIdentifier = expectedIdentity.slice(0, expectedIdentity.lastIndexOf("@"));
+  const removal = await runVSCodeCommand(
+    ["--uninstall-extension", extensionIdentifier, ...profileArguments],
+    { spawn: { env: commandEnvironment }, version },
+  );
+  process.stdout.write(removal.stdout);
+  process.stderr.write(removal.stderr);
+  const afterRemoval = await runVSCodeCommand(
+    ["--list-extensions", "--show-versions", ...profileArguments],
+    { spawn: { env: commandEnvironment }, version },
+  );
+  const remaining = afterRemoval.stdout
+    .split(/\r?\n/u)
+    .map((line) => line.trim().toLowerCase())
+    .filter(Boolean);
+  if (remaining.some((entry) => entry.startsWith(`${extensionIdentifier.toLowerCase()}@`))) {
+    throw new Error(`Clean uninstall left ${extensionIdentifier} registered in the test profile.`);
+  }
 }
 
 function run(command, arguments_, environment) {

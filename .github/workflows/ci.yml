@@ -168,6 +168,14 @@ jobs:
           path: .caddy-current
           fetch-depth: 0
           persist-credentials: false
+      - name: Check out pinned Caddy website source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: caddyserver/website
+          ref: 15ac087cfd9c21a53b2ddfa10359fdc63d5ec9b6
+          path: .website-upstream
+          fetch-depth: 0
+          persist-credentials: false
       - name: Check out pinned tree-sitter source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -191,6 +199,13 @@ jobs:
             .caddy-stable/go.sum
             .caddy-current/go.sum
       - run: npm ci
+      - name: Verify pinned source identities and documentation links
+        run: npm run check:upstream
+        env:
+          CADDY_CURRENT_SOURCE: ${{ github.workspace }}/.caddy-current
+          CADDY_STABLE_SOURCE: ${{ github.workspace }}/.caddy-stable
+          CADDY_WEBSITE_SOURCE: ${{ github.workspace }}/.website-upstream
+          TREE_SITTER_CADDYFILE_SOURCE: ${{ github.workspace }}/.tree-sitter-upstream
       - name: Re-extract and compare pinned language data
         run: |
           npm run fixtures:caddy:formatter
