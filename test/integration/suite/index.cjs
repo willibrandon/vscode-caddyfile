@@ -109,7 +109,10 @@ exports.run = async function run() {
   );
   assert.ok(
     jsonCompletion.items.every(
-      (item) => !String(item.documentation?.value ?? item.documentation ?? "").includes("Official documentation"),
+      (item) =>
+        !String(item.documentation?.value ?? item.documentation ?? "").includes(
+          "Official documentation",
+        ),
     ),
     "adapter JSON must not receive Caddy completions",
   );
