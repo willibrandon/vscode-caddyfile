@@ -5,6 +5,8 @@ description: Completion, hover, diagnostics, navigation, and formatting.
 
 Completion suggests directives, options, matchers, subdirectives, and accepted values for the
 current argument. Hover explains the selected item or value and links to Caddy's documentation.
+The reviewed registry can include experimental directives from current Caddy development builds;
+an installed Caddy command remains authoritative for the version you run.
 
 ![Documentation shown for a Caddyfile directive](../../assets/hover.png)
 
@@ -12,26 +14,6 @@ Diagnostics find structural errors and close spelling mistakes. Unknown names st
 Caddy modules can add directives.
 
 ![A Caddyfile diagnostic and quick fix](../../assets/diagnostic.png)
-
-## Route-scoped timeouts
-
-The extension recognizes Caddy's experimental `timeouts` directive and its current options:
-
-```caddyfile
-example.com {
-	timeouts {
-		read_timeout 15s 1024
-		write_timeout 15s 1024
-		max_write_chunk 64KiB
-	}
-	respond ok
-}
-```
-
-The optional number after a read or write timeout is the minimum transfer rate in bytes per second.
-This directive is currently available in Caddy development builds and may change before a stable
-Caddy release. An installed stable Caddy command can therefore reject it even though the extension
-provides editing support.
 
 Definitions, references, rename, symbols, folding, and selection work across imported files.
 
