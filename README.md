@@ -6,6 +6,7 @@ Language support for Caddyfiles in Visual Studio Code.
 
 - Syntax highlighting and formatting
 - Completions, hover documentation, diagnostics, and navigation
+- Current standard Caddy directives, including experimental route-scoped `timeouts`
 - Snippets, matchers, named routes, placeholders, and imports
 - Optional checks with an installed Caddy command
 - Desktop, remote, and browser extension hosts
