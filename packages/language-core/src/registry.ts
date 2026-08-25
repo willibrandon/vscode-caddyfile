@@ -217,6 +217,12 @@ export const directives: readonly LanguageItem[] = [
     "templates",
   ),
   directive(
+    "timeouts",
+    "Apply route-scoped read and write timeouts.",
+    "timeouts [<matcher>] { ... }",
+    undefined,
+  ),
+  directive(
     "tls",
     "Configure TLS certificates and automation for a site.",
     "tls [<email>|internal|force_automate|<cert> <key>] [{ ... }]",
@@ -836,6 +842,30 @@ export const subdirectives: readonly LanguageItem[] = [
   subdirective("between", "Set template action delimiters.", "between <open> <close>", [
     "templates",
   ]),
+  subdirective(
+    "read_timeout",
+    "Set a request-body idle timeout and optional minimum transfer rate.",
+    "read_timeout <duration> [<min_rate>]",
+    ["timeouts"],
+    undefined,
+    null,
+  ),
+  subdirective(
+    "write_timeout",
+    "Set a response-write idle timeout and optional minimum transfer rate.",
+    "write_timeout <duration> [<min_rate>]",
+    ["timeouts"],
+    undefined,
+    null,
+  ),
+  subdirective(
+    "max_write_chunk",
+    "Limit the size of each response write operation.",
+    "max_write_chunk <size>",
+    ["timeouts"],
+    undefined,
+    null,
+  ),
   subdirective("uri", "Set the authentication request URI.", "uri <path>", ["forward_auth"]),
   subdirective(
     "copy_headers",
@@ -1241,13 +1271,19 @@ function directive(
   name: string,
   summary: string,
   syntax: string,
-  page: string,
+  page: string | undefined,
   deprecated?: Readonly<{ readonly replacement: string; readonly message: string }>,
   valueGuidance?: ValueGuidance,
 ): LanguageItem {
   return withGuidance(
     withDeprecated(
-      { kind: "directive", name, summary, syntax, url: `${docs}/directives/${page}` },
+      {
+        kind: "directive",
+        name,
+        summary,
+        syntax,
+        url: directiveDocumentationUrl(page),
+      },
       deprecated,
     ),
     valueGuidance,
@@ -1284,14 +1320,14 @@ function subdirective(
   syntax: string,
   parents: readonly string[],
   valueGuidance?: ValueGuidance,
-  page?: string,
+  page?: string | null,
 ): LanguageItem {
   const firstParent = parents[0] ?? "";
   const [parentKind, parentName = firstParent] = firstParent.split(":");
   const url =
     parentKind === "global-option"
       ? `${docs}/options#${parentName}`
-      : `${docs}/directives/${page ?? parentName}`;
+      : directiveDocumentationUrl(page === null ? undefined : (page ?? parentName));
   return withGuidance(
     {
       kind: "subdirective",
@@ -1303,6 +1339,10 @@ function subdirective(
     },
     valueGuidance,
   );
+}
+
+function directiveDocumentationUrl(page: string | undefined): string {
+  return page === undefined ? `${docs}/directives` : `${docs}/directives/${page}`;
 }
 
 function value(name: string, summary: string, arguments_?: readonly number[]): LanguageValue {

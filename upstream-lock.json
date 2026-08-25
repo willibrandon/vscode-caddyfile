@@ -3,7 +3,7 @@
     "repository": "https://github.com/caddyserver/caddy.git",
     "stableVersion": "v2.11.4",
     "stableCommit": "e2eee6a7fce366321294c9c2a79f3146891dcbdf",
-    "currentCommit": "45ba3278b5822f6fa6107a44ca41669b6e722482"
+    "currentCommit": "51db7f0313b98e047345343a939bb2a3bd975602"
   },
   "website": {
     "repository": "https://github.com/caddyserver/website.git",

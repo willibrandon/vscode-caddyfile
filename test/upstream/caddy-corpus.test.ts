@@ -14,7 +14,7 @@ const adapterFiles = manifest.files.filter(({ path }) => path.startsWith("adapte
 describe("pinned Caddy parser corpus", () => {
   it("vendors all adapter and parser-table inputs with verified provenance", async () => {
     expect(manifest.upstream).toEqual({
-      commit: "45ba3278b5822f6fa6107a44ca41669b6e722482",
+      commit: "51db7f0313b98e047345343a939bb2a3bd975602",
       license: "Apache-2.0",
       repository: "https://github.com/caddyserver/caddy.git",
     });

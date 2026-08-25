@@ -37,7 +37,7 @@ for directory in "${expected_mounts[@]}"; do
 done
 
 test -S /var/run/docker-host.sock
-test "$(git -C "$CADDY_CURRENT_SOURCE" rev-parse HEAD)" = "45ba3278b5822f6fa6107a44ca41669b6e722482"
+test "$(git -C "$CADDY_CURRENT_SOURCE" rev-parse HEAD)" = "51db7f0313b98e047345343a939bb2a3bd975602"
 test "$(git -C "$CADDY_STABLE_SOURCE" rev-parse v2.11.4^{commit})" = "e2eee6a7fce366321294c9c2a79f3146891dcbdf"
 test "$(git -C "$CADDY_WEBSITE_SOURCE" rev-parse HEAD)" = "15ac087cfd9c21a53b2ddfa10359fdc63d5ec9b6"
 test "$(git -C "$TREE_SITTER_CADDYFILE_SOURCE" rev-parse HEAD)" = "a8669017cb7b3e600dfc1346d11d0943bfd47bf3"
