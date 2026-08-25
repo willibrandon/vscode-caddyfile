@@ -4,9 +4,9 @@ description: Completion, hover, diagnostics, navigation, and formatting.
 ---
 
 Completion suggests directives, options, matchers, subdirectives, and accepted values for the
-current argument. Hover explains the selected item or value and links to Caddy's documentation.
-The reviewed registry can include experimental directives from current Caddy development builds;
-an installed Caddy command remains authoritative for the version you run.
+current argument. Hover explains the selected item or value and links to Caddy's documentation. The
+reviewed registry can include experimental directives from current Caddy development builds; an
+installed Caddy command remains authoritative for the version you run.
 
 ![Documentation shown for a Caddyfile directive](../../assets/hover.png)
 
