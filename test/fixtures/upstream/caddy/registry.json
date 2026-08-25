@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "upstream": {
-    "commit": "45ba3278b5822f6fa6107a44ca41669b6e722482",
+    "commit": "51db7f0313b98e047345343a939bb2a3bd975602",
     "license": "Apache-2.0",
     "repository": "https://github.com/caddyserver/caddy.git"
   },
@@ -43,6 +43,7 @@
     "route",
     "skip_log",
     "templates",
+    "timeouts",
     "tls",
     "tracing",
     "try_files",
@@ -174,6 +175,8 @@
     "modules/caddyhttp/subroute.go",
     "modules/caddyhttp/templates/caddyfile.go",
     "modules/caddyhttp/templates/templates.go",
+    "modules/caddyhttp/timeouts/caddyfile.go",
+    "modules/caddyhttp/timeouts/timeouts.go",
     "modules/caddyhttp/tracing/module.go",
     "modules/caddyhttp/urlpatternmatcher.go",
     "modules/caddyhttp/vars.go",

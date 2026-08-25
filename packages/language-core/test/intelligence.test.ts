@@ -49,6 +49,14 @@ describe("language intelligence", () => {
     expect(emptyProxyCompletions).toContain("header_up");
     expect(emptyProxyCompletions).not.toContain("respond");
 
+    const timeoutsSource = ":80 {\n timeouts {\n  read\n }\n}\n";
+    expect(
+      completionsAt(
+        parseCaddyfile(timeoutsSource),
+        timeoutsSource.indexOf("read") + "read".length,
+      ).map(({ label }) => label),
+    ).toEqual(["read_timeout"]);
+
     const accessLog = ":80 {\n log {\n  \n }\n}\n";
     const accessLogCompletions = completionsAt(
       parseCaddyfile(accessLog),
@@ -180,10 +188,10 @@ describe("language intelligence", () => {
 
   it("covers the complete standard top-level registry", () => {
     expect(languageCoverage()).toEqual({
-      directives: 43,
+      directives: 44,
       globalOptions: 40,
       matchers: 16,
-      subdirectives: 151,
+      subdirectives: 154,
     });
   });
 
@@ -191,7 +199,7 @@ describe("language intelligence", () => {
     const names = allKnownNames();
     expect(names).toContain("reverse_proxy");
     expect(names).toContain("http_port");
-    expect(names).toHaveLength(250);
+    expect(names).toHaveLength(254);
     expect(new Set(names).size).toBeLessThan(names.length);
   });
 

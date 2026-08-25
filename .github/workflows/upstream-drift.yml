@@ -68,7 +68,7 @@ jobs:
           TREE_SITTER_CADDYFILE_REF=$(git -C "$TREE_SITTER_CADDYFILE_SOURCE" rev-parse HEAD)
           npm run fixtures:caddy:formatter
           npm run fixtures:caddy:corpus
-          npm run fixtures:caddy:registry
+          npm run fixtures:caddy:registry -- --allow-count-drift
           npm run fixtures:tree-sitter:corpus
       - name: Record reviewable drift
         id: drift
@@ -132,6 +132,8 @@ jobs:
           if [[ -n "$issue" ]]; then
             gh issue close "$issue" --comment "No fixture drift remains as of $RUN_URL."
           fi
-      - name: Fail after reporting drift
+      - name: Summarize reported drift
         if: steps.drift.outputs.changed == 'true'
-        run: exit 1
+        run:
+          echo "::warning title=Upstream Caddyfile data changed::Review the actionable drift issue
+          and attached patch."

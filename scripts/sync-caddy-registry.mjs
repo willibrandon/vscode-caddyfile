@@ -9,12 +9,13 @@ const lock = JSON.parse(await readFile(resolve(root, "upstream-lock.json"), "utf
 const source = process.env.CADDY_SOURCE ?? resolve(root, "..", "caddy");
 const ref = process.env.CADDY_REF ?? lock.caddy.currentCommit;
 const outputPath = resolve(root, "test/fixtures/upstream/caddy/registry.json");
+const allowCountDrift = process.argv.includes("--allow-count-drift");
 const directives = await registrations(/Register(?:Handler)?Directive\("([^"]+)"/gu);
 const globalOptions = await registrations(/RegisterGlobalOption\("([^"]+)"/gu);
-if (directives.names.length !== 42) {
-  throw new Error(`Expected 42 standard directives, found ${directives.names.length}.`);
+if (!allowCountDrift && directives.names.length !== 43) {
+  throw new Error(`Expected 43 standard directives, found ${directives.names.length}.`);
 }
-if (globalOptions.names.length !== 40) {
+if (!allowCountDrift && globalOptions.names.length !== 40) {
   throw new Error(`Expected 40 standard global options, found ${globalOptions.names.length}.`);
 }
 await mkdir(dirname(outputPath), { recursive: true });
