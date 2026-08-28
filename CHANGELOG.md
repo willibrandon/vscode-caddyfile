@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1] - 2026-08-28
+
+- Made ambient Caddyfile discovery honor `files.exclude`, nested `.gitignore` rules, and common
+  generated-output directories while preserving navigation to explicitly imported files.
+- Added a default-on `caddyfile.index.useIgnoreFiles` setting and live index refresh when ignore
+  settings or ignore files change.
+- Normalized Windows workspace URIs before applying ignore rules and added desktop, browser,
+  manifest, and cross-platform regression coverage.
+
 ## [0.2.0] - 2026-08-24
 
 - Language support for Caddy's experimental route-scoped `timeouts` directive, including
