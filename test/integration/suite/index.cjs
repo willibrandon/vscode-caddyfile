@@ -47,10 +47,22 @@ exports.run = async function run() {
     assert.ok(extension.extensionPath.startsWith(installedPathPrefix));
   }
 
+  const visibleAfterActivationUri = vscode.Uri.joinPath(root, "visible-after-activation.caddyfile");
+  await vscode.workspace.fs.writeFile(
+    visibleAfterActivationUri,
+    new TextEncoder().encode("(VisibleAfterActivationMarker) {\n\trespond visible\n}\n"),
+  );
   await waitFor(
-    () => vscode.commands.executeCommand("vscode.executeWorkspaceSymbolProvider", "shared"),
-    (items) => items.some((symbol) => symbol.location.uri.toString().endsWith("/parts.caddy")),
-    "initial Caddyfile workspace index",
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "VisibleAfterActivationMarker",
+      ),
+    (items) =>
+      items.some(
+        (symbol) => symbol.location.uri.toString() === visibleAfterActivationUri.toString(),
+      ),
+    "post-activation Caddyfile workspace refresh",
   );
   let ignoredSymbols = await vscode.commands.executeCommand(
     "vscode.executeWorkspaceSymbolProvider",
