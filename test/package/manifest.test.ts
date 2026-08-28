@@ -80,6 +80,10 @@ describe("extension manifest", () => {
       default: false,
       type: "boolean",
     });
+    expect(properties?.["caddyfile.index.useIgnoreFiles"]).toMatchObject({
+      default: true,
+      type: "boolean",
+    });
     expect(manifest.contributes?.configurationDefaults).toBeUndefined();
     expect(manifest.contributes?.views).toBeUndefined();
     expect(manifest.contributes?.viewsContainers).toBeUndefined();

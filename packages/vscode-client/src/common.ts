@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import type { BaseLanguageClient, LanguageClientOptions } from "vscode-languageclient";
+import { isGitIgnoreFile, loadWorkspaceExclusions } from "./workspace-exclusions.js";
 
 export const CADDYFILE_LANGUAGE_IDS: readonly string[] = ["caddyfile", "caddyfile-test"];
 
@@ -68,12 +69,26 @@ export function registerWorkspaceSynchronization(
     watcher.onDidCreate(schedule),
     watcher.onDidDelete(schedule),
     watcher.onDidChange((changed) => {
-      if (indexedUris.has(changed.toString()) || isCaddyfileName(changed)) schedule();
+      if (
+        indexedUris.has(changed.toString()) ||
+        isCaddyfileName(changed) ||
+        isGitIgnoreFile(changed)
+      ) {
+        schedule();
+      }
     }),
     vscode.workspace.onDidSaveTextDocument((document) => {
       if (indexedUris.has(document.uri.toString()) || isCaddyfileName(document.uri)) schedule();
     }),
     vscode.workspace.onDidChangeWorkspaceFolders(schedule),
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (
+        event.affectsConfiguration("caddyfile.index.useIgnoreFiles") ||
+        event.affectsConfiguration("files.exclude")
+      ) {
+        schedule();
+      }
+    }),
     {
       dispose(): void {
         generation++;
@@ -86,11 +101,14 @@ export function registerWorkspaceSynchronization(
 }
 
 async function workspaceFiles(): Promise<readonly WorkspaceFile[]> {
-  const seeds = await vscode.workspace.findFiles(
-    "**/{Caddyfile,Caddyfile.*,Caddyfile-*,*.Caddyfile,*.caddyfile,*.caddyfiletest}",
-    "**/{.git,node_modules,.cache,dist,coverage}/**",
-    2_000,
-  );
+  const exclusions = await loadWorkspaceExclusions("caddyfile");
+  const seeds = (
+    await vscode.workspace.findFiles(
+      "**/{Caddyfile,Caddyfile.*,Caddyfile-*,*.Caddyfile,*.caddyfile,*.caddyfiletest}",
+      undefined,
+      2_000,
+    )
+  ).filter((uri) => !exclusions.excludes(uri));
   const pending = [...seeds];
   const seen = new Set<string>();
   const files: WorkspaceFile[] = [];

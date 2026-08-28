@@ -16,6 +16,9 @@ Caddy modules can add directives.
 ![A Caddyfile diagnostic and quick fix](../../assets/diagnostic.png)
 
 Definitions, references, rename, symbols, folding, and selection work across imported files.
+Automatic workspace discovery respects `files.exclude` and nested `.gitignore` files. Explicitly
+opened and imported files remain available. Set `caddyfile.index.useIgnoreFiles` to `false` only
+when an ignored generated tree should be indexed automatically.
 
 **Format Document** follows `caddy fmt`. It edits the open document and does not enable format on
 save.
