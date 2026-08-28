@@ -8,6 +8,7 @@ Language support for Caddyfiles in Visual Studio Code.
 - Completions, hover documentation, diagnostics, and navigation
 - Current standard Caddy directives, including experimental route-scoped `timeouts`
 - Snippets, matchers, named routes, placeholders, and imports
+- Workspace indexing that respects `files.exclude` and `.gitignore` without hiding explicit imports
 - Optional checks with an installed Caddy command
 - Desktop, remote, and browser extension hosts
 

@@ -9,6 +9,28 @@ exports.run = async function run() {
   assert.ok(root, "The fixture workspace must be open.");
   const extension = vscode.extensions.getExtension(extensionId);
   assert.ok(extension, extensionId + " must be installed.");
+  const ignoreUri = vscode.Uri.joinPath(root, ".gitignore");
+  const ignoredDirectory = vscode.Uri.joinPath(root, "artifacts");
+  const ignoredUri = vscode.Uri.joinPath(ignoredDirectory, "ignored.caddyfile");
+  await vscode.workspace.fs.createDirectory(ignoredDirectory);
+  await vscode.workspace.fs.writeFile(ignoreUri, new TextEncoder().encode("artifacts/\n"));
+  await vscode.workspace.fs.writeFile(
+    ignoredUri,
+    new TextEncoder().encode("(IgnoredAmbientMarker) {\n\trespond ignored\n}\n"),
+  );
+  const vscodeExcludedDirectory = vscode.Uri.joinPath(root, "excluded-by-vscode");
+  const vscodeExcludedUri = vscode.Uri.joinPath(vscodeExcludedDirectory, "excluded.caddyfile");
+  await vscode.workspace.fs.createDirectory(vscodeExcludedDirectory);
+  await vscode.workspace.fs.writeFile(
+    vscodeExcludedUri,
+    new TextEncoder().encode("(VsCodeExcludedMarker) {\n\trespond excluded\n}\n"),
+  );
+  const filesConfiguration = vscode.workspace.getConfiguration("files", vscodeExcludedUri);
+  await filesConfiguration.update(
+    "exclude",
+    { "**/excluded-by-vscode": true },
+    vscode.ConfigurationTarget.Workspace,
+  );
   const uri = vscode.Uri.joinPath(root, "Caddyfile");
   const document = await vscode.workspace.openTextDocument(uri);
   await vscode.window.showTextDocument(document);
@@ -24,6 +46,135 @@ exports.run = async function run() {
     );
     assert.ok(extension.extensionPath.startsWith(installedPathPrefix));
   }
+
+  await waitFor(
+    () => vscode.commands.executeCommand("vscode.executeWorkspaceSymbolProvider", "shared"),
+    (items) => items.some((symbol) => symbol.location.uri.toString().endsWith("/parts.caddy")),
+    "initial Caddyfile workspace index",
+  );
+  let ignoredSymbols = await vscode.commands.executeCommand(
+    "vscode.executeWorkspaceSymbolProvider",
+    "IgnoredAmbientMarker",
+  );
+  assert.equal(
+    ignoredSymbols.some((symbol) => symbol.location.uri.toString() === ignoredUri.toString()),
+    false,
+    "Git-ignored Caddyfiles must stay out of ambient workspace indexing.",
+  );
+  let vscodeExcludedSymbols = await vscode.commands.executeCommand(
+    "vscode.executeWorkspaceSymbolProvider",
+    "VsCodeExcludedMarker",
+  );
+  assert.equal(
+    vscodeExcludedSymbols.some(
+      (symbol) => symbol.location.uri.toString() === vscodeExcludedUri.toString(),
+    ),
+    false,
+    "files.exclude entries must stay out of ambient workspace indexing.",
+  );
+
+  await vscode.workspace.fs.writeFile(ignoreUri, new TextEncoder().encode(""));
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "IgnoredAmbientMarker",
+      ),
+    (items) => items.some((symbol) => symbol.location.uri.toString() === ignoredUri.toString()),
+    "Caddyfile to enter the index after .gitignore changes",
+  );
+  await vscode.workspace.fs.writeFile(ignoreUri, new TextEncoder().encode("artifacts/\n"));
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "IgnoredAmbientMarker",
+      ),
+    (items) => items.every((symbol) => symbol.location.uri.toString() !== ignoredUri.toString()),
+    "Caddyfile to leave the index after .gitignore changes",
+  );
+
+  const indexConfiguration = vscode.workspace.getConfiguration("caddyfile", ignoredUri);
+  await indexConfiguration.update(
+    "index.useIgnoreFiles",
+    false,
+    vscode.ConfigurationTarget.WorkspaceFolder,
+  );
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "IgnoredAmbientMarker",
+      ),
+    (items) => items.some((symbol) => symbol.location.uri.toString() === ignoredUri.toString()),
+    "ignored Caddyfile to enter the index when Git ignore filtering is disabled",
+  );
+  await indexConfiguration.update(
+    "index.useIgnoreFiles",
+    true,
+    vscode.ConfigurationTarget.WorkspaceFolder,
+  );
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "IgnoredAmbientMarker",
+      ),
+    (items) => items.every((symbol) => symbol.location.uri.toString() !== ignoredUri.toString()),
+    "ignored Caddyfile to leave the index when Git ignore filtering is restored",
+  );
+
+  await filesConfiguration.update(
+    "exclude",
+    { "**/excluded-by-vscode": false },
+    vscode.ConfigurationTarget.Workspace,
+  );
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "VsCodeExcludedMarker",
+      ),
+    (items) =>
+      items.some((symbol) => symbol.location.uri.toString() === vscodeExcludedUri.toString()),
+    "Caddyfile to enter the index after files.exclude changes",
+  );
+  await filesConfiguration.update(
+    "exclude",
+    { "**/excluded-by-vscode": true },
+    vscode.ConfigurationTarget.Workspace,
+  );
+  await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeWorkspaceSymbolProvider",
+        "VsCodeExcludedMarker",
+      ),
+    (items) =>
+      items.every((symbol) => symbol.location.uri.toString() !== vscodeExcludedUri.toString()),
+    "Caddyfile to leave the index after files.exclude changes",
+  );
+
+  const explicitUri = vscode.Uri.joinPath(root, "explicit-import.caddyfile");
+  await vscode.workspace.fs.writeFile(
+    explicitUri,
+    new TextEncoder().encode(
+      "import ./artifacts/ignored.caddyfile\n:9090 {\n\timport IgnoredAmbientMarker\n}\n",
+    ),
+  );
+  const explicitDocument = await vscode.workspace.openTextDocument(explicitUri);
+  await vscode.window.showTextDocument(explicitDocument);
+  const ignoredDefinition = await waitFor(
+    () =>
+      vscode.commands.executeCommand(
+        "vscode.executeDefinitionProvider",
+        explicitUri,
+        new vscode.Position(2, "\timport IgnoredAmbient".length),
+      ),
+    (locations) => locations[0]?.uri.toString() === ignoredUri.toString(),
+    "explicit import to retain its Git-ignored target",
+  );
+  assert.equal(ignoredDefinition[0]?.uri.toString(), ignoredUri.toString());
 
   const completion = await vscode.commands.executeCommand(
     "vscode.executeCompletionItemProvider",
