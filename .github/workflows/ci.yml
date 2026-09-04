@@ -166,7 +166,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: caddyserver/caddy
-          ref: 51db7f0313b98e047345343a939bb2a3bd975602
+          ref: 19be5d8c587ae081957ce967e43cdb028df9e0ba
           path: .caddy-current
           fetch-depth: 0
           persist-credentials: false
@@ -182,7 +182,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: caddyserver/tree-sitter-caddyfile
-          ref: a8669017cb7b3e600dfc1346d11d0943bfd47bf3
+          ref: 90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3
           path: .tree-sitter-upstream
           fetch-depth: 0
           persist-credentials: false

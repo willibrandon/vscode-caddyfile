@@ -9,7 +9,7 @@ const fixture = JSON.parse(
 describe("pinned Caddy formatter conformance", () => {
   it("contains every upstream formatter case at the reviewed revision", () => {
     expect(fixture.upstream).toMatchObject({
-      commit: "51db7f0313b98e047345343a939bb2a3bd975602",
+      commit: "19be5d8c587ae081957ce967e43cdb028df9e0ba",
       file: "caddyconfig/caddyfile/formatter_test.go",
       license: "Apache-2.0",
     });

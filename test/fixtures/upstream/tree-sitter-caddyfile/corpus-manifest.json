@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "upstream": {
-    "commit": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+    "commit": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
     "license": "MIT",
     "repository": "https://github.com/caddyserver/tree-sitter-caddyfile.git"
   },
@@ -18,7 +18,7 @@
   "files": [
     {
       "path": "base/addresses.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "bcb49597e99ac9cb2f77a10c0c95578d6b8968934ec28989fb9950b754285517",
       "size": 4206,
       "sourceKind": "base",
@@ -26,7 +26,7 @@
     },
     {
       "path": "base/comments.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "ec137ffa0244a69fa4100fbef2bc630e728a21a8912684ed8520e30d0b2cfe54",
       "size": 836,
       "sourceKind": "base",
@@ -34,7 +34,7 @@
     },
     {
       "path": "base/directives.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "1f07a20f52b819bc4e3a9d5fac4299e13bd8529f21c04a668a220eafa5229456",
       "size": 531,
       "sourceKind": "base",
@@ -42,7 +42,7 @@
     },
     {
       "path": "base/durations.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "e4b3bc3fbe59082ff216a47fc14e597ecb63c53f85fc83bc1a18880ecfe10933",
       "size": 160,
       "sourceKind": "base",
@@ -50,7 +50,7 @@
     },
     {
       "path": "base/environment_variables.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "47674cbbf22de638a361b58c6d93fd55472cc4a80dee2245432c859bf6340ff4",
       "size": 501,
       "sourceKind": "base",
@@ -58,7 +58,7 @@
     },
     {
       "path": "base/heredoc.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "98b13278c620d205772cb33cce9e9784ff8f9a20a558d7bccb99910692ca72a8",
       "size": 1049,
       "sourceKind": "base",
@@ -66,7 +66,7 @@
     },
     {
       "path": "base/matchers.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "986a87064fb3ae94d7641c9197b5f461c399fd08ce3fcfee06dbc8880b445f77",
       "size": 739,
       "sourceKind": "base",
@@ -74,7 +74,7 @@
     },
     {
       "path": "base/named_matchers.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "80c903bce8944be5ff005c8a97966b5061ec2fb07cc426a9b2ad3fb4f9f2e7e1",
       "size": 4076,
       "sourceKind": "base",
@@ -82,7 +82,7 @@
     },
     {
       "path": "base/named_routes.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "7de658c86f38c460ded903a13b20ccf395123b695259f7fed1b72a9c2b3e78bc",
       "size": 663,
       "sourceKind": "base",
@@ -90,7 +90,7 @@
     },
     {
       "path": "base/placeholders.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "d60f2a507b4a510e1d7cc49d42bccb56d414fc3717b11c3be62cda4d9663b492",
       "size": 771,
       "sourceKind": "base",
@@ -98,7 +98,7 @@
     },
     {
       "path": "base/sites.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "30eb803e41bd72eeeb97f9a02554f3751ec35754f989dd767f50c3feb82e9fb7",
       "size": 1546,
       "sourceKind": "base",
@@ -106,7 +106,7 @@
     },
     {
       "path": "base/snippets.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "491e1563ce2a8d7326f3f1dbb746687e83e940f4de5d5890d27e5df0fee8b263",
       "size": 613,
       "sourceKind": "base",
@@ -114,7 +114,7 @@
     },
     {
       "path": "base/source_files.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "d1ae8e8cb3aa5fb51314a11f4ff996068191570a5266f307194f909ce5182356",
       "size": 484,
       "sourceKind": "base",
@@ -122,7 +122,7 @@
     },
     {
       "path": "base/strings.txt",
-      "ref": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      "ref": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       "sha256": "463ad8776fbd277064d8fa595e465dd320324908e595ab029b32c79cb494fcfd",
       "size": 1856,
       "sourceKind": "base",

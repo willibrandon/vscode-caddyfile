@@ -3,7 +3,7 @@
     "repository": "https://github.com/caddyserver/caddy.git",
     "stableVersion": "v2.11.4",
     "stableCommit": "e2eee6a7fce366321294c9c2a79f3146891dcbdf",
-    "currentCommit": "51db7f0313b98e047345343a939bb2a3bd975602"
+    "currentCommit": "19be5d8c587ae081957ce967e43cdb028df9e0ba"
   },
   "website": {
     "repository": "https://github.com/caddyserver/website.git",
@@ -11,7 +11,7 @@
   },
   "treeSitter": {
     "repository": "https://github.com/caddyserver/tree-sitter-caddyfile.git",
-    "commit": "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+    "commit": "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
     "pullRequests": {
       "64": "9d3af6ae44ea5f9015bc2c9a5a02066c192ab627"
     }
