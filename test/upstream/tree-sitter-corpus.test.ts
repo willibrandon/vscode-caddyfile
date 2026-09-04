@@ -26,7 +26,7 @@ const cases = (
 describe("pinned tree-sitter Caddyfile corpus", () => {
   it("vendors the full corpus and pull request 64 regressions with verified provenance", async () => {
     expect(manifest.upstream).toEqual({
-      commit: "a8669017cb7b3e600dfc1346d11d0943bfd47bf3",
+      commit: "90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3",
       license: "MIT",
       repository: "https://github.com/caddyserver/tree-sitter-caddyfile.git",
     });
