@@ -47,22 +47,42 @@ exports.run = async function run() {
     assert.ok(extension.extensionPath.startsWith(installedPathPrefix));
   }
 
-  const visibleAfterActivationUri = vscode.Uri.joinPath(root, "visible-after-activation.caddyfile");
-  await vscode.workspace.fs.writeFile(
-    visibleAfterActivationUri,
-    new TextEncoder().encode("(VisibleAfterActivationMarker) {\n\trespond visible\n}\n"),
-  );
+  // The server only learns about parts.caddy from the client's workspace snapshot, so this proves
+  // the initial scan has landed before any watcher-driven refresh is expected.
   await waitFor(
-    () =>
-      vscode.commands.executeCommand(
+    () => vscode.commands.executeCommand("vscode.executeWorkspaceSymbolProvider", "shared"),
+    (items) => items.some((symbol) => symbol.location.uri.toString().endsWith("/parts.caddy")),
+    "initial Caddyfile workspace index",
+  );
+  // VS Code starts its recursive workspace watcher after the window restores, and macOS FSEvents
+  // subscriptions add their own delay, so a write made right after activation can go unobserved.
+  // Every later step relies on watcher events, so keep rewriting a sentinel until the index shows
+  // the newest write. Only a refresh scheduled by a watcher event can pick that content up.
+  const visibleAfterActivationUri = vscode.Uri.joinPath(root, "visible-after-activation.caddyfile");
+  let watcherAttempt = 0;
+  await waitFor(
+    async () => {
+      watcherAttempt += 1;
+      await vscode.workspace.fs.writeFile(
+        visibleAfterActivationUri,
+        new TextEncoder().encode(
+          `(VisibleAfterActivationMarker${watcherAttempt}) {\n\trespond visible\n}\n`,
+        ),
+      );
+      await delay(500);
+      return vscode.commands.executeCommand(
         "vscode.executeWorkspaceSymbolProvider",
         "VisibleAfterActivationMarker",
-      ),
+      );
+    },
     (items) =>
       items.some(
-        (symbol) => symbol.location.uri.toString() === visibleAfterActivationUri.toString(),
+        (symbol) =>
+          symbol.name === `VisibleAfterActivationMarker${watcherAttempt}` &&
+          symbol.location.uri.toString() === visibleAfterActivationUri.toString(),
       ),
-    "post-activation Caddyfile workspace refresh",
+    "file watcher events to reach the extension",
+    30_000,
   );
   let ignoredSymbols = await vscode.commands.executeCommand(
     "vscode.executeWorkspaceSymbolProvider",
@@ -360,12 +380,16 @@ function diagnosticCode(diagnostic) {
   return typeof diagnostic.code === "object" ? diagnostic.code.value : diagnostic.code;
 }
 
-async function waitFor(read, accept, description) {
-  const deadline = Date.now() + 10_000;
+async function waitFor(read, accept, description, timeoutMs = 10_000) {
+  const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const value = await read();
     if (await accept(value)) return value;
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await delay(50);
   }
   assert.fail("Timed out waiting for " + description + ".");
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
