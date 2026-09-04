@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.2] - 2026-09-03
+
+- Updated the bundled vscode-uri library to 3.2.0 and vscode-languageserver-textdocument to 1.0.14.
+- Cleared the fast-uri and qs npm advisories from the development toolchain. Neither package ships
+  in the extension.
+- Refreshed the reviewed Caddy and tree-sitter-caddyfile pins to their current upstream heads. The
+  fixture content is unchanged.
+- Hardened the desktop integration suite against file watcher start-up latency on macOS.
+- Updated the CodeQL Action to 4.37.9 and refreshed the development container base image digests.
+
 ## [0.2.1] - 2026-08-28
 
 - Made ambient Caddyfile discovery honor `files.exclude`, nested `.gitignore` rules, and common
