@@ -39,7 +39,7 @@ License: `LICENSES/tree-sitter-caddyfile-MIT.txt`
 | vscode-languageclient@10.1.0              | MIT           | `LICENSES/vscode-languageclient-10.1.0.txt`              |
 | vscode-languageserver@10.1.0              | MIT           | `LICENSES/vscode-languageserver-10.1.0.txt`              |
 | vscode-languageserver-protocol@3.18.2     | MIT           | `LICENSES/vscode-languageserver-protocol-3.18.2.txt`     |
-| vscode-languageserver-textdocument@1.0.12 | MIT           | `LICENSES/vscode-languageserver-textdocument-1.0.12.txt` |
+| vscode-languageserver-textdocument@1.0.14 | MIT           | `LICENSES/vscode-languageserver-textdocument-1.0.14.txt` |
 | vscode-languageserver-textdocument@1.0.13 | MIT           | `LICENSES/vscode-languageserver-textdocument-1.0.13.txt` |
 | vscode-languageserver-types@3.18.0        | MIT           | `LICENSES/vscode-languageserver-types-3.18.0.txt`        |
-| vscode-uri@3.1.0                          | MIT           | `LICENSES/vscode-uri-3.1.0.txt`                          |
+| vscode-uri@3.2.0                          | MIT           | `LICENSES/vscode-uri-3.2.0.txt`                          |

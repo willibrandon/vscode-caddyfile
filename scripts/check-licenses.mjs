@@ -39,10 +39,10 @@ const expectedRuntimePackages = new Map([
   ["vscode-languageclient@10.1.0", "vscode-languageclient-10.1.0.txt"],
   ["vscode-languageserver@10.1.0", "vscode-languageserver-10.1.0.txt"],
   ["vscode-languageserver-protocol@3.18.2", "vscode-languageserver-protocol-3.18.2.txt"],
-  ["vscode-languageserver-textdocument@1.0.12", "vscode-languageserver-textdocument-1.0.12.txt"],
+  ["vscode-languageserver-textdocument@1.0.14", "vscode-languageserver-textdocument-1.0.14.txt"],
   ["vscode-languageserver-textdocument@1.0.13", "vscode-languageserver-textdocument-1.0.13.txt"],
   ["vscode-languageserver-types@3.18.0", "vscode-languageserver-types-3.18.0.txt"],
-  ["vscode-uri@3.1.0", "vscode-uri-3.1.0.txt"],
+  ["vscode-uri@3.2.0", "vscode-uri-3.2.0.txt"],
 ]);
 const expectedLicenseHashes = new Map([
   ["Caddy-Apache-2.0.txt", "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"],
@@ -69,7 +69,7 @@ const expectedLicenseHashes = new Map([
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
-    "vscode-languageserver-textdocument-1.0.12.txt",
+    "vscode-languageserver-textdocument-1.0.14.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
@@ -80,7 +80,7 @@ const expectedLicenseHashes = new Map([
     "vscode-languageserver-types-3.18.0.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
-  ["vscode-uri-3.1.0.txt", "5bf78228f68c7cd7811974f8e98a4c9bec9fdf4adf5c2a3f222184898c669f5b"],
+  ["vscode-uri-3.2.0.txt", "5bf78228f68c7cd7811974f8e98a4c9bec9fdf4adf5c2a3f222184898c669f5b"],
 ]);
 const mitSha256 = "f74f925ccd6fc2f4b9bdf7682f6927a64809c8668e8232997c541cc6f992787b";
 
