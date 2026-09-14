@@ -165,8 +165,7 @@ function readHeredoc(
 
   consumeUntil(text, cursor, openingEnd);
   if (cursor.offset < text.length) {
-    const newline = readNewline(text, cursor);
-    void newline;
+    void readNewline(text, cursor);
   }
   const contentStart = cursor.offset;
   let contentEnd = text.length;
@@ -190,8 +189,7 @@ function readHeredoc(
     }
     consumeUntil(text, cursor, markerLineEnd);
     if (cursor.offset < text.length) {
-      const newline = readNewline(text, cursor);
-      void newline;
+      void readNewline(text, cursor);
     }
   }
   const end = snapshot(cursor);
