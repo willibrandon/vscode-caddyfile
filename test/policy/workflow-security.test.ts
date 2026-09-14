@@ -88,4 +88,10 @@ describe("workflow supply-chain policy", () => {
       expect(dependabot).toContain(`package-ecosystem: ${ecosystem}`);
     }
   });
+
+  it("installs the exact Playwright browser before browser-based checks", () => {
+    for (const name of ["ci.yml", "docs.yml", "release.yml"]) {
+      expect(workflow(name), name).toContain("npm exec -- playwright install chromium");
+    }
+  });
 });
