@@ -46,6 +46,7 @@ docker version
 npm run check:upstream
 npm run check:caddy:formatter
 npm run verify
+npm exec -- playwright install chromium
 npm run test:integration
 npm run test:web
 npm run package

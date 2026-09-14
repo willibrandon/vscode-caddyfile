@@ -129,6 +129,7 @@ describe("development container", () => {
     }
     expect(verify).toContain("mountpoint --quiet");
     expect(verify).toContain("docker version");
+    expect(verify).toContain("npm exec -- playwright install chromium");
     expect(proxy).toContain("UNIX-LISTEN:$target_socket");
     expect(proxy).toContain("UNIX-CONNECT:$source_socket");
     expect(proxy).not.toMatch(/ch(?:mod|own).*docker-host\.sock/u);
