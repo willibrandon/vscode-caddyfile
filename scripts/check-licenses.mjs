@@ -32,16 +32,15 @@ const approvedDevelopmentOnlyLicenses = new Set([
 const expectedRuntimePackages = new Map([
   ["balanced-match@4.0.4", "balanced-match-4.0.4.txt"],
   ["brace-expansion@5.0.9", "brace-expansion-5.0.9.txt"],
-  ["ignore@7.0.6", "ignore-7.0.6.txt"],
+  ["ignore@7.0.9", "ignore-7.0.9.txt"],
   ["minimatch@10.2.6", "minimatch-10.2.6.txt"],
   ["semver@7.8.5", "semver-7.8.5.txt"],
-  ["vscode-jsonrpc@9.0.1", "vscode-jsonrpc-9.0.1.txt"],
-  ["vscode-languageclient@10.1.0", "vscode-languageclient-10.1.0.txt"],
-  ["vscode-languageserver@10.1.0", "vscode-languageserver-10.1.0.txt"],
-  ["vscode-languageserver-protocol@3.18.2", "vscode-languageserver-protocol-3.18.2.txt"],
+  ["vscode-jsonrpc@9.0.2", "vscode-jsonrpc-9.0.2.txt"],
+  ["vscode-languageclient@10.1.1", "vscode-languageclient-10.1.1.txt"],
+  ["vscode-languageserver@10.1.1", "vscode-languageserver-10.1.1.txt"],
+  ["vscode-languageserver-protocol@3.18.3", "vscode-languageserver-protocol-3.18.3.txt"],
   ["vscode-languageserver-textdocument@1.0.14", "vscode-languageserver-textdocument-1.0.14.txt"],
-  ["vscode-languageserver-textdocument@1.0.13", "vscode-languageserver-textdocument-1.0.13.txt"],
-  ["vscode-languageserver-types@3.18.0", "vscode-languageserver-types-3.18.0.txt"],
+  ["vscode-languageserver-types@3.18.3", "vscode-languageserver-types-3.18.3.txt"],
   ["vscode-uri@3.2.0", "vscode-uri-3.2.0.txt"],
 ]);
 const expectedLicenseHashes = new Map([
@@ -53,11 +52,17 @@ const expectedLicenseHashes = new Map([
   ["balanced-match-4.0.4.txt", "d408f38ffa3355c5faec517153295338892eb0f1ea43f57874bb23c6075979b5"],
   ["brace-expansion-5.0.9.txt", "9c63a23124d68cd30cd316a94a1a0bca34f032786df6df69fc4b5f136bac8d2e"],
   ["ignore-7.0.6.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
+  ["ignore-7.0.9.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
   ["minimatch-10.2.6.txt", "2c7c5d22ed5a8ee968c64757710979afcd77438c48b4a265b94e615babd8a901"],
   ["semver-7.8.5.txt", "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b"],
   ["vscode-jsonrpc-9.0.1.txt", "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0"],
+  ["vscode-jsonrpc-9.0.2.txt", "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0"],
   [
     "vscode-languageclient-10.1.0.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
+    "vscode-languageclient-10.1.1.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
@@ -65,7 +70,15 @@ const expectedLicenseHashes = new Map([
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
+    "vscode-languageserver-10.1.1.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
     "vscode-languageserver-protocol-3.18.2.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
+    "vscode-languageserver-protocol-3.18.3.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
@@ -78,6 +91,10 @@ const expectedLicenseHashes = new Map([
   ],
   [
     "vscode-languageserver-types-3.18.0.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
+    "vscode-languageserver-types-3.18.3.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   ["vscode-uri-3.2.0.txt", "5bf78228f68c7cd7811974f8e98a4c9bec9fdf4adf5c2a3f222184898c669f5b"],
