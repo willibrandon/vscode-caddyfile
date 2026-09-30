@@ -26,8 +26,8 @@ const adapterFiles = listing
   .split("\n")
   .filter((path) => path.endsWith(".caddyfiletest"))
   .sort();
-if (adapterFiles.length !== 233) {
-  throw new Error(`Expected 233 adapter fixtures, found ${adapterFiles.length}.`);
+if (adapterFiles.length === 0) {
+  throw new Error(`Expected adapter fixtures in ${adapterRoot}, found none.`);
 }
 const manifestFiles = [];
 for (const upstreamPath of [...adapterFiles, ...sourceTests]) {
