@@ -42,6 +42,7 @@ try {
       temporaryWorkspace,
       ...(installedSmoke ? [] : ["--disable-extensions"]),
       "--disable-workspace-trust",
+      "--disable-gpu",
       "--skip-release-notes",
       "--skip-welcome",
       "--user-data-dir=" + userData,
