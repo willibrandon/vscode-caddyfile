@@ -12,7 +12,7 @@ readonly caddy_stable_revision="e2eee6a7fce366321294c9c2a79f3146891dcbdf"
 readonly caddy_current_revision="19be5d8c587ae081957ce967e43cdb028df9e0ba"
 readonly website_revision="15ac087cfd9c21a53b2ddfa10359fdc63d5ec9b6"
 readonly tree_sitter_revision="90e0a0c6e82ccc59fc2320a3ad71b4edb93c15f3"
-readonly tree_sitter_pull_revision="9d3af6ae44ea5f9015bc2c9a5a02066c192ab627"
+readonly tree_sitter_pull_revision="1d0f58e143bf4712325e4945055614425d51ecf2"
 readonly isolated_directories=(
   "$workspace_root/node_modules"
   "$workspace_root/dist"

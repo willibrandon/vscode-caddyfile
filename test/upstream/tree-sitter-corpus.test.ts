@@ -31,7 +31,7 @@ describe("pinned tree-sitter Caddyfile corpus", () => {
       repository: "https://github.com/caddyserver/tree-sitter-caddyfile.git",
     });
     expect(manifest.pullRequests["64"]).toEqual({
-      commit: "9d3af6ae44ea5f9015bc2c9a5a02066c192ab627",
+      commit: "1d0f58e143bf4712325e4945055614425d51ecf2",
       files: ["named_matchers.txt", "sites.txt"],
       url: "https://github.com/caddyserver/tree-sitter-caddyfile/pull/64",
     });
