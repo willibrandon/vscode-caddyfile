@@ -7,7 +7,7 @@ FROM caddy:2.11.4@sha256:0c994536bddb66445885237f1a5dcc1916bccea922661c76b4e9fc2
 
 FROM docker:29.7.2-cli@sha256:3f4743208d2338c934d7b8bcfbe1bb54c0b2355c510ad5e0f31c0c4a54bd704e AS docker-toolchain
 
-FROM mcr.microsoft.com/devcontainers/base:2-trixie@sha256:1f851004adcd3dff3776b4a1da86727cf52280b0fdc9d5b0568c9c7d74274286
+FROM mcr.microsoft.com/devcontainers/base:2-trixie@sha256:6ee2b4097c75d33e9a94d941577a3286e5d629434fba384688b06daeeaaeac99
 
 COPY --from=node-toolchain /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-toolchain /usr/local/lib/node_modules /usr/local/lib/node_modules
