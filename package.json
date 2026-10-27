@@ -282,7 +282,8 @@
     "glob": "13.0.6",
     "keytar": "npm:@github/keytar@7.10.6",
     "@vscode/vsce": "4.0.0",
-    "serialize-javascript": "7.1.0"
+    "serialize-javascript": "7.1.4",
+    "@azure/msal-node": "7.1.1"
   },
   "allowScripts": {
     "@github/keytar@7.10.6": true,
