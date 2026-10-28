@@ -36,10 +36,12 @@ License: `LICENSES/tree-sitter-caddyfile-MIT.txt`
 | minimatch@10.2.6                          | BlueOak-1.0.0 | `LICENSES/minimatch-10.2.6.txt`                          |
 | semver@7.8.5                              | ISC           | `LICENSES/semver-7.8.5.txt`                              |
 | vscode-jsonrpc@9.0.3                      | MIT           | `LICENSES/vscode-jsonrpc-9.0.3.txt`                      |
-| vscode-languageclient@10.1.2              | MIT           | `LICENSES/vscode-languageclient-10.1.2.txt`              |
+| vscode-jsonrpc@10.0.0                     | MIT           | `LICENSES/vscode-jsonrpc-10.0.0.txt`                     |
+| vscode-languageclient@11.0.0              | MIT           | `LICENSES/vscode-languageclient-11.0.0.txt`              |
 | vscode-languageserver@10.1.2              | MIT           | `LICENSES/vscode-languageserver-10.1.2.txt`              |
 | vscode-languageserver-protocol@3.18.4     | MIT           | `LICENSES/vscode-languageserver-protocol-3.18.4.txt`     |
-| vscode-languageserver-textdocument@1.0.15 | MIT           | `LICENSES/vscode-languageserver-textdocument-1.0.15.txt` |
+| vscode-languageserver-protocol@3.18.5     | MIT           | `LICENSES/vscode-languageserver-protocol-3.18.5.txt`     |
 | vscode-languageserver-textdocument@1.0.16 | MIT           | `LICENSES/vscode-languageserver-textdocument-1.0.16.txt` |
 | vscode-languageserver-types@3.18.4        | MIT           | `LICENSES/vscode-languageserver-types-3.18.4.txt`        |
+| vscode-languageserver-types@3.18.5        | MIT           | `LICENSES/vscode-languageserver-types-3.18.5.txt`        |
 | vscode-uri@3.2.0                          | MIT           | `LICENSES/vscode-uri-3.2.0.txt`                          |
