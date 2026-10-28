@@ -9,7 +9,6 @@ export function clientOptions(output: vscode.LogOutputChannel): LanguageClientOp
     documentSelector: CADDYFILE_LANGUAGE_IDS.map((language) => ({ language })),
     markdown: { isTrusted: false },
     outputChannel: output,
-    synchronize: { configurationSection: "caddyfile" },
   };
 }
 
@@ -82,6 +81,11 @@ export function registerWorkspaceSynchronization(
     }),
     vscode.workspace.onDidChangeWorkspaceFolders(schedule),
     vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration("caddyfile")) {
+        void client
+          .sendNotification("workspace/didChangeConfiguration", { settings: null })
+          .catch((error: unknown) => output.warn("Configuration update failed: " + String(error)));
+      }
       if (
         event.affectsConfiguration("caddyfile.index.useIgnoreFiles") ||
         event.affectsConfiguration("files.exclude")
