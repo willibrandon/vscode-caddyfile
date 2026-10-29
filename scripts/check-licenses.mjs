@@ -35,15 +35,12 @@ const expectedRuntimePackages = new Map([
   ["ignore@7.0.13", "ignore-7.0.13.txt"],
   ["minimatch@10.2.6", "minimatch-10.2.6.txt"],
   ["semver@7.8.5", "semver-7.8.5.txt"],
-  ["vscode-jsonrpc@9.0.3", "vscode-jsonrpc-9.0.3.txt"],
   ["vscode-jsonrpc@10.0.0", "vscode-jsonrpc-10.0.0.txt"],
   ["vscode-languageclient@11.0.0", "vscode-languageclient-11.0.0.txt"],
-  ["vscode-languageserver@10.1.2", "vscode-languageserver-10.1.2.txt"],
-  ["vscode-languageserver-protocol@3.18.4", "vscode-languageserver-protocol-3.18.4.txt"],
+  ["vscode-languageserver@11.0.0", "vscode-languageserver-11.0.0.txt"],
   ["vscode-languageserver-protocol@3.18.5", "vscode-languageserver-protocol-3.18.5.txt"],
   ["vscode-languageserver-textdocument@1.0.16", "vscode-languageserver-textdocument-1.0.16.txt"],
   ["vscode-languageserver-types@3.18.5", "vscode-languageserver-types-3.18.5.txt"],
-  ["vscode-languageserver-types@3.18.4", "vscode-languageserver-types-3.18.4.txt"],
   ["vscode-uri@3.2.0", "vscode-uri-3.2.0.txt"],
 ]);
 const expectedLicenseHashes = new Map([
@@ -94,6 +91,10 @@ const expectedLicenseHashes = new Map([
   ],
   [
     "vscode-languageserver-10.1.2.txt",
+    "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+  ],
+  [
+    "vscode-languageserver-11.0.0.txt",
     "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
   ],
   [
