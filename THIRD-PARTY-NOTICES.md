@@ -33,7 +33,8 @@ License: `LICENSES/tree-sitter-caddyfile-MIT.txt`
 | balanced-match@4.0.4                      | MIT           | `LICENSES/balanced-match-4.0.4.txt`                      |
 | brace-expansion@5.0.12                    | MIT           | `LICENSES/brace-expansion-5.0.12.txt`                    |
 | ignore@7.0.13                             | MIT           | `LICENSES/ignore-7.0.13.txt`                             |
-| minimatch@10.2.6                          | BlueOak-1.0.0 | `LICENSES/minimatch-10.2.6.txt`                          |
+| minimatch@11.0.4                          | BlueOak-1.0.0 | `LICENSES/minimatch-11.0.4.txt`                          |
+| @isaacs/nonrecursive-glob-match@1.0.3     | BlueOak-1.0.0 | `LICENSES/nonrecursive-glob-match-1.0.3.txt`             |
 | semver@7.8.5                              | ISC           | `LICENSES/semver-7.8.5.txt`                              |
 | vscode-jsonrpc@10.0.0                     | MIT           | `LICENSES/vscode-jsonrpc-10.0.0.txt`                     |
 | vscode-languageclient@11.0.0              | MIT           | `LICENSES/vscode-languageclient-11.0.0.txt`              |
