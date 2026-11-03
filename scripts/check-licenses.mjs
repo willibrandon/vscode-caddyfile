@@ -32,7 +32,7 @@ const approvedDevelopmentOnlyLicenses = new Set([
 const expectedRuntimePackages = new Map([
   ["balanced-match@4.0.4", "balanced-match-4.0.4.txt"],
   ["brace-expansion@5.0.12", "brace-expansion-5.0.12.txt"],
-  ["ignore@7.0.13", "ignore-7.0.13.txt"],
+  ["ignore@7.0.14", "ignore-7.0.14.txt"],
   ["minimatch@11.0.4", "minimatch-11.0.4.txt"],
   ["@isaacs/nonrecursive-glob-match@1.0.3", "nonrecursive-glob-match-1.0.3.txt"],
   ["semver@7.8.5", "semver-7.8.5.txt"],
@@ -59,7 +59,7 @@ const expectedLicenseHashes = new Map([
   ["ignore-7.0.6.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
   ["ignore-7.0.9.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
   ["ignore-7.0.12.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
-  ["ignore-7.0.13.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
+  ["ignore-7.0.14.txt", "542e7521fab287d3d2ea83e0145692c7d82ea81b28f141be6686364929d33079"],
   ["minimatch-11.0.4.txt", "2c7c5d22ed5a8ee968c64757710979afcd77438c48b4a265b94e615babd8a901"],
   [
     "nonrecursive-glob-match-1.0.3.txt",
